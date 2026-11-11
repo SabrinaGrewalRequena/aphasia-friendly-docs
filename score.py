@@ -48,7 +48,10 @@ def grade_level(text, lang):
 
 def score(doc, max_grade=5, max_lines=4, max_words=15):
     lang = doc.get("language", "en")
-    prose = [strip_md(l["text"]) for _, l in all_lines(doc) if l.get("kind") in READ_KINDS]
+    # Names and copied facts (bold text with a capital letter or a digit, e.g. "**Atorvastatin 40 mg**",
+    # "**Carolina Valley Medical Center**") cannot be simplified, so the grade leaves them out.
+    prose = [strip_md(re.sub(r"\*\*([^*]*[A-Z0-9ÁÉÍÓÚÑ][^*]*)\*\*", "", l["text"]))
+             for _, l in all_lines(doc) if l.get("kind") in READ_KINDS]
     prose_text = "\n".join(prose)
     sents = [s for p in prose for s in sentences(p)]
     sent_lens = [len(words(s)) for s in sents] or [0]

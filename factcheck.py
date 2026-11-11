@@ -28,7 +28,7 @@ PATTERNS = {
     "date": (rf"\b{DAYS},?\s+{MONTHS_EN}\s+\d{{1,2}}(?:,\s*\d{{4}})?|\b{MONTHS_EN}\s+\d{{1,2}}(?:st|nd|rd|th)?(?:,\s*\d{{4}})?"
              rf"|\b\d{{1,2}}\s+de\s+{MONTHS_ES}(?:\s+de\s+\d{{4}})?|\b\d{{1,2}}/\d{{1,2}}(?:/\d{{2,4}})?\b"),
     "time": r"\b\d{1,2}(?::\d{2})?\s*(?:a\.?\s?m\.?|p\.?\s?m\.?|AM|PM)(?=\W|$)|\b\d{1,2}:\d{2}\b",
-    "dose": rf"\b\d+(?:[.,]\d+)?\s*{UNITS}\b",
+    "dose": rf"\b\d+(?:[.,]\d+)?[ \t]?{UNITS}\b",
     "name": r"\b(?:Dr|Dra|Mr|Mrs|Ms|Sr|Sra|Srta)\.\s+[A-ZÁÉÍÓÚÑ][\w'’-]+(?:\s+[A-ZÁÉÍÓÚÑ][\w'’-]+)?",
     "address": rf"\b\d{{1,6}}\s+(?:[A-Z0-9][\w.'-]*\s+){{1,4}}{STREET}(?:,?\s+(?:Suite|Ste\.?|Room|Rm\.?)\s*\w+)?|\b(?:Calle|Avenida|Av\.)\s+[\wÁÉÍÓÚÑáéíóúñ ]+?\s+\d+",
 }
@@ -77,6 +77,8 @@ def check(original, out_doc, keep=()):
             status = "ok"
         elif f["type"] in ("phone", "date", "time", "dose") and digits(v) and digits(v) in out_digits:
             status = "reformatted"
+        elif f["type"] == "name" and len(v.split()) == 2 and re.search(rf"\b{re.escape(norm(v.split()[-1]))}\b", out_norm):
+            status = "ok"               # title + surname ("Mr. Jenkins") and the output names that person
         elif f["type"] == "name" and re.search(rf"\b{re.escape(norm(v.split()[0]))}\s.*\b{re.escape(norm(v.split()[-1]))}\b", out_norm):
             status = "ok"               # short form ("Dr. Ortiz") of a full name the output already has
         elif norm(v) in omitted_norm and v not in CRISIS_NUMBERS:

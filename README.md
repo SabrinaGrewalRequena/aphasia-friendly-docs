@@ -113,7 +113,8 @@ Nothing leaves your computer this way — use this route for any real patient do
   addresses, emails) and flags any number the model invented. It only finds names with a title
   (Dr., Sra.) — add others with `--keep`. It can't judge meaning; that's the SLP's job.
 - The reading grade uses Flesch-Kincaid (English) and Crawford (Spanish) with a simple syllable
-  count. It's rough on very short text and long proper names; use it to compare systems, not as the final word.
+  count. It leaves out copied names and facts (bold text with a capital letter or a digit, such as drug and clinic
+  names), because the writer cannot simplify those. It's rough on very short text and long proper names; use it to compare systems, not as the final word.
 - ARASAAC pictograms are licensed **CC BY-NC-SA 4.0**. Documents that use them must credit ARASAAC
   (the footer does this) and be shared non-commercially under the same license — so the library should
   be CC BY-NC-SA, and listings (e.g. Teachers Pay Teachers) must be free.

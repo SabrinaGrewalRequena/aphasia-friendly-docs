@@ -1,0 +1,481 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Example Pair Review</title><style>
+:root { --bg:#f4f4f2; --card:#fff; --ink:#1b1b1b; --muted:#666; --line:#ddd; --ok:#2e7d32; --warn:#b26a00; --bad:#b00020; }
+@media (prefers-color-scheme: dark) { :root { --bg:#161616; --card:#222; --ink:#eee; --muted:#aaa; --line:#3a3a3a; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+header { padding:24px 16px 8px; max-width:1200px; margin:auto; }
+h1 { margin:0 0 4px; font-size:24px; }
+.sub { color:var(--muted); }
+.toc { max-width:1200px; margin:8px auto 16px; padding:0 16px; columns: 2 280px; }
+.toc a { color:inherit; display:block; padding:2px 0; }
+.pair { max-width:1200px; margin:0 auto 28px; padding:16px; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.pair h2 { margin:0; font-size:19px; }
+.meta { color:var(--muted); font-size:13px; margin:4px 0 10px; }
+.badge { display:inline-block; padding:1px 8px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid currentColor; margin-right:6px; }
+.ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+.cols { display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.6fr); gap:16px; }
+@media (max-width: 800px) { .cols { grid-template-columns: 1fr; } }
+.orig { white-space:pre-wrap; background:var(--bg); border-radius:8px; padding:12px; font-size:14px; }
+.pages { display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:10px; }
+.pg { border:1px solid var(--line); border-radius:8px; padding:10px; background:var(--card); }
+.pg h3 { margin:0 0 6px; font-size:14px; border-bottom:2px solid var(--ink); padding-bottom:4px; }
+.pg ol, .pg ul { margin:0; padding-left:18px; } .pg li { margin:4px 0; font-size:14px; }
+.pg ul { list-style:none; padding-left:0; }
+.pic { color:var(--muted); font-size:11px; }
+.crisis { color:var(--bad); font-weight:700; }
+.notes { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--warn); background:var(--bg); border-radius:4px; font-size:14px; }
+.box { margin-top:10px; font-size:14px; }
+.box span { display:inline-block; margin-right:18px; }
+@media print { body { background:#fff; } .pair { break-inside: avoid-page; page-break-after: always; border:none; } .toc { display:none; } }
+</style></head><body><header><h1>Example pair review</h1><div class='sub'>25 pairs waiting for review. Original on the left, aphasia-friendly version on the right. ☐ = clinician ticks what applies, ☎ = phone line, ⚠ = emergency line, [grey words] = picture suggestion.</div></header><nav class='toc'><a href="#p1">1. Message from your nurse <span class="sub">(en, message)</span></a><a href="#p2">2. Your medicine label: gabapentin <span class="sub">(en, medication)</span></a><a href="#p3">3. Text message reminder <span class="sub">(en, appointment)</span></a><a href="#p4">4. Your MRI time changed <span class="sub">(en, message)</span></a><a href="#p5">5. Getting ready for your neck surgery <span class="sub">(en, procedure)</span></a><a href="#p6">6. Your neurology appointment <span class="sub">(en, appointment)</span></a><a href="#p7">7. My medicine times <span class="sub">(en, medication)</span></a><a href="#p8">8. Your doctor sent you to speech therapy <span class="sub">(en, referral)</span></a><a href="#p9">9. Going home after your TIA <span class="sub">(en, discharge)</span></a><a href="#p10">10. Your lab results <span class="sub">(en, results)</span></a><a href="#p11">11. Advice from the nurse line <span class="sub">(en, message)</span></a><a href="#p12">12. Daily care checklist <span class="sub">(en, home_program)</span></a><a href="#p13">13. Your swallow study <span class="sub">(en, message)</span></a><a href="#p14">14. Mensaje de su enfermera <span class="sub">(es, message)</span></a><a href="#p15">15. La etiqueta de su medicina: amlodipino <span class="sub">(es, medication)</span></a><a href="#p16">16. Recordatorio por mensaje de texto <span class="sub">(es, appointment)</span></a><a href="#p17">17. Pueden adelantar su prueba del corazón <span class="sub">(es, message)</span></a><a href="#p18">18. Antes de su procedimiento <span class="sub">(es, procedure)</span></a><a href="#p19">19. Su cita de neurología <span class="sub">(es, appointment)</span></a><a href="#p20">20. Mis horarios de medicinas <span class="sub">(es, medication)</span></a><a href="#p21">21. Formulario para pacientes nuevos <span class="sub">(es, form)</span></a><a href="#p22">22. Al salir del hospital <span class="sub">(es, discharge)</span></a><a href="#p23">23. Sus resultados de laboratorio <span class="sub">(es, results)</span></a><a href="#p24">24. Su cita de terapia ocupacional <span class="sub">(es, message)</span></a><a href="#p25">25. Consejos de la línea de enfermería <span class="sub">(es, message)</span></a></nav>
+<section class="pair" id="p1">
+  <h2>1. Message from your nurse</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.9</span><b>portal-message-en-001</b> · en ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">From: Megan Hollis, RN (Maple Ridge Family Medicine)
+To: Harold Jenkins
+Subject: RE: blood pressure readings
+
+Hi Mr. Jenkins, thanks for sending your readings!! Dr. Liu looked at them. Since your BPs have been running low-ish (lots of 100s/60s) and you mentioned feeling dizzy when you stand up, she wants you to HOLD the amlodipine 10 mg for now - don&#x27;t take it starting tomorrow AM. Keep taking everything else the same. Please keep checking your BP every morning &amp; send us the numbers again in 1 week. If you get really dizzy, faint, or fall, call us right away at (919) 555-0123 or go to urgent care. If you have chest pain or stroke symptoms call 911!! Thanks, Megan</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Message from your nurse</h3><ul><li>For: <strong>Harold Jenkins</strong> <span class="pic">[person]</span></li><li>From <strong>Megan Hollis, RN</strong>. <span class="pic">[nurse]</span></li><li><strong>Dr. Liu</strong> looked at your <strong>blood pressure</strong> numbers. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>What they saw</h3><ul><li>Your blood pressure is a bit <strong>low</strong>. <span class="pic">[blood pressure]</span></li><li>Many readings in the <strong>100s/60s</strong>. <span class="pic">[blood pressure]</span></li><li>You said you feel <strong>dizzy</strong> when you <strong>stand up</strong>. <span class="pic">[dizzy]</span></li></ul></div><div class="pg"><h3>Medicine change</h3><ul><li><strong>Stop</strong> amlodipine <strong>10 mg</strong> for now. <span class="pic">[stop]</span></li><li>Start <strong>tomorrow morning</strong>. <span class="pic">[sunrise]</span></li><li>Keep taking <strong>everything else</strong> the same. <span class="pic">[pills]</span></li></ul></div><div class="pg"><h3>Keep checking</h3><ul><li>Check your <strong>blood pressure</strong> every <strong>morning</strong>. <span class="pic">[blood pressure]</span></li><li><strong>Send</strong> the numbers again in <strong>1 week</strong>. <span class="pic">[message]</span></li></ul></div><div class="pg"><h3>Very dizzy? Fainted? Fell?</h3><ul><li><strong>Call</strong> the clinic right away. <span class="pic">[phone]</span></li><li>☎ Clinic: (919) 555-0123 <span class="pic">[phone]</span></li><li>Or go to <strong>urgent care</strong>. <span class="pic">[clinic]</span></li></ul></div><div class="pg"><h3>Emergency</h3><ul><li><strong>Chest pain</strong>? <strong>Stroke</strong> signs? <span class="pic">[chest pain]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Hold the amlodipine&#x27; became &#x27;Stop amlodipine for now&#x27;. Please confirm &#x27;stop for now&#x27; is clear enough that it is not permanent.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p2">
+  <h2>2. Your medicine label: gabapentin</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.7</span><b>pharmacy-label-en-001</b> · en ·
+    medication · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">RIVERBEND PHARMACY  (919) 555-0102
+Rx# 0048213   Date filled: 01/20/2027
+JENKINS, HAROLD
+GABAPENTIN 300 MG CAPSULE
+TAKE 1 CAPSULE BY MOUTH THREE TIMES DAILY
+Qty: 90   Refills: 2   Dr. Karen Liu
+Discard after: 01/20/2028
+[Yellow sticker] MAY CAUSE DROWSINESS OR DIZZINESS. USE CARE WHEN DRIVING OR OPERATING MACHINERY.
+[Red sticker] DO NOT DRINK ALCOHOL WHILE TAKING THIS MEDICATION.
+[Blue sticker] DO NOT STOP TAKING SUDDENLY WITHOUT ASKING YOUR DOCTOR.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Your medicine</h3><ul><li>For: <strong>Harold Jenkins</strong> <span class="pic">[person]</span></li><li><strong>Gabapentin 300 mg</strong> capsule <span class="pic">[capsule]</span></li><li>From <strong>Dr. Karen Liu</strong>. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>How to take it</h3><ul><li>Take <strong>1 capsule</strong>. <span class="pic">[capsule]</span></li><li>By <strong>mouth</strong>. <span class="pic">[mouth]</span></li><li><strong>Three times</strong> a day. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Warnings</h3><ul><li>You may feel <strong>sleepy</strong> or <strong>dizzy</strong>. <span class="pic">[sleepy]</span></li><li>Be <strong>careful</strong> driving or using <strong>machines</strong>. <span class="pic">[car]</span></li><li><strong>No alcohol</strong>. <span class="pic">[no alcohol]</span></li></ul></div><div class="pg"><h3>Do not stop suddenly</h3><ul><li><strong>Do not stop</strong> this medicine <strong>suddenly</strong>. <span class="pic">[stop]</span></li><li><strong>Ask</strong> your <strong>doctor</strong> first. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>Refills</h3><ul><li><strong>2 refills</strong> left. <span class="pic">[pill bottle]</span></li><li>Rx number: <strong>0048213</strong> <span class="pic">[label]</span></li><li>Throw away after <strong>01/20/2028</strong>. <span class="pic">[trash]</span></li></ul></div><div class="pg"><h3>Pharmacy</h3><ul><li><strong>Riverbend Pharmacy</strong> <span class="pic">[pharmacy]</span></li><li>☎ Phone: (919) 555-0102 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The label is written in capital letters; the handout uses normal letters.</li><li>&#x27;Qty: 90&#x27; is left out (pharmacy count, no action).</li><li>Left out on purpose: Date filled 01/20/2027: past date</li><li>Left out on purpose: Qty: 90: number of capsules in the bottle, no action</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p3">
+  <h2>3. Text message reminder</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.2</span><b>sms-reminder-en-001</b> · en ·
+    appointment · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PiedmontSpeech: Reminder: Bernard has an appt w/ J. Ellis SLP on Thu 3/18 @ 1:30PM at 1420 Duke St Ste 2. Reply C to confirm, R to reschedule, STOP to opt out. Msg&amp;data rates may apply. Need help? Call 919-555-0107</div></div>
+    <div><b>Aphasia-friendly version</b> (4 pages)<div class="pages"><div class="pg"><h3>Appointment reminder</h3><ul><li><strong>Bernard</strong> has <strong>speech therapy</strong>. <span class="pic">[speech therapist]</span></li><li>With <strong>J. Ellis</strong>, speech therapist. <span class="pic">[speech therapist]</span></li><li>At <strong>Piedmont Speech</strong> clinic. <span class="pic">[clinic]</span></li></ul></div><div class="pg"><h3>When and where</h3><ul><li><strong>Thu 3/18</strong> <span class="pic">[calendar]</span></li><li><strong>1:30PM</strong> <span class="pic">[clock]</span></li><li><strong>1420 Duke St Ste 2</strong> <span class="pic">[map]</span></li></ul></div><div class="pg"><h3>Answer the text</h3><ul><li>Type <strong>C</strong> to say <strong>yes</strong>, you will come. <span class="pic">[yes]</span></li><li>Type <strong>R</strong> to <strong>change</strong> the time. <span class="pic">[calendar]</span></li><li>Type <strong>STOP</strong> to get <strong>no more</strong> texts. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Need help?</h3><ul><li>☎ Call 919-555-0107 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Date and time kept exactly as in the text (&#x27;Thu 3/18&#x27;, &#x27;1:30PM&#x27;) because the fact check needs them unchanged; an SLP may prefer &#x27;Thursday, March 18&#x27;.</li><li>&#x27;Msg&amp;data rates may apply&#x27; left out.</li><li>Left out on purpose: Msg&amp;data rates may apply: phone company fine print</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p4">
+  <h2>4. Your MRI time changed</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.0</span><b>voicemail-en-001</b> · en ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">[Voicemail transcript, 2:14 PM] &quot;Hi, um, this message is for Dolores Pruitt. This is, uh, Kayla from Northgate Imaging calling about your MRI. So we had to move it, the machine is getting serviced that day, sorry about that. Your new time is Friday, February 5, 2027 at 3:45 p.m., that&#x27;s in the afternoon, same place, 4410 Pinecrest Parkway. Um, everything else is the same, no metal, you can eat. If that time doesn&#x27;t work just give us a call back at (919) 555-0181, again that&#x27;s (919) 555-0181. Okay, thanks, bye.&quot;</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Your MRI time changed</h3><ul><li>For: <strong>Dolores Pruitt</strong> <span class="pic">[person]</span></li><li><strong>Kayla</strong> from <strong>Northgate Imaging</strong> called. <span class="pic">[phone]</span></li><li>Your <strong>MRI</strong> time <strong>changed</strong>. <span class="pic">[mri]</span></li></ul></div><div class="pg"><h3>Why</h3><ul><li>The <strong>machine</strong> needs <strong>repairs</strong> that day. <span class="pic">[repair]</span></li></ul></div><div class="pg"><h3>New time</h3><ul><li><strong>Friday, February 5, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>3:45 p.m.</strong> (afternoon) <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Same place</h3><ul><li><strong>4410 Pinecrest Parkway</strong> <span class="pic">[map]</span></li></ul></div><div class="pg"><h3>Everything else is the same</h3><ul><li><strong>No metal</strong>. <span class="pic">[no metal]</span></li><li>You can <strong>eat</strong>. <span class="pic">[eat]</span></li></ul></div><div class="pg"><h3>Time does not work?</h3><ul><li><strong>Call</strong> them back. <span class="pic">[phone]</span></li><li>☎ Phone: (919) 555-0181 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Getting serviced&#x27; became &#x27;needs repairs&#x27;.</li><li>Left out on purpose: Voicemail time stamp 2:14 PM: when the call came, no action</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p5">
+  <h2>5. Getting ready for your neck surgery</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.4</span><b>pre-op-en-001</b> · en ·
+    procedure · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PRE-PROCEDURE INSTRUCTIONS — Carotid endarterectomy (CEA), L side
+Pt: Walter Simmons | Surgeon: Dr. Nina Castellano | Date: Mon 3/8/27 | Arrive: 6 AM, Surgical Admissions, CVMC Main Bldg 2nd fl
+• NPO after MN (nothing to eat or drink after midnight), incl. gum, mints, water.
+• HOLD clopidogrel x 5 days before surgery (last dose Tues 3/2/27).
+• Take metoprolol AM of surgery w/ small sip of water.
+• Shower w/ CHG soap night before &amp; AM of surgery.
+• Bring: med list, ID, ins card, CPAP if you use one.
+• Must have responsible adult to drive you home &amp; stay w/ you x 24 hrs.
+Questions/illness before surgery (fever, cough): call Pre-Op Clinic (919) 555-0169.</div></div>
+    <div><b>Aphasia-friendly version</b> (9 pages)<div class="pages"><div class="pg"><h3>Your surgery</h3><ul><li>For: <strong>Walter Simmons</strong> <span class="pic">[person]</span></li><li>Surgery on the <strong>left side</strong> of your <strong>neck</strong>. <span class="pic">[neck]</span></li><li>It <strong>cleans out</strong> a blood vessel (<strong>carotid endarterectomy</strong>). <span class="pic">[blood vessel]</span></li><li>Surgeon: <strong>Dr. Nina Castellano</strong> <span class="pic">[surgeon]</span></li></ul></div><div class="pg"><h3>When and where</h3><ul><li><strong>Mon 3/8/27</strong> <span class="pic">[calendar]</span></li><li>Arrive at <strong>6 AM</strong>. <span class="pic">[clock]</span></li><li><strong>Surgical Admissions</strong>, Main Building, <strong>2nd floor</strong> <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>Nothing to eat or drink</h3><ul><li><strong>Nothing</strong> to <strong>eat</strong> or <strong>drink</strong> after <strong>midnight</strong>. <span class="pic">[no food]</span></li><li><strong>No</strong> gum, mints or water. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Clopidogrel</h3><ul><li><strong>Stop</strong> clopidogrel <strong>5 days</strong> before surgery. <span class="pic">[stop]</span></li><li>Last dose: <strong>Tues 3/2/27</strong>. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Metoprolol</h3><ul><li><strong>Take</strong> metoprolol the <strong>morning</strong> of surgery. <span class="pic">[pill]</span></li><li>With a <strong>small sip</strong> of <strong>water</strong>. <span class="pic">[glass of water]</span></li></ul></div><div class="pg"><h3>Shower</h3><ul><li>Shower with the <strong>special soap</strong> (<strong>CHG</strong>). <span class="pic">[shower]</span></li><li>The <strong>night before</strong> and the <strong>morning</strong> of surgery. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>What to bring</h3><ul><li>1. Your <strong>medicine list</strong>. <span class="pic">[medicine list]</span></li><li>2. Your <strong>ID</strong> and <strong>insurance card</strong>. <span class="pic">[identity card]</span></li><li>3. Your <strong>CPAP</strong>, if you use one. <span class="pic">[cpap]</span></li></ul></div><div class="pg"><h3>A ride home</h3><ul><li>An <strong>adult</strong> must <strong>drive</strong> you home. <span class="pic">[car]</span></li><li>They must <strong>stay</strong> with you for <strong>24 hours</strong>. <span class="pic">[family]</span></li></ul></div><div class="pg"><h3>Sick before surgery?</h3><ul><li><strong>Fever</strong>? <strong>Cough</strong>? Questions? <span class="pic">[fever]</span></li><li>☎ Pre-Op Clinic: (919) 555-0169 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Abbreviations spelled out: NPO, MN, HOLD, w/, x, AM, CHG.</li><li>&#x27;Cleans out a blood vessel&#x27; explains endarterectomy; please confirm.</li><li>&#x27;CVMC&#x27; (hospital name) not spelled out because the original does not give it in full; please add if known.</li><li>Left out on purpose: CVMC: hospital abbreviation not spelled out in the original</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p6">
+  <h2>6. Your neurology appointment</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.6</span><b>letter-legal-en-001</b> · en ·
+    appointment · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">Carolina Valley Medical Center — Neurology
+Dear Ms. Evelyn Carter: This letter confirms your new patient appointment with Dr. Ravi Patel on Wednesday, March 10, 2027 at 9:00 a.m. Please arrive 30 minutes early to complete paperwork. Bring your insurance card, photo ID, and all medication bottles.
+
+NOTICE OF NONDISCRIMINATION: Carolina Valley Medical Center complies with applicable Federal civil rights laws and does not discriminate on the basis of race, color, national origin, age, disability, or sex. We provide free aids and services to people with disabilities to communicate effectively with us, such as qualified sign language interpreters and written information in other formats (large print, audio, accessible electronic formats). If you believe we have failed to provide these services, you can file a grievance with our Civil Rights Coordinator at 1-800-555-0171.
+ATTENTION: If you speak Spanish, language assistance services, free of charge, are available to you. Call 1-800-555-0171 (TTY: 711). ATENCIÓN: si habla español, tiene a su disposición servicios gratuitos de asistencia lingüística. Llame al 1-800-555-0171 (TTY: 711).
+To reschedule, call (919) 555-0124.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Your appointment</h3><ul><li>For: <strong>Ms. Evelyn Carter</strong> <span class="pic">[person]</span></li><li>New visit with <strong>Dr. Ravi Patel</strong>. <span class="pic">[doctor]</span></li><li>At <strong>Carolina Valley Medical Center</strong>, <strong>Neurology</strong>. <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>When</h3><ul><li><strong>Wednesday, March 10, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>9:00 a.m.</strong> <span class="pic">[clock]</span></li><li>Arrive <strong>30 minutes early</strong> for <strong>paperwork</strong>. <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>What to bring</h3><ul><li>1. Your <strong>insurance card</strong>. <span class="pic">[insurance card]</span></li><li>2. Your <strong>photo ID</strong>. <span class="pic">[identity card]</span></li><li>3. <strong>All</strong> your <strong>medicine bottles</strong>. <span class="pic">[pill bottle]</span></li></ul></div><div class="pg"><h3>Free help to communicate</h3><ul><li>You can get <strong>free help</strong> to talk with us. <span class="pic">[help]</span></li><li>Like <strong>big print</strong>, audio, or <strong>sign language</strong>. <span class="pic">[large print]</span></li><li>Free <strong>language help</strong> too. <span class="pic">[interpreter]</span></li></ul></div><div class="pg"><h3>Ask for help or complain</h3><ul><li>☎ Phone: 1-800-555-0171 <span class="pic">[phone]</span></li><li>☎ TTY: 711 <span class="pic">[tty]</span></li></ul></div><div class="pg"><h3>Change your appointment</h3><ul><li>☎ Phone: (919) 555-0124 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Most of the legal notice is summarized in one page (&#x27;free help to communicate&#x27;). The Spanish tagline is not repeated; the handout is English. Please check this is acceptable for the clinic.</li><li>Left out on purpose: Full nondiscrimination notice text: legal fine print; key rights kept on the &#x27;Free help&#x27; pages</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p7">
+  <h2>7. My medicine times</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 4.5</span><b>medication-table-en-001</b> · en ·
+    medication · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">DAILY MEDICATION SCHEDULE — Dolores Pruitt (updated 01/08/2027)
+| Medication | Dose | Breakfast | Lunch | Dinner | Bedtime | Purpose |
+| Apixaban | 5 mg | X | | X | | blood thinner |
+| Atorvastatin | 80 mg | | | | X | cholesterol |
+| Metoprolol | 25 mg | X | | X | | heart rate |
+| Vitamin D | 1000 units | X | | | | bones |
+Questions: Stroke Nurse Line (919) 555-0125.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>My medicine times</h3><ul><li>For: <strong>Dolores Pruitt</strong> <span class="pic">[person]</span></li></ul></div><div class="pg"><h3>Breakfast</h3><ul><li><strong>Apixaban 5 mg</strong>: blood thinner <span class="pic">[pill]</span></li><li><strong>Metoprolol 25 mg</strong>: heart rate <span class="pic">[pill]</span></li><li><strong>Vitamin D 1000 units</strong>: bones <span class="pic">[pill]</span></li></ul></div><div class="pg"><h3>Lunch</h3><ul><li><strong>No</strong> medicines at lunch. <span class="pic">[no pill]</span></li></ul></div><div class="pg"><h3>Dinner</h3><ul><li><strong>Apixaban 5 mg</strong>: blood thinner <span class="pic">[pill]</span></li><li><strong>Metoprolol 25 mg</strong>: heart rate <span class="pic">[pill]</span></li></ul></div><div class="pg"><h3>Bedtime</h3><ul><li><strong>Atorvastatin 80 mg</strong>: cholesterol <span class="pic">[pill]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li><strong>Stroke Nurse Line</strong> <span class="pic">[nurse]</span></li><li>☎ Phone: (919) 555-0125 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The table is turned into one page per time of day.</li><li>Left out on purpose: Updated 01/08/2027: date the list was made</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p8">
+  <h2>8. Your doctor sent you to speech therapy</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.8</span><b>fax-referral-en-001</b> · en ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">FAX COVER — CONFIDENTIAL. If you received this in error, please notify the sender and destroy all copies.
+TO: Piedmont Speech Clinic, fax (919) 555-0170 | FROM: Neurology, Dr. Ravi Patel, ph (919) 555-0125 | Pages: 2
+RE: Pt Marcus Bell, 64 yo M, s/p L MCA CVA 12/14/2026 w/ nonfluent aphasia, mild dysarthria, R hemiparesis. Pls eval &amp; tx. Dx: I69.320. Freq: 2x/wk x 12 wks. Interpreter needed: N. Ins: Medicare. Pt lives w/ spouse; spouse to attend sessions. Pt reports frustration w/ word-finding; hx depression, on sertraline.
+Clinic: pls call pt to schedule.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Speech therapy referral</h3><ul><li>For: <strong>Marcus Bell</strong> <span class="pic">[person]</span></li><li><strong>Dr. Ravi Patel</strong> sent you to <strong>speech therapy</strong>. <span class="pic">[doctor]</span></li><li>At <strong>Piedmont Speech Clinic</strong>. <span class="pic">[clinic]</span></li></ul></div><div class="pg"><h3>Why</h3><ul><li>You had a <strong>stroke</strong> on the <strong>left side</strong> of your brain. <span class="pic">[brain]</span></li><li>Talking is <strong>hard</strong> (<strong>aphasia</strong>). <span class="pic">[talk]</span></li><li>Your speech muscles are a little <strong>weak</strong>. <span class="pic">[mouth]</span></li><li>Your <strong>right side</strong> is <strong>weak</strong>. <span class="pic">[weak arm]</span></li></ul></div><div class="pg"><h3>How often</h3><ul><li><strong>2</strong> times a week. <span class="pic">[calendar]</span></li><li>For <strong>12 weeks</strong>. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Your spouse</h3><ul><li>Your <strong>spouse</strong> will <strong>come</strong> to sessions too. <span class="pic">[family]</span></li></ul></div><div class="pg"><h3>Feelings</h3><ul><li>Finding <strong>words</strong> is <strong>frustrating</strong>. <span class="pic">[frustrated]</span></li><li>Your <strong>doctor</strong> knows about your <strong>depression</strong> medicine. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>Next step</h3><ul><li>The clinic will <strong>call you</strong> to make a visit. <span class="pic">[phone]</span></li><li>☎ Dr. Patel&#x27;s office: (919) 555-0125 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Written for the patient, from a referral meant for the clinic.</li><li>&#x27;Your doctor knows about your depression medicine&#x27; is a gentle summary of &#x27;hx depression, on sertraline&#x27;. An SLP may prefer to leave this page out; please decide.</li><li>Abbreviations expanded: Pt, yo, s/p, L MCA CVA, w/, R, Dx, Freq, x, wk(s), hx.</li><li>Left out on purpose: Fax number (919) 555-0170: for the offices, not the patient</li><li>Left out on purpose: Stroke date 12/14/2026: past date</li><li>Left out on purpose: Age 64 yo, diagnosis code I69.320, insurance Medicare, interpreter N: office details</li><li>Left out on purpose: Fax confidentiality notice and page count: fine print</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p9">
+  <h2>9. Going home after your TIA</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>ocr-discharge-en-001</b> · en ·
+    discharge · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">Page 1 of 2          CAROLINA VALLEY MEDICAL CENTER          Discharge Instruc-
+tions
+Patient: Gloria Whitaker
+You were treated for a transient isch-
+emic attack (TIA). Take aspirin 81 mg by mouth once
+dai1y. Take atorvastatin 40 mg by mouth at bed-
+time. Fo11ow up with Dr. Samuel Ortiz on Tuesday, March 2, 2027
+at 2:00 p.m.
+Page 1 of 2          CAROLINA VALLEY MEDICAL CENTER
+If you have face droop, arm weak-
+ness or trouble speaking, ca11 911 right away. Do not
+drive for 2 weeks. Ques-
+tions: Stroke Nurse Line (919) 555-0125.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>You had a TIA</h3><ul><li>For: <strong>Gloria Whitaker</strong> <span class="pic">[person]</span></li><li>You had a <strong>TIA</strong>, a short <strong>blockage</strong> of blood to the <strong>brain</strong>. <span class="pic">[brain]</span></li></ul></div><div class="pg"><h3>Your medicines</h3><ul><li>Take <strong>aspirin 81 mg</strong>, by mouth, <strong>once</strong> a day. <span class="pic">[pill]</span></li><li>Take <strong>atorvastatin 40 mg</strong>, by mouth, at <strong>bedtime</strong>. <span class="pic">[bed]</span></li></ul></div><div class="pg"><h3>See your doctor</h3><ul><li>See <strong>Dr. Samuel Ortiz</strong>. <span class="pic">[doctor]</span></li><li><strong>Tuesday, March 2, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>2:00 p.m.</strong> <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>No driving</h3><ul><li><strong>Do not drive</strong> for <strong>2 weeks</strong>. <span class="pic">[no driving]</span></li></ul></div><div class="pg"><h3>Emergency</h3><ul><li><strong>Face</strong> drooping? Arm <strong>weak</strong>? Trouble <strong>speaking</strong>? <span class="pic">[face]</span></li><li class="crisis">⚠ Call 911 right away <span class="pic">[ambulance]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li><strong>Stroke Nurse Line</strong> <span class="pic">[nurse]</span></li><li>☎ Phone: (919) 555-0125 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The scan had errors (&#x27;dai1y&#x27;, &#x27;Fo11ow&#x27;, &#x27;ca11&#x27; with the number 1 instead of the letter l) and words split across lines. The handout fixes these. Please check nothing was misread.</li><li>&#x27;A short blockage of blood to the brain&#x27; explains TIA; the original only says &#x27;transient ischemic attack&#x27;. Please confirm.</li><li>Left out on purpose: &#x27;Page 1 of 2&#x27; and repeated hospital header: scanning artifacts</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p10">
+  <h2>10. Your lab results</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.1</span><b>lab-report-flags-en-001</b> · en ·
+    results · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">LABORATORY REPORT — Maple Ridge Family Medicine
+Patient: Shirley Abernathy | Collected: 02/10/2027 07:42
+TEST            RESULT   FLAG   REFERENCE RANGE   UNITS
+SODIUM          134      L      135-145           mmol/L
+POTASSIUM       4.2             3.5-5.1           mmol/L
+GLUCOSE         128      H      70-99             mg/dL
+CREATININE      0.9             0.6-1.1           mg/dL
+HEMOGLOBIN      11.8     L      12.0-15.5         g/dL
+Comment (Dr. Karen Liu): Slightly low sodium and hemoglobin, slightly high glucose. Not dangerous. We will repeat these tests at your next visit. No changes to your medicines. Call (919) 555-0123 with questions.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Your lab results</h3><ul><li>For: <strong>Shirley Abernathy</strong> <span class="pic">[person]</span></li><li><strong>Dr. Karen Liu</strong> looked at your results. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>A little low</h3><ul><li><strong>Sodium</strong>: <strong>134</strong>. Normal: <strong>135-145</strong>. <span class="pic">[salt]</span></li><li><strong>Hemoglobin</strong> (blood): <strong>11.8</strong>. Normal: <strong>12.0-15.5</strong>. <span class="pic">[blood]</span></li></ul></div><div class="pg"><h3>A little high</h3><ul><li><strong>Glucose</strong> (blood sugar): <strong>128</strong>. Normal: <strong>70-99</strong>. <span class="pic">[blood sugar]</span></li></ul></div><div class="pg"><h3>Normal</h3><ul><li><strong>Potassium</strong>: <strong>4.2</strong>. <span class="pic">[check mark]</span></li><li><strong>Creatinine</strong> (kidneys): <strong>0.9</strong>. <span class="pic">[kidney]</span></li></ul></div><div class="pg"><h3>What it means</h3><ul><li>This is <strong>not dangerous</strong>. <span class="pic">[check mark]</span></li><li>We will <strong>test again</strong> at your <strong>next visit</strong>. <span class="pic">[blood test]</span></li><li><strong>No changes</strong> to your medicines. <span class="pic">[pills]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li>☎ Phone: (919) 555-0123 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Units (mmol/L, mg/dL, g/dL) and the potassium and creatinine normal ranges are left out to keep pages short. Please check this is acceptable.</li><li>Left out on purpose: Collected 02/10/2027 07:42: when the blood was drawn</li><li>Left out on purpose: Units mmol/L, mg/dL, g/dL and ranges 3.5-5.1 and 0.6-1.1 for normal results: detail without action</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p11">
+  <h2>11. Advice from the nurse line</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.3</span><b>nurse-call-en-001</b> · en ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">AFTER-HOURS NURSE ADVICE LINE — CALL SUMMARY
+Caller: Linda Marsh (patient) | Call time: Sat 01/30/2027 21:10
+Reason for call: Headache since this afternoon, 5/10, no weakness, no trouble speaking, no vision changes.
+Advice given: Take acetaminophen 500 mg, 2 tablets, may repeat in 6 hours if needed. Rest in a quiet, dark room. Drink water. Check blood pressure; if top number is over 180, call back.
+Go to the Emergency Department or call 911 if: worst headache of your life, sudden weakness, numbness, trouble speaking, confusion, or vision loss.
+Follow-up: call your primary care office on Monday: (919) 555-0106. Nurse line: (919) 555-0172.</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Your call to the nurse</h3><ul><li>For: <strong>Linda Marsh</strong> <span class="pic">[person]</span></li><li>You called about a <strong>headache</strong>. <span class="pic">[headache]</span></li></ul></div><div class="pg"><h3>What to do now</h3><ul><li>Take <strong>acetaminophen 500 mg</strong>, <strong>2 tablets</strong>. <span class="pic">[pill]</span></li><li>You may take it <strong>again</strong> after <strong>6 hours</strong> if needed. <span class="pic">[clock]</span></li><li><strong>Rest</strong> in a <strong>quiet</strong>, <strong>dark</strong> room. <span class="pic">[bed]</span></li><li>Drink <strong>water</strong>. <span class="pic">[glass of water]</span></li></ul></div><div class="pg"><h3>Check your blood pressure</h3><ul><li>Check your <strong>blood pressure</strong>. <span class="pic">[blood pressure]</span></li><li>Top number <strong>over 180</strong>? <strong>Call back</strong>. <span class="pic">[phone]</span></li><li>☎ Nurse line: (919) 555-0172 <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>Emergency</h3><ul><li><strong>Worst</strong> headache of your life? <span class="pic">[headache]</span></li><li>Sudden <strong>weakness</strong>, <strong>numbness</strong> or <strong>confusion</strong>? <span class="pic">[weak arm]</span></li><li>Trouble <strong>speaking</strong>? Can&#x27;t <strong>see</strong>? <span class="pic">[speech]</span></li><li class="crisis">⚠ Call 911 or go to the Emergency Department <span class="pic">[ambulance]</span></li></ul></div><div class="pg"><h3>On Monday</h3><ul><li><strong>Call</strong> your <strong>primary care</strong> office. <span class="pic">[phone]</span></li><li>☎ Phone: (919) 555-0106 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The headache rating (5/10) and the symptoms she did not have are left out.</li><li>Left out on purpose: Call time Sat 01/30/2027 21:10: when the call happened</li><li>Left out on purpose: Pain 5/10 and &#x27;no weakness, no trouble speaking, no vision changes&#x27;: what the caller reported</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p12">
+  <h2>12. Daily care checklist</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.0</span><b>caregiver-checklist-en-001</b> · en ·
+    home_program · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">DAILY CARE CHECKLIST — for family caregivers
+Patient: Bernard Okafor
+MORNING: [ ] Check blood pressure and write it down [ ] Give morning medicines from the pill box [ ] Help with shower using the shower chair [ ] Do the home speech practice for 15 minutes
+AFTERNOON: [ ] Walk together for 10 minutes with the cane [ ] Offer water every 2 hours [ ] Practice the communication book at lunch
+EVENING: [ ] Give evening medicines [ ] Check skin on heels and hips for red spots [ ] Night-light on in hallway
+Call the home health nurse at (919) 555-0131 if you see a red spot that does not fade, a fever over 100.4°F, or new confusion. Call 911 for stroke signs.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Daily care checklist</h3><ul><li>For the <strong>family</strong> caring for <strong>Bernard Okafor</strong>. <span class="pic">[family]</span></li><li><strong>Tick</strong> each box when it is <strong>done</strong>. <span class="pic">[check mark]</span></li></ul></div><div class="pg"><h3>Morning</h3><ul><li>☐ Check <strong>blood pressure</strong>. Write it down. <span class="pic">[blood pressure]</span></li><li>☐ Give <strong>morning medicines</strong> from the <strong>pill box</strong>. <span class="pic">[pill organizer]</span></li><li>☐ Help with the <strong>shower</strong>. Use the <strong>shower chair</strong>. <span class="pic">[shower chair]</span></li><li>☐ <strong>Speech practice</strong> for <strong>15 minutes</strong>. <span class="pic">[practice]</span></li></ul></div><div class="pg"><h3>Afternoon</h3><ul><li>☐ <strong>Walk</strong> together <strong>10 minutes</strong> with the <strong>cane</strong>. <span class="pic">[cane]</span></li><li>☐ Offer <strong>water</strong> every <strong>2 hours</strong>. <span class="pic">[glass of water]</span></li><li>☐ Use the <strong>communication book</strong> at <strong>lunch</strong>. <span class="pic">[communication book]</span></li></ul></div><div class="pg"><h3>Evening</h3><ul><li>☐ Give <strong>evening medicines</strong>. <span class="pic">[pill]</span></li><li>☐ Check <strong>heels</strong> and <strong>hips</strong> for <strong>red spots</strong>. <span class="pic">[skin]</span></li><li>☐ <strong>Night-light</strong> on in the hallway. <span class="pic">[night-light]</span></li></ul></div><div class="pg"><h3>Call the nurse</h3><ul><li>A <strong>red spot</strong> that does <strong>not fade</strong>? <span class="pic">[skin]</span></li><li><strong>Fever</strong> over <strong>100.4°F</strong>? <span class="pic">[thermometer]</span></li><li>New <strong>confusion</strong>? <span class="pic">[confused]</span></li><li>☎ Home health nurse: (919) 555-0131 <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>Emergency</h3><ul><li><strong>Stroke</strong> signs? <span class="pic">[stroke]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p13">
+  <h2>13. Your swallow study</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.8</span><b>email-thread-en-001</b> · en ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">From: scheduling@example.org
+Sent: Tuesday, February 2, 2027 4:51 PM
+To: Anthony Russo
+Subject: RE: RE: FW: swallow study??
+
+Hi Anthony, sorry for the confusion below. The swallow study (modified barium swallow) IS scheduled. It&#x27;s Thursday, February 18, 2027 at 10:30 a.m. in Radiology, Carolina Valley Medical Center, Ground Floor. Please don&#x27;t eat or drink for 2 hours before. Bring your glasses. The speech therapist, Maria Ochoa, will be there with you. If you need to change it please call us, don&#x27;t reply to this email since this inbox isn&#x27;t monitored on weekends.
+Thanks, Scheduling Team | (919) 555-0128
+
+-----Original Message-----
+From: Anthony Russo
+Sent: Monday, February 1, 2027 9:02 AM
+Subject: FW: swallow study??
+is this still happening? nobody called me
+
+CONFIDENTIALITY NOTICE: This email may contain protected health information...</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Your swallow study</h3><ul><li>For: <strong>Anthony Russo</strong> <span class="pic">[person]</span></li><li>Your <strong>swallow study</strong> <strong>is scheduled</strong>. <span class="pic">[swallow]</span></li><li>It is an <strong>X-ray</strong> of you <strong>swallowing</strong> (<strong>modified barium swallow</strong>). <span class="pic">[x-ray]</span></li></ul></div><div class="pg"><h3>When and where</h3><ul><li><strong>Thursday, February 18, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>10:30 a.m.</strong> <span class="pic">[clock]</span></li><li><strong>Radiology</strong>, <strong>Carolina Valley Medical Center</strong> <span class="pic">[hospital]</span></li><li><strong>Ground Floor</strong> <span class="pic">[building]</span></li></ul></div><div class="pg"><h3>Before</h3><ul><li><strong>Do not eat</strong> or <strong>drink</strong> for <strong>2 hours</strong> before. <span class="pic">[no food]</span></li><li>Bring your <strong>glasses</strong>. <span class="pic">[glasses]</span></li></ul></div><div class="pg"><h3>Who will be there</h3><ul><li>Your <strong>speech therapist</strong>, <strong>Maria Ochoa</strong>. <span class="pic">[speech therapist]</span></li></ul></div><div class="pg"><h3>Need to change it?</h3><ul><li><strong>Call</strong>. Do <strong>not</strong> answer the <strong>email</strong>. <span class="pic">[phone]</span></li><li>☎ Scheduling: (919) 555-0128 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;It is an X-ray of you swallowing&#x27; explains the test; the email does not say X-ray. Please confirm or remove.</li><li>Email headers, the earlier message and the confidentiality notice are left out.</li><li>Left out on purpose: Email dates Tuesday, February 2, 2027 4:51 PM and Monday, February 1, 2027 9:02 AM: when the emails were sent</li><li>Left out on purpose: scheduling@example.org: inbox not monitored; the reader should call instead</li><li>Left out on purpose: Earlier message and confidentiality notice: not needed</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p14">
+  <h2>14. Mensaje de su enfermera</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.9</span><b>mensaje-portal-es-001</b> · es ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">De: Patricia Lozano, RN (Clínica Familiar Las Palmas)
+Para: Rosario Méndez
+Asunto: RE: azúcar alta
+
+Hola Sra. Méndez, gracias por mandar sus números!! El Dr. Aguilar los revisó. Como su azúcar en ayunas ha estado arriba de 200 casi todos los días, él quiere que empiece a usar insulina glargina 10 unidades por la noche, a la hora de dormir. La receta ya está en su farmacia. Mañana a las 2:00 p.m. la enfermera le va a enseñar cómo ponérsela, aquí en la clínica. Siga con la metformina igual. Si su azúcar baja de 70 o se siente temblorosa, sudada o confundida, coma algo dulce y llámenos al (919) 555-0144. Si se desmaya o no puede despertar, llamen al 911!! Saludos, Patricia</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Mensaje de su enfermera</h3><ul><li>Para: <strong>Rosario Méndez</strong> <span class="pic">[persona]</span></li><li>De <strong>Patricia Lozano, RN</strong>. <span class="pic">[enfermera]</span></li><li>El <strong>Dr. Aguilar</strong> revisó sus números de <strong>azúcar</strong>. <span class="pic">[médico]</span></li></ul></div><div class="pg"><h3>Lo que vieron</h3><ul><li>Su azúcar en ayunas está <strong>arriba de 200</strong> casi <strong>todos los días</strong>. <span class="pic">[glucómetro]</span></li></ul></div><div class="pg"><h3>Medicina nueva</h3><ul><li><strong>Empiece</strong> insulina glargina <strong>10 unidades</strong>. <span class="pic">[insulina]</span></li><li>Por la <strong>noche</strong>, a la hora de <strong>dormir</strong>. <span class="pic">[cama]</span></li><li>La <strong>receta</strong> ya está en su <strong>farmacia</strong>. <span class="pic">[farmacia]</span></li></ul></div><div class="pg"><h3>Aprenda a usarla</h3><ul><li><strong>Mañana</strong> a las <strong>2:00 p.m.</strong> <span class="pic">[reloj]</span></li><li>La <strong>enfermera</strong> le enseña cómo <strong>ponérsela</strong>. <span class="pic">[enfermera]</span></li><li>Aquí en la <strong>clínica</strong>. <span class="pic">[clínica]</span></li></ul></div><div class="pg"><h3>Siga igual</h3><ul><li>Siga con la <strong>metformina</strong> igual. <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>¿Azúcar baja?</h3><ul><li>¿Azúcar <strong>menos de 70</strong>? ¿<strong>Temblorosa</strong>, <strong>sudada</strong> o <strong>confundida</strong>? <span class="pic">[mareo]</span></li><li><strong>Coma algo dulce</strong>. <span class="pic">[jugo]</span></li><li>☎ Llame al (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>Emergencia</h3><ul><li>¿Se <strong>desmaya</strong>? ¿No puede <strong>despertar</strong>? <span class="pic">[desmayo]</span></li><li class="crisis">⚠ Llamen al 911 <span class="pic">[ambulancia]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Mañana&#x27; depende de la fecha del mensaje; el mensaje no da la fecha. Por favor revise.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p15">
+  <h2>15. La etiqueta de su medicina: amlodipino</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>etiqueta-farmacia-es-001</b> · es ·
+    medication · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">FARMACIA CENTRAL  (919) 555-0154
+Rx# 0071930   Fecha: 01/25/2027
+PAREDES, ANA LUCIA
+AMLODIPINE 5 MG TABLET / AMLODIPINO 5 MG TABLETA
+TOME 1 TABLETA POR LA BOCA UNA VEZ AL DÍA
+Qty: 30   Refills: 5   Dr. Tomás Aguilar
+Discard after / Desechar después de: 01/25/2028
+[Sticker] MAY CAUSE DIZZINESS / PUEDE CAUSAR MAREO
+[Sticker] TAKE AT THE SAME TIME EVERY DAY / TÓMELA A LA MISMA HORA TODOS LOS DÍAS</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Su medicina</h3><ul><li>Para: <strong>Ana Lucía Paredes</strong> <span class="pic">[persona]</span></li><li><strong>Amlodipino 5 mg</strong>, tableta <span class="pic">[pastilla]</span></li><li>Del <strong>Dr. Tomás Aguilar</strong>. <span class="pic">[médico]</span></li></ul></div><div class="pg"><h3>Cómo tomarla</h3><ul><li>Tome <strong>1 tableta</strong>. <span class="pic">[pastilla]</span></li><li>Por la <strong>boca</strong>. <span class="pic">[boca]</span></li><li><strong>Una vez</strong> al día. <span class="pic">[calendario]</span></li><li>A la <strong>misma hora</strong> todos los días. <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Cuidado</h3><ul><li>Puede causar <strong>mareo</strong>. <span class="pic">[mareo]</span></li></ul></div><div class="pg"><h3>Más medicina</h3><ul><li>Le quedan <strong>5</strong> resurtidos (<strong>refills</strong>). <span class="pic">[frasco de pastillas]</span></li><li>Número de receta (Rx): <strong>0071930</strong> <span class="pic">[etiqueta]</span></li><li>Deséchela después del <strong>01/25/2028</strong>. <span class="pic">[basura]</span></li></ul></div><div class="pg"><h3>Farmacia</h3><ul><li><strong>Farmacia Central</strong> <span class="pic">[farmacia]</span></li><li>☎ Teléfono: (919) 555-0154 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>La etiqueta mezcla inglés y español; el folleto está solo en español.</li><li>Las fechas de la etiqueta están en formato de EE. UU. (mes/día/año). Se copiaron igual; un lector hispano puede leerlas como día/mes. Por favor revise.</li><li>Left out on purpose: Fecha de surtido 01/25/2027: fecha pasada</li><li>Left out on purpose: Qty: 30: cantidad en el frasco, sin acción</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p16">
+  <h2>16. Recordatorio por mensaje de texto</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.2</span><b>sms-recordatorio-es-001</b> · es ·
+    appointment · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">ClinicaPalmas: Recordatorio: Marisol tiene cita c/ Dr. T. Aguilar el lun 3/22 a las 8:45AM en Clínica Familiar Las Palmas. Responda 1 para confirmar, 2 para cambiar, ALTO para no recibir mensajes. Pueden aplicar cargos. ¿Ayuda? 919-555-0144</div></div>
+    <div><b>Aphasia-friendly version</b> (4 pages)<div class="pages"><div class="pg"><h3>Recordatorio de cita</h3><ul><li><strong>Marisol</strong> tiene una <strong>cita</strong>. <span class="pic">[cita médica]</span></li><li>Con el <strong>Dr. T. Aguilar</strong>. <span class="pic">[médico]</span></li><li>En la <strong>Clínica Familiar Las Palmas</strong>. <span class="pic">[clínica]</span></li></ul></div><div class="pg"><h3>Cuándo</h3><ul><li><strong>lun 3/22</strong> <span class="pic">[calendario]</span></li><li><strong>8:45AM</strong> <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Conteste el mensaje</h3><ul><li>Escriba <strong>1</strong> para decir que <strong>sí</strong> va. <span class="pic">[sí]</span></li><li>Escriba <strong>2</strong> para <strong>cambiar</strong> la cita. <span class="pic">[calendario]</span></li><li>Escriba <strong>ALTO</strong> para <strong>no recibir</strong> más mensajes. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>¿Ayuda?</h3><ul><li>☎ Llame al 919-555-0144 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>La fecha y la hora se copiaron igual que en el mensaje (&#x27;lun 3/22&#x27;, &#x27;8:45AM&#x27;). &#x27;3/22&#x27; es 22 de marzo.</li><li>&#x27;Pueden aplicar cargos&#x27; se dejó fuera.</li><li>Left out on purpose: Pueden aplicar cargos: letra pequeña de la compañía de teléfono</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p17">
+  <h2>17. Pueden adelantar su prueba del corazón</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>buzon-voz-es-001</b> · es ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">[Transcripción de mensaje de voz, 11:32 AM] &quot;Hola, eh, este mensaje es para Héctor Navarro. Habla Sofía del Laboratorio de Cardiología del Hospital San Marcos. Le llamo por su prueba del corazón, el Holter. Este, se nos canceló un paciente y le podemos adelantar la cita para el miércoles 17 de febrero de 2027 a las 9:00 de la mañana, o sea 9:00 a.m. Va a tener que llevar el aparato puesto 24 horas y regresarlo el jueves. No se bañe mientras lo tenga. Si le sirve, llámenos al (919) 555-0166, otra vez, (919) 555-0166. Gracias, que esté bien.&quot;</div></div>
+    <div><b>Aphasia-friendly version</b> (4 pages)<div class="pages"><div class="pg"><h3>Su prueba del corazón</h3><ul><li>Para: <strong>Héctor Navarro</strong> <span class="pic">[persona]</span></li><li>Llamó <strong>Sofía</strong> del <strong>Laboratorio de Cardiología</strong>. <span class="pic">[teléfono]</span></li><li>Es sobre su prueba <strong>Holter</strong> del <strong>corazón</strong>. <span class="pic">[corazón]</span></li></ul></div><div class="pg"><h3>Una cita más pronto</h3><ul><li>Pueden <strong>adelantar</strong> su cita. <span class="pic">[calendario]</span></li><li><strong>miércoles 17 de febrero de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>9:00 a.m.</strong> <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>El aparato</h3><ul><li>Lleva el <strong>aparato</strong> puesto <strong>24 horas</strong>. <span class="pic">[monitor cardíaco]</span></li><li>Lo <strong>regresa</strong> el <strong>jueves</strong>. <span class="pic">[calendario]</span></li><li><strong>No se bañe</strong> mientras lo tenga. <span class="pic">[no bañarse]</span></li></ul></div><div class="pg"><h3>¿Le sirve la nueva fecha?</h3><ul><li><strong>Llame</strong> para decir que <strong>sí</strong>. <span class="pic">[teléfono]</span></li><li>☎ Teléfono: (919) 555-0166 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>El mensaje dice &#x27;Hospital San Marcos&#x27; sin &#x27;Comunitario&#x27;; se dejó como &#x27;Laboratorio de Cardiología&#x27;.</li><li>Left out on purpose: Hora del mensaje 11:32 AM: cuándo llamaron, sin acción</li><li>Left out on purpose: Hospital San Marcos: nombre corto del hospital</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p18">
+  <h2>18. Antes de su procedimiento</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.3</span><b>preparacion-cirugia-es-001</b> · es ·
+    procedure · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">INSTRUCCIONES PRE-PROCEDIMIENTO — Colocación de sonda de gastrostomía (PEG)
+Pte: Esperanza Vidal | Médico: Dr. Pablo Serrano | Fecha: vie 2/26/27 | Llegar: 7 AM, Admisión de Cirugía, HCSM edificio principal, 1er piso
+• NPO desp. de medianoche (nada de comer ni beber), incl. chicle y agua.
+• SUSPENDER clopidogrel x 5 días antes (última dosis dom 2/21/27).
+• Tomar metoprolol la mañana del proced. c/ un sorbito de agua.
+• Traer: lista de meds, identificación, tarjeta de seguro.
+• Debe venir con un adulto responsable que la lleve a casa.
+Preguntas o si está enferma antes (fiebre, tos): Clínica Pre-Op (919) 555-0169.</div></div>
+    <div><b>Aphasia-friendly version</b> (8 pages)<div class="pages"><div class="pg"><h3>Su procedimiento</h3><ul><li>Para: <strong>Esperanza Vidal</strong> <span class="pic">[persona]</span></li><li>Le van a poner una <strong>sonda</strong> en el <strong>estómago</strong> (<strong>PEG</strong>). <span class="pic">[sonda]</span></li><li>Médico: <strong>Dr. Pablo Serrano</strong> <span class="pic">[médico]</span></li></ul></div><div class="pg"><h3>Cuándo y dónde</h3><ul><li><strong>vie 2/26/27</strong> <span class="pic">[calendario]</span></li><li>Llegue a las <strong>7 AM</strong>. <span class="pic">[reloj]</span></li><li><strong>Admisión de Cirugía</strong>, edificio principal, <strong>1er piso</strong> <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>Nada de comer ni beber</h3><ul><li><strong>Nada</strong> de <strong>comer</strong> ni <strong>beber</strong> después de <strong>medianoche</strong>. <span class="pic">[no comer]</span></li><li><strong>Ni</strong> chicle <strong>ni</strong> agua. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Clopidogrel</h3><ul><li><strong>Deje</strong> el clopidogrel <strong>5 días</strong> antes. <span class="pic">[parar]</span></li><li>Última dosis: <strong>dom 2/21/27</strong>. <span class="pic">[calendario]</span></li></ul></div><div class="pg"><h3>Metoprolol</h3><ul><li><strong>Tome</strong> metoprolol la <strong>mañana</strong> del procedimiento. <span class="pic">[pastilla]</span></li><li>Con un <strong>sorbito</strong> de <strong>agua</strong>. <span class="pic">[vaso de agua]</span></li></ul></div><div class="pg"><h3>Qué traer</h3><ul><li>1. Su <strong>lista</strong> de <strong>medicinas</strong>. <span class="pic">[lista de medicamentos]</span></li><li>2. Su <strong>identificación</strong>. <span class="pic">[identificación]</span></li><li>3. Su <strong>tarjeta de seguro</strong>. <span class="pic">[tarjeta de seguro]</span></li></ul></div><div class="pg"><h3>Quién la lleva a casa</h3><ul><li>Un <strong>adulto</strong> debe venir con usted. <span class="pic">[familia]</span></li><li>Y <strong>llevarla</strong> a casa. <span class="pic">[carro]</span></li></ul></div><div class="pg"><h3>¿Enferma antes?</h3><ul><li>¿<strong>Fiebre</strong>? ¿<strong>Tos</strong>? ¿Preguntas? <span class="pic">[fiebre]</span></li><li>☎ Clínica Pre-Op: (919) 555-0169 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Abreviaturas explicadas: Pte, NPO, desp., incl., x, proced., c/, meds.</li><li>&#x27;Gastrostomía&#x27; se explicó como &#x27;una sonda en el estómago&#x27;. Por favor confirme.</li><li>Fechas copiadas en el formato del original (mes/día/año).</li><li>Left out on purpose: HCSM: abreviatura del hospital que el original no explica</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p19">
+  <h2>19. Su cita de neurología</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.0</span><b>carta-avisos-es-001</b> · es ·
+    appointment · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">Hospital Comunitario San Marcos — Neurología
+Estimada Sra. Teresa Campos: Esta carta confirma su cita de paciente nuevo con la Dra. Lucía Herrera el jueves 4 de marzo de 2027 a las 2:30 p.m. Llegue 30 minutos antes para llenar formularios. Traiga su tarjeta de seguro, una identificación con foto y todos sus frascos de medicinas. Tendrá un intérprete de español gratis.
+
+AVISO DE NO DISCRIMINACIÓN: El Hospital Comunitario San Marcos cumple con las leyes federales de derechos civiles aplicables y no discrimina por raza, color, nacionalidad, edad, discapacidad o sexo. Ofrecemos ayudas y servicios gratuitos a personas con discapacidades para que se comuniquen con nosotros, como intérpretes de lenguaje de señas e información escrita en otros formatos (letra grande, audio). Si cree que no le dimos estos servicios, puede presentar una queja ante nuestro Coordinador de Derechos Civiles al 1-800-555-0173 (TTY: 711).
+Para cambiar la cita, llame al (919) 555-0113.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su cita</h3><ul><li>Para: <strong>Sra. Teresa Campos</strong> <span class="pic">[persona]</span></li><li>Cita nueva con la <strong>Dra. Lucía Herrera</strong>. <span class="pic">[doctora]</span></li><li>En <strong>Neurología</strong>, <strong>Hospital Comunitario San Marcos</strong>. <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>Cuándo</h3><ul><li><strong>jueves 4 de marzo de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>2:30 p.m.</strong> <span class="pic">[reloj]</span></li><li>Llegue <strong>30 minutos antes</strong> para llenar <strong>formularios</strong>. <span class="pic">[formulario]</span></li></ul></div><div class="pg"><h3>Qué traer</h3><ul><li>1. Su <strong>tarjeta de seguro</strong>. <span class="pic">[tarjeta de seguro]</span></li><li>2. Una <strong>identificación</strong> con <strong>foto</strong>. <span class="pic">[identificación]</span></li><li>3. <strong>Todos</strong> sus <strong>frascos</strong> de medicinas. <span class="pic">[frasco de pastillas]</span></li></ul></div><div class="pg"><h3>Intérprete</h3><ul><li>Tendrá un <strong>intérprete</strong> de <strong>español</strong> gratis. <span class="pic">[intérprete]</span></li></ul></div><div class="pg"><h3>Ayuda gratis para comunicarse</h3><ul><li>Puede pedir ayuda <strong>gratis</strong> para <strong>comunicarse</strong>. <span class="pic">[ayuda]</span></li><li>Como <strong>letra grande</strong>, audio o lenguaje de señas. <span class="pic">[letra grande]</span></li><li>¿No le dieron esta ayuda? Puede <strong>quejarse</strong>. <span class="pic">[hablar]</span></li><li>☎ Teléfono: 1-800-555-0173 <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>TTY</h3><ul><li>☎ TTY: 711 <span class="pic">[tty]</span></li></ul></div><div class="pg"><h3>Cambiar la cita</h3><ul><li>☎ Teléfono: (919) 555-0113 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>El aviso legal se resume en una página. Por favor revise que la clínica lo acepte.</li><li>Left out on purpose: Texto completo del aviso de no discriminación: letra pequeña legal; los derechos principales se mantienen</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p20">
+  <h2>20. Mis horarios de medicinas</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>tabla-medicamentos-es-001</b> · es ·
+    medication · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">HORARIO DIARIO DE MEDICAMENTOS — Esperanza Vidal (actualizado 15/01/2027)
+| Medicamento | Dosis | Desayuno | Almuerzo | Cena | Al acostarse | Para qué |
+| Clopidogrel | 75 mg | X | | | | prevenir coágulos |
+| Lisinopril | 10 mg | X | | | | presión |
+| Atorvastatina | 40 mg | | | | X | colesterol |
+| Metformina | 500 mg | X | | X | | azúcar |
+Preguntas: Línea de enfermería (919) 555-0145.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Mis horarios de medicinas</h3><ul><li>Para: <strong>Esperanza Vidal</strong> <span class="pic">[persona]</span></li></ul></div><div class="pg"><h3>Desayuno</h3><ul><li><strong>Clopidogrel 75 mg</strong>: prevenir coágulos <span class="pic">[pastilla]</span></li><li><strong>Lisinopril 10 mg</strong>: presión <span class="pic">[pastilla]</span></li><li><strong>Metformina 500 mg</strong>: azúcar <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Almuerzo</h3><ul><li><strong>No</strong> hay medicinas en el almuerzo. <span class="pic">[no pastilla]</span></li></ul></div><div class="pg"><h3>Cena</h3><ul><li><strong>Metformina 500 mg</strong>: azúcar <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Al acostarse</h3><ul><li><strong>Atorvastatina 40 mg</strong>: colesterol <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>¿Preguntas?</h3><ul><li><strong>Línea de enfermería</strong> <span class="pic">[enfermera]</span></li><li>☎ Teléfono: (919) 555-0145 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>La tabla se convirtió en una página por cada hora del día.</li><li>Left out on purpose: Actualizado 15/01/2027: fecha de la lista</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p21">
+  <h2>21. Formulario para pacientes nuevos</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>formulario-mixto-es-001</b> · es ·
+    form · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">NEW PATIENT INTAKE / FORMULARIO DE ADMISIÓN — Piedmont Speech Clinic
+Please complete before your first visit. / Por favor llénelo antes de su primera visita.
+Name / Nombre: ____________ Preferred language / Idioma preferido: ____________
+Interpreter needed? / ¿Necesita intérprete? [ ] Yes / Sí [ ] No
+Emergency contact / Contacto de emergencia: ____________ Phone / Teléfono: ____________
+How do you communicate best? (check all) / ¿Cómo se comunica mejor? (marque todo lo que aplique) [ ] Speaking / Hablando [ ] Writing / Escribiendo [ ] Gestures / Gestos [ ] Pointing to pictures / Señalando dibujos [ ] Device / Aparato
+Return this form to the front desk or by fax to (919) 555-0170. / Entregue este formulario en la recepción o por fax al (919) 555-0170.
+Questions / Preguntas: (919) 555-0107</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Formulario para pacientes nuevos</h3><ul><li>De la <strong>Clínica del Habla Piedmont</strong>. <span class="pic">[clínica]</span></li><li>Llénelo <strong>antes</strong> de su <strong>primera visita</strong>. <span class="pic">[formulario]</span></li></ul></div><div class="pg"><h3>Sus datos</h3><ul><li>Nombre: ____________ <span class="pic">[persona]</span></li><li>Idioma preferido: ____________ <span class="pic">[hablar]</span></li></ul></div><div class="pg"><h3>Intérprete</h3><ul><li>¿Necesita <strong>intérprete</strong>? <span class="pic">[intérprete]</span></li><li>☐ <strong>Sí</strong> <span class="pic">[sí]</span></li><li>☐ <strong>No</strong> <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Contacto de emergencia</h3><ul><li>Nombre: ____________ <span class="pic">[persona]</span></li><li>Teléfono: ____________ <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>¿Cómo se comunica mejor?</h3><ul><li>☐ <strong>Hablando</strong> <span class="pic">[hablar]</span></li><li>☐ <strong>Escribiendo</strong> <span class="pic">[escribir]</span></li><li>☐ Con <strong>gestos</strong> <span class="pic">[gestos]</span></li><li>☐ <strong>Señalando</strong> dibujos <span class="pic">[señalar]</span></li><li>☐ Con un <strong>aparato</strong> <span class="pic">[tableta]</span></li></ul></div><div class="pg"><h3>Entréguelo</h3><ul><li>En la <strong>recepción</strong>. <span class="pic">[recepción]</span></li><li>O por <strong>fax</strong>. <span class="pic">[fax]</span></li><li>☎ Fax: (919) 555-0170 <span class="pic">[fax]</span></li><li>☎ Preguntas: (919) 555-0107 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>El formulario está en inglés y español; el folleto está solo en español.</li><li>&#x27;Marque todo lo que aplique&#x27; está en el título de la página de casillas como pregunta; por favor revise que sea claro.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p22">
+  <h2>22. Al salir del hospital</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>alta-escaneada-es-001</b> · es ·
+    discharge · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">Página 1 de 2          HOSPITAL COMUNITARIO SAN MARCOS          Instruc-
+ciones de alta
+Paciente: Rafael Ortega
+Usted fue tratado por un derrame cere-
+bral. Tome aspirina 81 mg por la boca una vez a1 día. Tome
+atorvastatina 40 mg por la boca en la no-
+che. Su cita con la Dra. Lucía Herrera es e1 miércoles 3 de marzo de 2027
+a las 10:30 a.m.
+Página 1 de 2          HOSPITAL COMUNITARIO SAN MARCOS
+Si tiene la cara caída, debi-
+lidad en un brazo o le cuesta hablar, 11ame a1 911 de inmediato. No ma-
+neje por 4 semanas. Pre-
+guntas: Línea de enfermería (919) 555-0145.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Usted tuvo un derrame</h3><ul><li>Para: <strong>Rafael Ortega</strong> <span class="pic">[persona]</span></li><li>Usted tuvo un <strong>derrame cerebral</strong>. <span class="pic">[cerebro]</span></li></ul></div><div class="pg"><h3>Sus medicinas</h3><ul><li>Tome <strong>aspirina 81 mg</strong>, por la boca, <strong>una vez</strong> al día. <span class="pic">[pastilla]</span></li><li>Tome <strong>atorvastatina 40 mg</strong>, por la boca, en la <strong>noche</strong>. <span class="pic">[noche]</span></li></ul></div><div class="pg"><h3>Su cita</h3><ul><li>Con la <strong>Dra. Lucía Herrera</strong>. <span class="pic">[doctora]</span></li><li><strong>miércoles 3 de marzo de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>10:30 a.m.</strong> <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>No maneje</h3><ul><li><strong>No maneje</strong> por <strong>4 semanas</strong>. <span class="pic">[no manejar]</span></li></ul></div><div class="pg"><h3>Emergencia</h3><ul><li>¿La <strong>cara</strong> caída? ¿<strong>Debilidad</strong> en un brazo? ¿Le cuesta <strong>hablar</strong>? <span class="pic">[cara]</span></li><li class="crisis">⚠ Llame al 911 de inmediato <span class="pic">[ambulancia]</span></li></ul></div><div class="pg"><h3>¿Preguntas?</h3><ul><li><strong>Línea de enfermería</strong> <span class="pic">[enfermera]</span></li><li>☎ Teléfono: (919) 555-0145 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>El escaneo tenía errores (&#x27;a1&#x27;, &#x27;e1&#x27;, &#x27;11ame&#x27; con el número 1 en vez de la letra l) y palabras cortadas. El folleto los corrige. Por favor revise.</li><li>Left out on purpose: &#x27;Página 1 de 2&#x27; y el encabezado repetido: errores del escaneo</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p23">
+  <h2>23. Sus resultados de laboratorio</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>resultados-tabla-es-001</b> · es ·
+    results · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">INFORME DE LABORATORIO — Clínica Familiar Las Palmas
+Paciente: Marisol Vega | Tomada: 02/12/2027 08:05
+PRUEBA          RESULTADO   MARCA   RANGO DE REFERENCIA
+GLUCOSA         184         A       70-99
+HEMOGLOBINA A1C 8.6         A       4.0-5.6
+POTASIO         4.0                 3.5-5.1
+CREATININA      0.8                 0.6-1.1
+Comentario (Dr. Tomás Aguilar): Su azúcar está alta. Vamos a hablar de un cambio de medicina en su cita del lunes 1 de marzo de 2027. Mientras tanto, siga su dieta y tome su metformina. Preguntas: (919) 555-0144.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Sus resultados</h3><ul><li>Para: <strong>Marisol Vega</strong> <span class="pic">[persona]</span></li><li>El <strong>Dr. Tomás Aguilar</strong> revisó sus resultados. <span class="pic">[médico]</span></li></ul></div><div class="pg"><h3>Alto</h3><ul><li><strong>Glucosa</strong> (azúcar): <strong>184</strong>. Normal: <strong>70-99</strong>. <span class="pic">[glucómetro]</span></li><li><strong>A1c</strong>: <strong>8.6</strong>. Normal: <strong>4.0-5.6</strong>. <span class="pic">[análisis de sangre]</span></li><li>Su <strong>azúcar</strong> está <strong>alta</strong>. <span class="pic">[advertencia]</span></li></ul></div><div class="pg"><h3>Normal</h3><ul><li><strong>Potasio</strong>: <strong>4.0</strong>. <span class="pic">[bien]</span></li><li><strong>Creatinina</strong> (riñones): <strong>0.8</strong>. <span class="pic">[riñón]</span></li></ul></div><div class="pg"><h3>Qué hacer</h3><ul><li>Siga su <strong>dieta</strong>. <span class="pic">[comida sana]</span></li><li>Tome su <strong>metformina</strong>. <span class="pic">[pastilla]</span></li><li>En su cita van a hablar de un <strong>cambio</strong> de medicina. <span class="pic">[médico]</span></li></ul></div><div class="pg"><h3>Su cita</h3><ul><li><strong>lunes 1 de marzo de 2027</strong> <span class="pic">[calendario]</span></li></ul></div><div class="pg"><h3>¿Preguntas?</h3><ul><li>☎ Teléfono: (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;A&#x27; en la tabla significa alto. Los rangos de potasio y creatinina (normales) se dejaron fuera.</li><li>Left out on purpose: Tomada 02/12/2027 08:05: cuándo se sacó la sangre</li><li>Left out on purpose: Rangos 3.5-5.1 y 0.6-1.1 de resultados normales: detalle sin acción</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p24">
+  <h2>24. Su cita de terapia ocupacional</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.7</span><b>correo-es-001</b> · es ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">De: citas@example.org
+Enviado: martes 9 de febrero de 2027 5:12 p.m.
+Para: Jorge Castillo
+Asunto: RE: RE: ¿mi cita de terapia?
+
+Hola Jorge, disculpe la confusión. Su evaluación de terapia ocupacional SÍ está programada: viernes 26 de febrero de 2027 a las 3:00 p.m. con Luis Romero, en Lakeside Therapy Partners, 1180 Hillcrest Road. Use ropa cómoda y zapatos cerrados. Traiga sus lentes y su férula de la mano si la usa. Si necesita cambiarla, por favor llame; no conteste este correo porque no lo revisamos los fines de semana.
+Gracias, Equipo de Citas | (919) 555-0121
+
+-----Mensaje original-----
+De: Jorge Castillo
+nadie me ha llamado, sigue en pie??
+
+AVISO DE CONFIDENCIALIDAD: Este correo puede contener información médica protegida...</div></div>
+    <div><b>Aphasia-friendly version</b> (4 pages)<div class="pages"><div class="pg"><h3>Su cita está programada</h3><ul><li>Para: <strong>Jorge Castillo</strong> <span class="pic">[persona]</span></li><li>Su evaluación de <strong>terapia ocupacional</strong> <strong>sí</strong> está programada. <span class="pic">[terapia ocupacional]</span></li></ul></div><div class="pg"><h3>Cuándo y dónde</h3><ul><li><strong>viernes 26 de febrero de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>3:00 p.m.</strong> <span class="pic">[reloj]</span></li><li>Con <strong>Luis Romero</strong>, en <strong>Lakeside Therapy Partners</strong> <span class="pic">[clínica]</span></li><li><strong>1180 Hillcrest Road</strong> <span class="pic">[mapa]</span></li></ul></div><div class="pg"><h3>Qué usar y traer</h3><ul><li>Ropa <strong>cómoda</strong> y zapatos <strong>cerrados</strong>. <span class="pic">[zapatos]</span></li><li>Sus <strong>lentes</strong>. <span class="pic">[lentes]</span></li><li>Su <strong>férula</strong> de la mano, si la usa. <span class="pic">[férula]</span></li></ul></div><div class="pg"><h3>¿Necesita cambiarla?</h3><ul><li><strong>Llame</strong>. <strong>No</strong> conteste el <strong>correo</strong>. <span class="pic">[teléfono]</span></li><li>☎ Equipo de Citas: (919) 555-0121 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: Fecha del correo martes 9 de febrero de 2027 5:12 p.m.: cuándo se envió</li><li>Left out on purpose: citas@example.org: no lo revisan; el lector debe llamar</li><li>Left out on purpose: Mensaje anterior y aviso de confidencialidad: no se necesitan</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p25">
+  <h2>25. Consejos de la línea de enfermería</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.3</span><b>llamada-enfermera-es-001</b> · es ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">LÍNEA DE ENFERMERÍA FUERA DE HORARIO — RESUMEN DE LLAMADA
+Quien llamó: Alberto Ruiz (hijo de la paciente Carmen Ruiz) | Hora: dom 02/14/2027 19:40
+Motivo: la paciente tiene tos con flema y fiebre de 100.8°F desde ayer; tose al tomar agua.
+Consejo: Dele acetaminofén 500 mg, 2 tabletas, puede repetir en 6 horas si lo necesita. Que se siente derecha para comer y beber. Dele líquidos espesos como le indicó su terapeuta del habla. Llame mañana a su médico para una cita el mismo día: (919) 555-0144.
+Vaya a Emergencias o llame al 911 si: le cuesta respirar, tiene los labios azules, está muy confundida, o la fiebre pasa de 103°F.
+Línea de enfermería: (919) 555-0172.</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Su llamada a la enfermera</h3><ul><li>Para la familia de <strong>Carmen Ruiz</strong>. <span class="pic">[familia]</span></li><li>Llamaron por <strong>tos</strong> con <strong>flema</strong> y <strong>fiebre</strong> de <strong>100.8°F</strong>. <span class="pic">[tos]</span></li><li>Ella <strong>tose</strong> al tomar <strong>agua</strong>. <span class="pic">[tos]</span></li></ul></div><div class="pg"><h3>Qué hacer ahora</h3><ul><li>Dele <strong>acetaminofén 500 mg</strong>, <strong>2 tabletas</strong>. <span class="pic">[pastilla]</span></li><li>Puede <strong>repetir</strong> en <strong>6 horas</strong> si lo necesita. <span class="pic">[reloj]</span></li><li>Que se <strong>siente derecha</strong> para comer y beber. <span class="pic">[sentarse a la mesa]</span></li><li>Dele <strong>líquidos espesos</strong>, como dijo su terapeuta del habla. <span class="pic">[bebida espesa]</span></li></ul></div><div class="pg"><h3>Mañana</h3><ul><li><strong>Llame</strong> a su <strong>médico</strong> para una cita el <strong>mismo día</strong>. <span class="pic">[médico]</span></li><li>☎ Médico: (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>Emergencia</h3><ul><li>¿Le cuesta <strong>respirar</strong>? ¿Labios <strong>azules</strong>? <span class="pic">[respirar]</span></li><li>¿Muy <strong>confundida</strong>? ¿Fiebre de <strong>más de 103°F</strong>? <span class="pic">[termómetro]</span></li><li class="crisis">⚠ Llame al 911 o vaya a Emergencias <span class="pic">[ambulancia]</span></li></ul></div><div class="pg"><h3>Línea de enfermería</h3><ul><li>☎ Teléfono: (919) 555-0172 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Escrito para la familia que llamó. &#x27;Tose al tomar agua&#x27; puede ser señal de problemas para tragar; el folleto no lo interpreta. Por favor revise.</li><li>Left out on purpose: Hora de la llamada dom 02/14/2027 19:40: cuándo llamaron</li><li>Left out on purpose: Nombre de quien llamó (Alberto Ruiz, hijo): no se necesita</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section></body></html>
