@@ -23,16 +23,25 @@ examples/                            sample inputs and finished outputs (open th
 
 ## Data so far
 
-| Batch | Pairs | Where from |
-|---|---|---|
-| `seed` | 5 | made up |
-| `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts; originals written for this project |
-| `madeup_batch1` | 12 | made up (fake names, 555 numbers, example.org) |
-| `batch2_en` | 13 | made up: medication, schedule form, appointments, consent, insurance, home program, results, therapy discharge, education, anxiety, procedure |
-| `batch2_es` | 12 | made up, Spanish: same mix, plus caregiver support and social work referral |
+| Batch | Pairs | What | SLP |
+|---|---|---|---|
+| `seed` | 5 | made up, short | ✅ approved |
+| `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts | ✅ approved |
+| `madeup_batch1` | 12 | made up, short | ✅ approved |
+| `batch2_en`, `batch2_es` | 25 | made up: consent, insurance, home programs, schedules, education | ✅ approved |
+| `batch3_en`, `batch3_es` | 25 | **long, realistic** hospital paperwork (headers, record numbers, codes, fine print) | waiting |
+| `batch4_en`, `batch4_es` | 25 | under-represented types: consent, insurance, how-to, procedures, referrals, letters | waiting |
+| `batch5_en`, `batch5_es` | 25 | **messy formats**: portal messages, pharmacy labels, texts, voicemail, faxes, scans, tables, email | waiting |
+| `batch6_test` | 25 | **TEST SET** (`split: test`): never used for training; covers every type, 15 English / 10 Spanish | waiting |
 
-**50 pairs**: English 30, Spanish 20. All pass the fact check.
-SLP status: **all 50 approved** by a CCC-SLP (anonymous) on 2026-11-11, with no changes.
+**150 pairs**: English 81, Spanish 69. 125 for training, 25 for testing. All pass the fact check, the weekday check
+and the format rules. Review books for each batch are in `review/<batch>/`.
+
+All names, clinics, IDs and phone numbers in made-up documents are invented (phones use the fictional 555-01xx
+range). Real hospital papers contain details the reader does not need (record numbers, birth dates, billing codes);
+targets may leave these out only by listing them in `"omitted"` with a reason, which reviewers see. Crisis numbers can
+never be omitted.
+
 Never put real patient documents in this repo; keep them in a `private/` folder (it is never uploaded).
 
 ## Setup (once)

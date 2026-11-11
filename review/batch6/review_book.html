@@ -1,0 +1,459 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Example Pair Review</title><style>
+:root { --bg:#f4f4f2; --card:#fff; --ink:#1b1b1b; --muted:#666; --line:#ddd; --ok:#2e7d32; --warn:#b26a00; --bad:#b00020; }
+@media (prefers-color-scheme: dark) { :root { --bg:#161616; --card:#222; --ink:#eee; --muted:#aaa; --line:#3a3a3a; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+header { padding:24px 16px 8px; max-width:1200px; margin:auto; }
+h1 { margin:0 0 4px; font-size:24px; }
+.sub { color:var(--muted); }
+.toc { max-width:1200px; margin:8px auto 16px; padding:0 16px; columns: 2 280px; }
+.toc a { color:inherit; display:block; padding:2px 0; }
+.pair { max-width:1200px; margin:0 auto 28px; padding:16px; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.pair h2 { margin:0; font-size:19px; }
+.meta { color:var(--muted); font-size:13px; margin:4px 0 10px; }
+.badge { display:inline-block; padding:1px 8px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid currentColor; margin-right:6px; }
+.ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+.cols { display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.6fr); gap:16px; }
+@media (max-width: 800px) { .cols { grid-template-columns: 1fr; } }
+.orig { white-space:pre-wrap; background:var(--bg); border-radius:8px; padding:12px; font-size:14px; }
+.pages { display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:10px; }
+.pg { border:1px solid var(--line); border-radius:8px; padding:10px; background:var(--card); }
+.pg h3 { margin:0 0 6px; font-size:14px; border-bottom:2px solid var(--ink); padding-bottom:4px; }
+.pg ol, .pg ul { margin:0; padding-left:18px; } .pg li { margin:4px 0; font-size:14px; }
+.pg ul { list-style:none; padding-left:0; }
+.pic { color:var(--muted); font-size:11px; }
+.crisis { color:var(--bad); font-weight:700; }
+.notes { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--warn); background:var(--bg); border-radius:4px; font-size:14px; }
+.box { margin-top:10px; font-size:14px; }
+.box span { display:inline-block; margin-right:18px; }
+@media print { body { background:#fff; } .pair { break-inside: avoid-page; page-break-after: always; border:none; } .toc { display:none; } }
+</style></head><body><header><h1>Example pair review</h1><div class='sub'>25 pairs waiting for review. Original on the left, aphasia-friendly version on the right. ☐ = clinician ticks what applies, ☎ = phone line, ⚠ = emergency line, [grey words] = picture suggestion.</div></header><nav class='toc'><a href="#p1">1. Going home after your stroke <span class="sub">(en, discharge)</span></a><a href="#p2">2. Your doctor sent you to occupational therapy <span class="sub">(en, referral)</span></a><a href="#p3">3. Your video visit <span class="sub">(en, appointment)</span></a><a href="#p4">4. Your new medicine: levetiracetam <span class="sub">(en, medication)</span></a><a href="#p5">5. About your mood <span class="sub">(en, mental_health)</span></a><a href="#p6">6. Your swallow study results <span class="sub">(en, results)</span></a><a href="#p7">7. Agreeing to therapy <span class="sub">(en, consent)</span></a><a href="#p8">8. Insurance summary: not a bill <span class="sub">(en, insurance)</span></a><a href="#p9">9. Your payment plan <span class="sub">(en, billing)</span></a><a href="#p10">10. Making drinks thicker <span class="sub">(en, how_to)</span></a><a href="#p11">11. Getting ready for your colonoscopy <span class="sub">(en, procedure)</span></a><a href="#p12">12. Low blood sugar <span class="sub">(en, education)</span></a><a href="#p13">13. New exercises from your physical therapist <span class="sub">(en, message)</span></a><a href="#p14">14. Your urgent care visit <span class="sub">(en, visit_summary)</span></a><a href="#p15">15. Reading practice at home <span class="sub">(en, home_program)</span></a><a href="#p16">16. Su muñeca fracturada <span class="sub">(es, discharge)</span></a><a href="#p17">17. Su visita anual <span class="sub">(es, appointment)</span></a><a href="#p18">18. Su prednisona: la dosis baja poco a poco <span class="sub">(es, medication)</span></a><a href="#p19">19. La ansiedad después de un derrame <span class="sub">(es, mental_health)</span></a><a href="#p20">20. Sus resultados de la resonancia <span class="sub">(es, results)</span></a><a href="#p21">21. Renueve su Medicaid <span class="sub">(es, insurance)</span></a><a href="#p22">22. Cómo usar su inhalador <span class="sub">(es, how_to)</span></a><a href="#p23">23. Su plan de terapia ocupacional <span class="sub">(es, therapy_plan)</span></a><a href="#p24">24. Ejercicio para su corazón <span class="sub">(es, referral)</span></a><a href="#p25">25. Su medicina está lista <span class="sub">(es, message)</span></a></nav>
+<section class="pair" id="p1">
+  <h2>1. Going home after your stroke</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.0</span><b>test-discharge-hemorrhage-en</b> · en ·
+    discharge · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">DISCHARGE INSTRUCTIONS — Carolina Valley Medical Center, Neuro ICU Step-Down
+Patient: Curtis Langley | DOB: 06/19/1955 | MRN: 01430667
+Diagnosis: Intracerebral hemorrhage (bleeding in the brain), right basal ganglia, due to uncontrolled hypertension.
+BLOOD PRESSURE GOAL: below 130/80. Check BP twice daily and record.
+MEDICATIONS: START amlodipine 10 mg by mouth once daily. START losartan 50 mg by mouth once daily. DO NOT take aspirin, ibuprofen, naproxen, or any blood thinner unless your neurologist says it is safe.
+ACTIVITY: No lifting over 10 pounds for 4 weeks. No driving until cleared.
+FOLLOW-UP: Neurosurgery Clinic, Dr. Nina Castellano, Wednesday, February 10, 2027 at 2:15 p.m. Repeat CT scan the same morning at 11:00 a.m.
+CALL 911 for: sudden severe headache, new weakness or numbness, trouble speaking, confusion, seizure, or vomiting with headache.
+Questions: Neuro Nurse Line (919) 555-0174, 24 hours a day.</div></div>
+    <div><b>Aphasia-friendly version</b> (9 pages)<div class="pages"><div class="pg"><h3>You had a stroke</h3><ul><li>For: <strong>Curtis Langley</strong> <span class="pic">[person]</span></li><li>You had <strong>bleeding</strong> in your <strong>brain</strong>. <span class="pic">[brain]</span></li><li>It was on the <strong>right side</strong>. <span class="pic">[brain]</span></li><li>It happened because your <strong>blood pressure</strong> was <strong>too high</strong>. <span class="pic">[blood pressure]</span></li></ul></div><div class="pg"><h3>Blood pressure goal</h3><ul><li>Keep it <strong>below 130/80</strong>. <span class="pic">[target]</span></li><li>Check it <strong>twice</strong> a day. <span class="pic">[blood pressure]</span></li><li><strong>Write it down</strong>. <span class="pic">[write]</span></li></ul></div><div class="pg"><h3>New medicines</h3><ul><li><strong>Start</strong> amlodipine <strong>10 mg</strong>, by mouth, <strong>once</strong> a day. <span class="pic">[pill]</span></li><li><strong>Start</strong> losartan <strong>50 mg</strong>, by mouth, <strong>once</strong> a day. <span class="pic">[pill]</span></li></ul></div><div class="pg"><h3>Do not take</h3><ul><li><strong>No</strong> aspirin, ibuprofen or naproxen. <span class="pic">[no pill]</span></li><li><strong>No</strong> blood thinners. <span class="pic">[no pill]</span></li><li>Unless your <strong>neurologist</strong> says it is <strong>safe</strong>. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>Activity</h3><ul><li>Do <strong>not lift</strong> more than <strong>10 pounds</strong>. <span class="pic">[lift]</span></li><li>For <strong>4 weeks</strong>. <span class="pic">[calendar]</span></li><li><strong>No driving</strong> until your doctor says <strong>okay</strong>. <span class="pic">[no driving]</span></li></ul></div><div class="pg"><h3>CT scan</h3><ul><li><strong>Wednesday, February 10, 2027</strong> <span class="pic">[calendar]</span></li><li>CT scan at <strong>11:00 a.m.</strong> <span class="pic">[ct scan]</span></li></ul></div><div class="pg"><h3>Neurosurgery visit</h3><ul><li>Same day, at <strong>2:15 p.m.</strong> <span class="pic">[clock]</span></li><li>See <strong>Dr. Nina Castellano</strong>. <span class="pic">[surgeon]</span></li><li>At the <strong>Neurosurgery Clinic</strong>. <span class="pic">[clinic]</span></li></ul></div><div class="pg"><h3>Call 911</h3><ul><li><strong>Sudden</strong>, very bad <strong>headache</strong>? <strong>Vomiting</strong> with headache? <span class="pic">[headache]</span></li><li>New <strong>weakness</strong> or <strong>numbness</strong>? Trouble <strong>speaking</strong>? <span class="pic">[weak arm]</span></li><li><strong>Confusion</strong>? <strong>Seizure</strong>? <span class="pic">[confused]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li><strong>Neuro Nurse Line</strong>, <strong>24 hours</strong> a day. <span class="pic">[nurse]</span></li><li>☎ Phone: (919) 555-0174 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: DOB 06/19/1955: not needed by the reader</li><li>Left out on purpose: MRN 01430667: record number</li><li>Left out on purpose: Unit name Neuro ICU Step-Down and &#x27;basal ganglia&#x27;: hospital details</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p2">
+  <h2>2. Your doctor sent you to occupational therapy</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.9</span><b>test-referral-ot-en</b> · en ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERRAL — OUTPATIENT OCCUPATIONAL THERAPY
+TO: Lakeside Therapy Partners, fax (919) 555-0176 | FROM: Dr. Karen Liu, Maple Ridge Family Medicine
+Pt: Shirley Abernathy, 71 yo F, hx L CVA 10/2026, R hand weakness, difficulty w/ buttons, writing, cooking. Goals: ↑ independence in ADLs (dressing, grooming, meal prep). Eval &amp; treat, 2x/wk x 6 wks.
+Pt prefers morning appts. Pt&#x27;s daughter will drive.
+Clinic will call pt within 3 business days. Questions: (919) 555-0121.</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Occupational therapy</h3><ul><li>For: <strong>Shirley Abernathy</strong> <span class="pic">[person]</span></li><li><strong>Dr. Karen Liu</strong> sent you to <strong>occupational therapy</strong>. <span class="pic">[occupational therapy]</span></li><li>At <strong>Lakeside Therapy Partners</strong>. <span class="pic">[clinic]</span></li></ul></div><div class="pg"><h3>Why</h3><ul><li>After your <strong>stroke</strong>, your <strong>right hand</strong> is <strong>weak</strong>. <span class="pic">[hand]</span></li><li><strong>Buttons</strong>, <strong>writing</strong> and <strong>cooking</strong> are hard. <span class="pic">[buttons]</span></li></ul></div><div class="pg"><h3>Your goals</h3><ul><li>Do more <strong>on your own</strong>. <span class="pic">[person]</span></li><li><strong>Dressing</strong>, <strong>grooming</strong> and making <strong>meals</strong>. <span class="pic">[dressing]</span></li></ul></div><div class="pg"><h3>How often</h3><ul><li><strong>2 times</strong> a week. <span class="pic">[calendar]</span></li><li>For <strong>6 weeks</strong>. <span class="pic">[calendar]</span></li><li><strong>Morning</strong> visits, like you asked. <span class="pic">[sunrise]</span></li></ul></div><div class="pg"><h3>Next step</h3><ul><li>The clinic will <strong>call you</strong> within <strong>3 business days</strong>. <span class="pic">[phone]</span></li><li>☎ Questions: (919) 555-0121 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Pt&#x27;s daughter will drive&#x27; is left out; please add a line if useful.</li><li>Left out on purpose: Fax number (919) 555-0176: for the offices</li><li>Left out on purpose: Age 71 yo F and stroke date 10/2026: office details</li><li>Left out on purpose: Daughter will drive: arrangement already known to the reader</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p3">
+  <h2>3. Your video visit</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.6</span><b>test-appointment-video-en</b> · en ·
+    appointment · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">VIDEO VISIT REMINDER — Carolina Valley Neurology
+Patient: Leon Fraser
+Your follow-up video visit with Dr. Ravi Patel is on Thursday, April 22, 2027 at 3:20 p.m.
+BEFORE YOUR VISIT: Download the free CareConnect app or use a web browser. Log in 15 minutes early to test your camera and microphone. Have your blood pressure log, medication bottles, and a list of questions ready. A family member may join you.
+If the video does not work, the doctor will call you at the phone number we have on file.
+Technical help: (919) 555-0177. To reschedule: (919) 555-0124.</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Your video visit</h3><ul><li>For: <strong>Leon Fraser</strong> <span class="pic">[person]</span></li><li>A <strong>video visit</strong> with <strong>Dr. Ravi Patel</strong>. <span class="pic">[video call]</span></li><li><strong>Thursday, April 22, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>3:20 p.m.</strong> <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Get ready</h3><ul><li>1. Get the free <strong>CareConnect</strong> app, or use a <strong>web browser</strong>. <span class="pic">[phone app]</span></li><li>2. Log in <strong>15 minutes early</strong>. <span class="pic">[clock]</span></li><li>3. Test your <strong>camera</strong> and <strong>microphone</strong>. <span class="pic">[camera]</span></li></ul></div><div class="pg"><h3>Have these ready</h3><ul><li>Your <strong>blood pressure</strong> list. <span class="pic">[blood pressure]</span></li><li>Your <strong>medicine bottles</strong>. <span class="pic">[pill bottle]</span></li><li>Your <strong>questions</strong>. <span class="pic">[question]</span></li><li>A <strong>family member</strong> can join you. <span class="pic">[family]</span></li></ul></div><div class="pg"><h3>Video not working?</h3><ul><li>The doctor will <strong>call</strong> your <strong>phone</strong> instead. <span class="pic">[phone]</span></li><li>☎ Technical help: (919) 555-0177 <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>Change your visit</h3><ul><li>☎ Phone: (919) 555-0124 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p4">
+  <h2>4. Your new medicine: levetiracetam</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.5</span><b>test-medication-levetiracetam-en</b> · en ·
+    medication · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">NEW MEDICATION: LEVETIRACETAM (KEPPRA) 500 MG TABLET
+Patient: Curtis Langley | Prescriber: Dr. Ravi Patel
+You had a seizure after your stroke. Levetiracetam helps prevent more seizures.
+How to take: 1 tablet by mouth twice a day, about 12 hours apart (for example, 8 a.m. and 8 p.m.). Do not stop suddenly; stopping can cause seizures.
+Side effects: sleepiness, dizziness, and mood changes such as irritability or feeling down. Tell your doctor about mood changes. If you have thoughts of hurting yourself, call or text 988.
+Safety: Do not drive until your doctor says it is safe. Do not swim or bathe alone.
+Call 911 if a seizure lasts longer than 5 minutes, or if you have a second seizure without waking up in between.
+Questions: (919) 555-0125.</div></div>
+    <div><b>Aphasia-friendly version</b> (9 pages)<div class="pages"><div class="pg"><h3>Your new medicine</h3><ul><li>For: <strong>Curtis Langley</strong> <span class="pic">[person]</span></li><li><strong>Levetiracetam</strong> (<strong>Keppra</strong>) <strong>500 mg</strong> <span class="pic">[pill]</span></li><li>From <strong>Dr. Ravi Patel</strong>. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>Why you take it</h3><ul><li>You had a <strong>seizure</strong> after your stroke. <span class="pic">[seizure]</span></li><li>This medicine helps stop <strong>more seizures</strong>. <span class="pic">[shield]</span></li></ul></div><div class="pg"><h3>How to take it</h3><ul><li>Take <strong>1 tablet</strong> by mouth. <span class="pic">[pill]</span></li><li><strong>Twice</strong> a day, about <strong>12 hours</strong> apart. <span class="pic">[clock]</span></li><li>For example, <strong>8 a.m.</strong> and <strong>8 p.m.</strong> <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Do not stop suddenly</h3><ul><li><strong>Do not stop</strong> this medicine <strong>suddenly</strong>. <span class="pic">[stop]</span></li><li>Stopping can cause <strong>seizures</strong>. <span class="pic">[seizure]</span></li></ul></div><div class="pg"><h3>Side effects</h3><ul><li>You may feel <strong>sleepy</strong> or <strong>dizzy</strong>. <span class="pic">[sleepy]</span></li><li>Your <strong>mood</strong> may change: <strong>irritable</strong> or <strong>down</strong>. <span class="pic">[sad]</span></li><li><strong>Tell</strong> your <strong>doctor</strong> about mood changes. <span class="pic">[doctor]</span></li></ul></div><div class="pg"><h3>Thoughts of hurting yourself?</h3><ul><li class="crisis">⚠ Call or text 988 <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>Stay safe</h3><ul><li><strong>No driving</strong> until your doctor says it is <strong>safe</strong>. <span class="pic">[no driving]</span></li><li>Do <strong>not swim</strong> or <strong>bathe alone</strong>. <span class="pic">[bath]</span></li></ul></div><div class="pg"><h3>Call 911</h3><ul><li>Seizure <strong>longer</strong> than <strong>5 minutes</strong>? <span class="pic">[clock]</span></li><li>A <strong>second</strong> seizure <strong>without waking up</strong> in between? <span class="pic">[seizure]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li>☎ Phone: (919) 555-0125 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p5">
+  <h2>5. About your mood</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 4.0</span><b>test-mental-health-depression-en</b> · en ·
+    mental_health · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">Dear Mr. Bernard Okafor,
+At your last visit, you answered questions about your mood using the SADQ-10, a depression checklist made for people with communication difficulties. Your answers suggest you may have depression. Depression is common after stroke and is treatable.
+Dr. Karen Liu recommends: (1) a visit with a counselor at Oak Valley Counseling Center, which offers aphasia-friendly sessions; call (919) 555-0108; and (2) a follow-up visit with Dr. Liu in 4 weeks to talk about whether medicine could help.
+The Aphasia Café on Saturdays at 10:00 a.m. may also help you feel less alone.
+If you ever have thoughts of hurting yourself, call or text 988. In an emergency, call 911.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>About your mood</h3><ul><li>For: <strong>Mr. Bernard Okafor</strong> <span class="pic">[person]</span></li><li>You answered questions about your <strong>mood</strong>. <span class="pic">[mood]</span></li><li>Your answers show you may have <strong>depression</strong>. <span class="pic">[sad]</span></li></ul></div><div class="pg"><h3>You are not alone</h3><ul><li>Depression is <strong>common</strong> after a <strong>stroke</strong>. <span class="pic">[group of people]</span></li><li>It can be <strong>treated</strong>. <span class="pic">[improve]</span></li></ul></div><div class="pg"><h3>Talk to a counselor</h3><ul><li><strong>Oak Valley Counseling Center</strong> <span class="pic">[building]</span></li><li>They make sessions <strong>easy</strong> for people with <strong>aphasia</strong>. <span class="pic">[counselor]</span></li><li>☎ Phone: (919) 555-0108 <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>See Dr. Liu again</h3><ul><li>See <strong>Dr. Karen Liu</strong> in <strong>4 weeks</strong>. <span class="pic">[doctor]</span></li><li>Talk about whether <strong>medicine</strong> could <strong>help</strong>. <span class="pic">[pill]</span></li></ul></div><div class="pg"><h3>Aphasia Café</h3><ul><li>The <strong>Aphasia Café</strong> may help you feel <strong>less alone</strong>. <span class="pic">[coffee]</span></li><li><strong>Saturdays</strong> at <strong>10:00 a.m.</strong> <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Help now</h3><ul><li>Thinking about <strong>hurting yourself</strong>? <span class="pic">[help]</span></li><li class="crisis">⚠ Call or text 988 <span class="pic">[phone]</span></li><li class="crisis">⚠ Emergency? Call 911 <span class="pic">[ambulance]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The name of the checklist (SADQ-10) is left out of the handout.</li><li>Left out on purpose: SADQ-10: name of the screening checklist, not needed by the reader</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p6">
+  <h2>6. Your swallow study results</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.7</span><b>test-results-mbss-en</b> · en ·
+    results · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">MODIFIED BARIUM SWALLOW STUDY — RESULTS AND RECOMMENDATIONS for ____________
+Findings: [ ] Food or liquid went into the airway (aspiration) [ ] Food stayed in the throat after swallowing (residue) [ ] Delayed swallow [ ] Coughed when food went the wrong way [ ] Did not cough (silent aspiration) [ ] Swallow was safe for all foods and liquids.
+Diet: [ ] Regular [ ] Soft and bite-sized [ ] Minced and moist [ ] Pureed. Liquids: [ ] Thin [ ] Mildly thick [ ] Moderately thick.
+Strategies: [ ] Chin tuck when swallowing [ ] Swallow twice for each bite [ ] Small sips from a cup, no straws [ ] Alternate bites and sips.
+Repeat study in: ___ weeks. Speech therapist: ____________ Phone: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Your swallow study</h3><ul><li>Results for: ____________ <span class="pic">[person]</span></li><li>We watched you <strong>swallow</strong> on an <strong>X-ray</strong> video. <span class="pic">[x-ray]</span></li></ul></div><div class="pg"><h3>What we saw</h3><ul><li>☐ Food or drink went into your <strong>airway</strong>. <span class="pic">[lungs]</span></li><li>☐ Food <strong>stayed</strong> in your <strong>throat</strong> after swallowing. <span class="pic">[throat]</span></li><li>☐ Your swallow was <strong>slow</strong> to start. <span class="pic">[clock]</span></li><li>☐ You <strong>coughed</strong> when food went the <strong>wrong way</strong>. <span class="pic">[cough]</span></li><li>☐ You did <strong>not cough</strong> when food went the <strong>wrong way</strong>. <span class="pic">[no cough]</span></li><li>☐ Your swallow was <strong>safe</strong> for <strong>all</strong> foods and drinks. <span class="pic">[check mark]</span></li></ul></div><div class="pg"><h3>What to eat</h3><ul><li>☐ <strong>Regular</strong> food <span class="pic">[plate of food]</span></li><li>☐ <strong>Soft</strong> and <strong>bite-sized</strong> <span class="pic">[soft food]</span></li><li>☐ <strong>Minced</strong> and <strong>moist</strong> <span class="pic">[minced food]</span></li><li>☐ <strong>Pureed</strong> <span class="pic">[puree]</span></li></ul></div><div class="pg"><h3>What to drink</h3><ul><li>☐ <strong>Thin</strong> liquids <span class="pic">[glass of water]</span></li><li>☐ <strong>Mildly</strong> thick liquids <span class="pic">[thick drink]</span></li><li>☐ <strong>Moderately</strong> thick liquids <span class="pic">[thick drink]</span></li></ul></div><div class="pg"><h3>Ways to swallow safely</h3><ul><li>☐ <strong>Tuck</strong> your <strong>chin</strong> when you swallow. <span class="pic">[chin down]</span></li><li>☐ Swallow <strong>twice</strong> for each bite. <span class="pic">[swallow]</span></li><li>☐ <strong>Small sips</strong> from a cup. <strong>No straws</strong>. <span class="pic">[cup]</span></li><li>☐ <strong>Take turns</strong>: a bite, then a sip. <span class="pic">[bite and sip]</span></li></ul></div><div class="pg"><h3>Next steps</h3><ul><li>Do this test again in: ___ weeks <span class="pic">[calendar]</span></li><li>Speech therapist: ____________ <span class="pic">[speech therapist]</span></li><li>Phone: ____________ <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The study name (modified barium swallow) is explained as &#x27;an X-ray video&#x27;.</li><li>&#x27;Silent aspiration&#x27; is written as &#x27;you did not cough when food went the wrong way&#x27;. Please confirm.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p7">
+  <h2>7. Agreeing to therapy</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 4.8</span><b>test-consent-treatment-en</b> · en ·
+    consent · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CONSENT FOR OUTPATIENT THERAPY SERVICES — Lakeside Therapy Partners
+I agree to receive evaluation and treatment by licensed therapists. I understand that therapy may involve physical activity, exercises, and practice of daily tasks, and that I may feel tired or sore. I understand that results are not guaranteed. I may ask questions at any time, refuse any part of treatment, or stop therapy at any time.
+Cancellation policy: Please cancel at least 24 hours before your visit. After 3 missed visits without notice, your remaining visits may be cancelled.
+I have received the Notice of Privacy Practices.
+[ ] I agree to treatment.
+Patient or representative signature: ____________ Date: ____________
+Questions: (919) 555-0121</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Agreeing to therapy</h3><ul><li>You agree to <strong>therapy</strong> at <strong>Lakeside Therapy Partners</strong>. <span class="pic">[clinic]</span></li><li>Your therapists have a <strong>license</strong>. <span class="pic">[certificate]</span></li></ul></div><div class="pg"><h3>What therapy is like</h3><ul><li>You will <strong>move</strong>, do <strong>exercises</strong> and <strong>practice</strong> daily tasks. <span class="pic">[exercise]</span></li><li>You may feel <strong>tired</strong> or <strong>sore</strong>. <span class="pic">[tired]</span></li><li>We <strong>cannot promise</strong> results. <span class="pic">[no promise]</span></li></ul></div><div class="pg"><h3>Your choices</h3><ul><li>Ask <strong>questions</strong> any time. <span class="pic">[question]</span></li><li>Say <strong>no</strong> to any part. <span class="pic">[no]</span></li><li><strong>Stop</strong> therapy any time. <span class="pic">[stop]</span></li></ul></div><div class="pg"><h3>Cancelling</h3><ul><li>Cancel at least <strong>24 hours</strong> before. <span class="pic">[clock]</span></li><li><strong>3</strong> missed visits without calling? Your <strong>other visits</strong> may be <strong>cancelled</strong>. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Privacy</h3><ul><li>You got the <strong>privacy notice</strong>. <span class="pic">[lock]</span></li></ul></div><div class="pg"><h3>Sign</h3><ul><li>☐ I <strong>agree</strong> to treatment. <span class="pic">[yes]</span></li><li>Signature: ____________ <span class="pic">[signature]</span></li><li>Date: ____________ <span class="pic">[calendar]</span></li><li>☎ Questions: (919) 555-0121 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Consent form: the clinic&#x27;s legal team should also approve the wording.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p8">
+  <h2>8. Insurance summary: not a bill</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.6</span><b>test-insurance-eob-en</b> · en ·
+    insurance · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">EXPLANATION OF BENEFITS — THIS IS NOT A BILL
+Member: Gloria Whitaker | Member ID: XJH227461 | Plan: Carolina Community Health Plan
+Claim: Outpatient speech therapy, Piedmont Speech Clinic, service date 01/19/2027
+Amount billed: $240.00 | Plan discount: -$95.00 | Plan paid: $125.00 | YOU MAY OWE: $20.00 (copay)
+The provider may send you a bill for the amount you may owe. Visits used this year: 7 of 30.
+Questions about this claim: Member Services 1-800-555-0105 (TTY 711).</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>This is NOT a bill</h3><ul><li>This paper is <strong>not a bill</strong>. <span class="pic">[no bill]</span></li><li>It shows what your <strong>insurance</strong> paid. <span class="pic">[insurance card]</span></li><li>For: <strong>Gloria Whitaker</strong>, Member ID <strong>XJH227461</strong> <span class="pic">[person]</span></li></ul></div><div class="pg"><h3>Your visit</h3><ul><li><strong>Speech therapy</strong> at <strong>Piedmont Speech Clinic</strong>. <span class="pic">[speech therapist]</span></li></ul></div><div class="pg"><h3>The money</h3><ul><li>The clinic charged <strong>$240.00</strong>. <span class="pic">[bill]</span></li><li>Your plan took off <strong>$95.00</strong> and paid <strong>$125.00</strong>. <span class="pic">[insurance card]</span></li><li>You may owe <strong>$20.00</strong> (your <strong>copay</strong>). <span class="pic">[money]</span></li></ul></div><div class="pg"><h3>What happens next</h3><ul><li>The clinic may <strong>send you a bill</strong> for <strong>$20.00</strong>. <span class="pic">[envelope]</span></li></ul></div><div class="pg"><h3>Your visits this year</h3><ul><li>You used <strong>7</strong> of <strong>30</strong> visits. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li>Call <strong>Member Services</strong>. <span class="pic">[phone]</span></li><li>☎ Phone: 1-800-555-0105 <span class="pic">[phone]</span></li><li>☎ TTY: 711 <span class="pic">[tty]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: Service date 01/19/2027: past visit date</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p9">
+  <h2>9. Your payment plan</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.6</span><b>test-billing-payment-plan-en</b> · en ·
+    billing · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PAYMENT PLAN AGREEMENT — Carolina Valley Medical Center
+Account: 4471-882-019 | Guarantor: Gloria Whitaker
+Balance: $1,500.00. Monthly payment: $125.00 for 12 months. No interest. First payment due: April 1, 2027; then on the 1st of each month.
+If a payment is more than 30 days late, the full balance may be sent to a collection agency. If your income changes, call us before you miss a payment; we can change your plan.
+Pay online at www.example.org/paybill or call (919) 555-0135.
+Signature: ____________ Date: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Your payment plan</h3><ul><li>For: <strong>Gloria Whitaker</strong> <span class="pic">[person]</span></li><li>Account: <strong>4471-882-019</strong> <span class="pic">[card]</span></li><li>You owe <strong>$1,500.00</strong>. <span class="pic">[money]</span></li></ul></div><div class="pg"><h3>How you pay</h3><ul><li>Pay <strong>$125.00</strong> each month. <span class="pic">[money]</span></li><li>For <strong>12 months</strong>. <span class="pic">[calendar]</span></li><li><strong>No interest</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>When</h3><ul><li>First payment: <strong>April 1, 2027</strong>. <span class="pic">[calendar]</span></li><li>Then on the <strong>1st</strong> of <strong>each month</strong>. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Late payments</h3><ul><li>More than <strong>30 days</strong> late? <span class="pic">[clock]</span></li><li>The <strong>whole amount</strong> may go to a <strong>collection agency</strong>. <span class="pic">[warning]</span></li></ul></div><div class="pg"><h3>Money trouble?</h3><ul><li>Your <strong>income changed</strong>? <strong>Call</strong> before you miss a payment. <span class="pic">[phone]</span></li><li>We can <strong>change</strong> your plan. <span class="pic">[change]</span></li></ul></div><div class="pg"><h3>Sign</h3><ul><li>Signature: ____________ <span class="pic">[signature]</span></li><li>Date: ____________ <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>How to pay</h3><ul><li>Online: <strong>www.example.org/paybill</strong> <span class="pic">[computer]</span></li><li>☎ Phone: (919) 555-0135 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p10">
+  <h2>10. Making drinks thicker</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.8</span><b>test-how-to-thickener-en</b> · en ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">HOW TO THICKEN DRINKS — MILDLY THICK
+Your speech therapist, Maria Ochoa, recommends mildly thick liquids for all drinks, including water, coffee, and soup broth.
+1. Pour 4 oz (120 mL) of your drink into a clean cup. 2. Add 1 scoop of ThickWell gel powder. 3. Stir with a fork for 30 seconds. 4. Wait 1 minute before drinking. 5. Check: it should pour slowly off a spoon, like nectar.
+Do not add extra powder. Do not use thin liquids, ice cream, or gelatin; they melt into thin liquid. Throw away thickened drinks after 2 hours at room temperature.
+Questions: (919) 555-0131.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Thick drinks</h3><ul><li><strong>Maria Ochoa</strong>, your <strong>speech therapist</strong>, wants all drinks <strong>mildly thick</strong>. <span class="pic">[thick drink]</span></li><li>Even <strong>water</strong>, <strong>coffee</strong> and <strong>soup broth</strong>. <span class="pic">[cup]</span></li></ul></div><div class="pg"><h3>How to make it</h3><ul><li>1. Pour <strong>4 oz</strong> (<strong>120 mL</strong>) into a clean <strong>cup</strong>. <span class="pic">[cup]</span></li><li>2. Add <strong>1 scoop</strong> of <strong>ThickWell</strong> gel powder. <span class="pic">[scoop]</span></li><li>3. <strong>Stir</strong> with a <strong>fork</strong> for <strong>30 seconds</strong>. <span class="pic">[stir]</span></li></ul></div><div class="pg"><h3>Check it</h3><ul><li>4. <strong>Wait 1 minute</strong>. <span class="pic">[clock]</span></li><li>5. It should pour <strong>slowly</strong> off a spoon, like <strong>nectar</strong>. <span class="pic">[spoon]</span></li></ul></div><div class="pg"><h3>Do not</h3><ul><li>Do <strong>not</strong> add <strong>extra</strong> powder. <span class="pic">[no]</span></li><li><strong>No thin</strong> liquids. <span class="pic">[no glass of water]</span></li><li><strong>No ice cream</strong> or <strong>gelatin</strong>: they <strong>melt</strong> into thin liquid. <span class="pic">[ice cream]</span></li></ul></div><div class="pg"><h3>Throw it away</h3><ul><li>Throw away thick drinks after <strong>2 hours</strong> at <strong>room temperature</strong>. <span class="pic">[trash]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li>☎ Phone: (919) 555-0131 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p11">
+  <h2>11. Getting ready for your colonoscopy</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.3</span><b>test-procedure-colonoscopy-en</b> · en ·
+    procedure · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">COLONOSCOPY PREPARATION — Riverside GI Associates, 2100 Medical Park Drive, Suite 140
+Procedure: Monday, May 10, 2027. Arrive 8:00 a.m.
+5 DAYS BEFORE: Stop iron pills. Ask your neurologist before stopping clopidogrel; do not stop it on your own.
+1 DAY BEFORE: Clear liquids only all day (water, clear broth, apple juice, plain gelatin; nothing red or purple). At 6:00 p.m., drink the first half of the prep solution (1 liter) over 1 hour.
+DAY OF PROCEDURE: At 3:00 a.m., drink the second half (1 liter). Nothing by mouth after 4:00 a.m.
+You will receive sedation. An adult must drive you home. No driving for the rest of the day.
+Questions or to reschedule: (919) 555-0178.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Your colonoscopy</h3><ul><li><strong>Monday, May 10, 2027</strong> <span class="pic">[calendar]</span></li><li>Arrive at <strong>8:00 a.m.</strong> <span class="pic">[clock]</span></li><li><strong>Riverside GI Associates</strong> <span class="pic">[clinic]</span></li><li><strong>2100 Medical Park Drive, Suite 140</strong> <span class="pic">[map]</span></li></ul></div><div class="pg"><h3>5 days before</h3><ul><li><strong>Stop</strong> iron pills. <span class="pic">[stop]</span></li><li><strong>Ask</strong> your <strong>neurologist</strong> about clopidogrel. <span class="pic">[doctor]</span></li><li>Do <strong>not</strong> stop clopidogrel <strong>on your own</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>1 day before: food</h3><ul><li><strong>Clear liquids only</strong>, all day. <span class="pic">[glass of water]</span></li><li><strong>Water</strong>, clear broth, <strong>apple juice</strong>, plain gelatin. <span class="pic">[apple juice]</span></li><li><strong>Nothing red</strong> or <strong>purple</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>1 day before: at 6:00 p.m.</h3><ul><li>Drink the <strong>first half</strong> of the prep (<strong>1 liter</strong>). <span class="pic">[bottle]</span></li><li>Drink it over <strong>1 hour</strong>. <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Day of the test</h3><ul><li>At <strong>3:00 a.m.</strong>, drink the <strong>second half</strong> (<strong>1 liter</strong>). <span class="pic">[bottle]</span></li><li><strong>Nothing</strong> by mouth after <strong>4:00 a.m.</strong> <span class="pic">[no food]</span></li></ul></div><div class="pg"><h3>Going home</h3><ul><li>You will get medicine to make you <strong>sleepy</strong>. <span class="pic">[sleepy]</span></li><li>An <strong>adult</strong> must <strong>drive</strong> you home. <span class="pic">[car]</span></li><li><strong>No driving</strong> for the rest of the day. <span class="pic">[no driving]</span></li></ul></div><div class="pg"><h3>Questions or changes</h3><ul><li>☎ Phone: (919) 555-0178 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Sedation&#x27; explained as &#x27;medicine to make you sleepy&#x27;.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p12">
+  <h2>12. Low blood sugar</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.5</span><b>test-education-low-sugar-en</b> · en ·
+    education · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">LOW BLOOD SUGAR (HYPOGLYCEMIA)
+Low blood sugar is a reading below 70 mg/dL. Signs include shaking, sweating, fast heartbeat, hunger, confusion, and trouble speaking. After a stroke, it can be hard to tell low blood sugar from stroke symptoms, so check your sugar.
+RULE OF 15: 1. Eat or drink 15 grams of fast sugar: 4 oz (half cup) of juice or regular soda, or 4 glucose tablets. 2. Wait 15 minutes. 3. Check again. 4. If still below 70, repeat. 5. When above 70, eat a snack or meal.
+If the person cannot swallow safely or is not awake, do not give food or drink. Call 911.
+Call your diabetes team at (919) 555-0152 if you have low blood sugar more than 2 times in a week.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Low blood sugar</h3><ul><li>Low blood sugar is <strong>below 70 mg/dL</strong>. <span class="pic">[glucose meter]</span></li></ul></div><div class="pg"><h3>Signs</h3><ul><li><strong>Shaking</strong>, <strong>sweating</strong>, <strong>fast heartbeat</strong>. <span class="pic">[shaking]</span></li><li><strong>Hunger</strong>, <strong>confusion</strong>, trouble <strong>speaking</strong>. <span class="pic">[confused]</span></li><li>These can look like a <strong>stroke</strong>. <strong>Check</strong> your sugar. <span class="pic">[glucose meter]</span></li></ul></div><div class="pg"><h3>The rule of 15</h3><ul><li>1. Eat or drink <strong>15 grams</strong> of <strong>fast sugar</strong>. <span class="pic">[juice]</span></li><li>2. <strong>Wait 15 minutes</strong>. <span class="pic">[clock]</span></li><li>3. <strong>Check</strong> again. <span class="pic">[glucose meter]</span></li></ul></div><div class="pg"><h3>Fast sugar ideas</h3><ul><li><strong>4 oz</strong> (half cup) of <strong>juice</strong> or <strong>regular soda</strong>. <span class="pic">[juice]</span></li><li>Or <strong>4 glucose tablets</strong>. <span class="pic">[tablets]</span></li></ul></div><div class="pg"><h3>After you check</h3><ul><li>1. Still <strong>below 70</strong>? <strong>Repeat</strong>. <span class="pic">[repeat]</span></li><li>2. <strong>Above 70</strong>? Eat a <strong>snack</strong> or <strong>meal</strong>. <span class="pic">[meal]</span></li></ul></div><div class="pg"><h3>Emergency</h3><ul><li>Cannot <strong>swallow</strong> safely? Not <strong>awake</strong>? <span class="pic">[unconscious]</span></li><li>Do <strong>not</strong> give <strong>food</strong> or <strong>drink</strong>. <span class="pic">[no food]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div><div class="pg"><h3>Call your diabetes team</h3><ul><li>Low sugar <strong>more than 2 times</strong> in a week? <span class="pic">[calendar]</span></li><li>☎ Phone: (919) 555-0152 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p13">
+  <h2>13. New exercises from your physical therapist</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.1</span><b>test-message-pt-en</b> · en ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">From: Daniel Park, PT (Bright Path Home Health)
+To: Dolores Pruitt
+Subject: your new exercises
+
+Hi Dolores! Great job this week. I added 2 new exercises to your home program. Here&#x27;s the video link so your daughter can help: www.example.org/pt-video. Do each one 10 times, 2 times a day: (1) sit to stand from a firm chair WITHOUT using your hands, and (2) side steps holding the kitchen counter. Keep doing your walking with the walker 3 times a day. STOP if you feel dizzy or have chest pain. I&#x27;ll see you Thursday at 1 p.m. Questions? Call the office at (919) 555-0131. - Daniel</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>New exercises</h3><ul><li>For: <strong>Dolores Pruitt</strong> <span class="pic">[person]</span></li><li>From <strong>Daniel Park, PT</strong>. <span class="pic">[physical therapist]</span></li><li><strong>Great job</strong> this week! <span class="pic">[thumbs up]</span></li></ul></div><div class="pg"><h3>Exercise: sit to stand</h3><ul><li>Sit on a <strong>firm chair</strong>. <span class="pic">[chair]</span></li><li><strong>Stand up</strong> without using your <strong>hands</strong>. <span class="pic">[stand up]</span></li><li><strong>10 times</strong>, <strong>2 times</strong> a day. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Exercise: side steps</h3><ul><li>Hold the <strong>kitchen counter</strong>. <span class="pic">[counter]</span></li><li>Take <strong>side steps</strong>. <span class="pic">[side step]</span></li><li><strong>10 times</strong>, <strong>2 times</strong> a day. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Keep walking</h3><ul><li>Walk with your <strong>walker</strong> <strong>3 times</strong> a day. <span class="pic">[walker]</span></li></ul></div><div class="pg"><h3>Video</h3><ul><li>Your <strong>daughter</strong> can watch the video and <strong>help</strong>. <span class="pic">[family]</span></li><li><strong>www.example.org/pt-video</strong> <span class="pic">[video]</span></li></ul></div><div class="pg"><h3>Stop if</h3><ul><li>You feel <strong>dizzy</strong> or have <strong>chest pain</strong>. <strong>Stop</strong>. <span class="pic">[stop]</span></li></ul></div><div class="pg"><h3>Next visit</h3><ul><li><strong>Thursday</strong> at <strong>1 p.m.</strong> <span class="pic">[calendar]</span></li><li>☎ Questions? Call (919) 555-0131 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p14">
+  <h2>14. Your urgent care visit</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.2</span><b>test-visit-summary-urgent-en</b> · en ·
+    visit_summary · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">URGENT CARE VISIT SUMMARY — QuickCare Durham
+Patient: Walter Simmons | Visit: 02/27/2027
+Diagnosis: urinary tract infection (UTI).
+NEW MEDICINE: nitrofurantoin 100 mg capsule, 1 capsule by mouth twice a day with food for 5 days. Take all of it, even if you feel better.
+Drink plenty of water. Your urine may turn dark yellow or brown; this is normal with this medicine.
+We sent a urine culture. We will call you only if you need a different antibiotic.
+Go to the emergency room if you have fever over 101°F with back pain, vomiting, or confusion.
+Follow up with your primary care doctor if not better in 3 days. QuickCare: (919) 555-0179.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Your visit</h3><ul><li>For: <strong>Walter Simmons</strong> <span class="pic">[person]</span></li><li>You have a <strong>bladder infection</strong> (<strong>UTI</strong>). <span class="pic">[bladder]</span></li></ul></div><div class="pg"><h3>New medicine</h3><ul><li><strong>Nitrofurantoin 100 mg</strong> <span class="pic">[capsule]</span></li><li>Take <strong>1 capsule</strong> by mouth, <strong>twice</strong> a day, with <strong>food</strong>. <span class="pic">[capsule]</span></li><li>For <strong>5 days</strong>. <span class="pic">[calendar]</span></li><li>Take <strong>all</strong> of it, even if you feel <strong>better</strong>. <span class="pic">[check mark]</span></li></ul></div><div class="pg"><h3>Good to know</h3><ul><li>Drink <strong>plenty of water</strong>. <span class="pic">[glass of water]</span></li><li>Your urine may turn <strong>dark yellow</strong> or <strong>brown</strong>. This is <strong>normal</strong>. <span class="pic">[toilet]</span></li></ul></div><div class="pg"><h3>Urine test</h3><ul><li>We sent your urine to the <strong>lab</strong>. <span class="pic">[lab]</span></li><li>We will <strong>call</strong> only if you need a <strong>different medicine</strong>. <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>Go to the emergency room</h3><ul><li><strong>Fever</strong> over <strong>101°F</strong> with <strong>back pain</strong>? <span class="pic">[fever]</span></li><li><strong>Vomiting</strong>? <strong>Confusion</strong>? <span class="pic">[vomit]</span></li><li>Go to the <strong>emergency room</strong>. <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>Not better?</h3><ul><li>Not better in <strong>3 days</strong>? See your <strong>primary care</strong> doctor. <span class="pic">[doctor]</span></li><li>☎ QuickCare: (919) 555-0179 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Urinary tract infection&#x27; written as &#x27;bladder infection&#x27;. Please confirm.</li><li>&#x27;Urine culture&#x27; written as &#x27;we sent your urine to the lab&#x27;.</li><li>Left out on purpose: Visit date 02/27/2027: today&#x27;s date</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p15">
+  <h2>15. Reading practice at home</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.8</span><b>test-home-program-reading-en</b> · en ·
+    home_program · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">HOME PROGRAM: READING COMPREHENSION
+Do the checked activities for 20 minutes, 4 days per week.
+[ ] Match 10 written words to pictures. [ ] Read a short sentence and point to the matching picture. [ ] Read signs and labels in your kitchen and say what they mean. [ ] Read a menu and choose a meal. [ ] Read one short news story with a family member and answer 3 yes/no questions. [ ] Use the text-to-speech button on your tablet to check your reading.
+Use large print (at least 18 point). Keep a ruler or your finger under the line you are reading.
+Write your practice on the log and bring it to therapy. Therapist: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Reading practice</h3><ul><li>Practice <strong>reading</strong> at home. <span class="pic">[read]</span></li><li><strong>20 minutes</strong> a day. <span class="pic">[clock]</span></li><li><strong>4 days</strong> a week. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Do the checked activities</h3><ul><li>☐ Match <strong>10 words</strong> to <strong>pictures</strong>. <span class="pic">[picture cards]</span></li><li>☐ Read a <strong>short sentence</strong>. <strong>Point</strong> to the picture. <span class="pic">[point]</span></li><li>☐ Read <strong>signs</strong> and <strong>labels</strong> in your <strong>kitchen</strong>. <span class="pic">[kitchen]</span></li></ul></div><div class="pg"><h3>More activities</h3><ul><li>☐ Read a <strong>menu</strong> and <strong>choose</strong> a meal. <span class="pic">[menu]</span></li><li>☐ Read a <strong>news story</strong> with <strong>family</strong>. Answer <strong>3</strong> yes/no questions. <span class="pic">[newspaper]</span></li><li>☐ Use <strong>text-to-speech</strong> on your <strong>tablet</strong> to check. <span class="pic">[tablet]</span></li></ul></div><div class="pg"><h3>Tips</h3><ul><li>Use <strong>large print</strong>: at least <strong>18 point</strong>. <span class="pic">[large print]</span></li><li>Keep a <strong>ruler</strong> or your <strong>finger</strong> under the line. <span class="pic">[ruler]</span></li></ul></div><div class="pg"><h3>Keep track</h3><ul><li>Write your practice on the <strong>log</strong>. <span class="pic">[log sheet]</span></li><li><strong>Bring</strong> it to <strong>therapy</strong>. <span class="pic">[speech therapist]</span></li><li>Therapist: ____________ <span class="pic">[speech therapist]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p16">
+  <h2>16. Su muñeca fracturada</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.6</span><b>test-alta-fractura-es</b> · es ·
+    discharge · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">INSTRUCCIONES DE ALTA — Emergencias, Hospital Comunitario San Marcos
+Paciente: Guadalupe Torres | Expediente: 01127748
+Diagnóstico: fractura de la muñeca izquierda después de una caída. Se le puso una férula.
+CUIDADOS: Mantenga el brazo levantado sobre una almohada. Ponga hielo envuelto en una toalla 20 minutos cada 2 horas. No moje la férula; cúbrala con una bolsa para bañarse. Mueva los dedos con frecuencia.
+DOLOR: acetaminofén 500 mg, 2 tabletas cada 6 horas si lo necesita. No más de 3,000 mg en 24 horas.
+SEGUIMIENTO: Clínica de Ortopedia, Dr. Alan Brooks, lunes 15 de marzo de 2027 a las 10:00 a.m.
+REGRESE A EMERGENCIAS si los dedos están fríos, azules, entumidos o muy hinchados, o si el dolor empeora mucho.
+Caídas: pida a su médico una evaluación para prevenir caídas. Preguntas: (919) 555-0180.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su muñeca</h3><ul><li>Para: <strong>Guadalupe Torres</strong> <span class="pic">[persona]</span></li><li>Se <strong>fracturó</strong> la <strong>muñeca izquierda</strong> en una caída. <span class="pic">[muñeca]</span></li><li>Le pusieron una <strong>férula</strong>. <span class="pic">[férula]</span></li></ul></div><div class="pg"><h3>Cuidados</h3><ul><li>Ponga el brazo <strong>arriba</strong>, sobre una <strong>almohada</strong>. <span class="pic">[almohada]</span></li><li><strong>Hielo</strong> envuelto en una toalla, <strong>20 minutos</strong> cada <strong>2 horas</strong>. <span class="pic">[hielo]</span></li><li>Mueva los <strong>dedos</strong> seguido. <span class="pic">[dedos]</span></li></ul></div><div class="pg"><h3>No moje la férula</h3><ul><li><strong>No moje</strong> la férula. <span class="pic">[no agua]</span></li><li>Para bañarse, <strong>cúbrala</strong> con una <strong>bolsa</strong>. <span class="pic">[bolsa]</span></li></ul></div><div class="pg"><h3>Para el dolor</h3><ul><li><strong>Acetaminofén 500 mg</strong>, <strong>2 tabletas</strong>. <span class="pic">[pastilla]</span></li><li>Cada <strong>6 horas</strong>, si lo necesita. <span class="pic">[reloj]</span></li><li><strong>No más</strong> de <strong>3,000 mg</strong> en <strong>24 horas</strong>. <span class="pic">[advertencia]</span></li></ul></div><div class="pg"><h3>Su cita</h3><ul><li><strong>Clínica de Ortopedia</strong>, <strong>Dr. Alan Brooks</strong> <span class="pic">[médico]</span></li><li><strong>lunes 15 de marzo de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>10:00 a.m.</strong> <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Regrese a Emergencias</h3><ul><li>¿Dedos <strong>fríos</strong>, <strong>azules</strong> o <strong>entumidos</strong>? <span class="pic">[dedos]</span></li><li>¿Muy <strong>hinchados</strong>? ¿El dolor <strong>empeora</strong> mucho? <span class="pic">[dolor]</span></li><li><strong>Regrese</strong> a <strong>Emergencias</strong>. <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>Prevenir caídas</h3><ul><li>Pida a su <strong>médico</strong> una evaluación para <strong>prevenir caídas</strong>. <span class="pic">[caída]</span></li><li>☎ Preguntas: (919) 555-0180 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: Expediente 01127748: número de registro</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p17">
+  <h2>17. Su visita anual</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>test-cita-bienestar-es</b> · es ·
+    appointment · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">RECORDATORIO: VISITA ANUAL DE BIENESTAR DE MEDICARE
+Paciente: Alberto Ruiz
+Su visita anual de bienestar es el martes 20 de abril de 2027 a las 8:00 a.m. con la Dra. Ana Morales, Clínica Familiar Las Palmas. Esta visita no tiene costo para usted con Medicare.
+En la visita: revisaremos sus medicamentos, su memoria, su riesgo de caídas y sus vacunas. Puede recibir la vacuna de la gripe y la del neumococo ese día.
+Traiga: todos sus frascos de medicinas, sus lentes y audífonos, y la lista de sus otros médicos. Su hijo puede venir con usted.
+No necesita estar en ayunas.
+Para cambiar la cita: (919) 555-0144.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su visita anual</h3><ul><li>Para: <strong>Alberto Ruiz</strong> <span class="pic">[persona]</span></li><li>Con la <strong>Dra. Ana Morales</strong>. <span class="pic">[doctora]</span></li><li>En la <strong>Clínica Familiar Las Palmas</strong>. <span class="pic">[clínica]</span></li><li><strong>No cuesta</strong> nada con <strong>Medicare</strong>. <span class="pic">[gratis]</span></li></ul></div><div class="pg"><h3>Cuándo</h3><ul><li><strong>martes 20 de abril de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>8:00 a.m.</strong> <span class="pic">[reloj]</span></li><li><strong>Puede comer</strong> antes. <span class="pic">[comer]</span></li></ul></div><div class="pg"><h3>Qué revisamos</h3><ul><li>Sus <strong>medicinas</strong> y su <strong>memoria</strong>. <span class="pic">[pastillas]</span></li><li>Su riesgo de <strong>caídas</strong>. <span class="pic">[caída]</span></li><li>Sus <strong>vacunas</strong>. <span class="pic">[vacuna]</span></li></ul></div><div class="pg"><h3>Vacunas</h3><ul><li>Puede recibir la vacuna de la <strong>gripe</strong>. <span class="pic">[vacuna]</span></li><li>Y la del <strong>neumococo</strong>. <span class="pic">[vacuna]</span></li></ul></div><div class="pg"><h3>Qué traer</h3><ul><li>1. <strong>Todos</strong> sus <strong>frascos</strong> de medicinas. <span class="pic">[frasco de pastillas]</span></li><li>2. Sus <strong>lentes</strong> y <strong>audífonos</strong>. <span class="pic">[lentes]</span></li><li>3. La <strong>lista</strong> de sus otros <strong>médicos</strong>. <span class="pic">[lista]</span></li></ul></div><div class="pg"><h3>Puede venir acompañado</h3><ul><li>Su <strong>hijo</strong> puede venir con usted. <span class="pic">[familia]</span></li></ul></div><div class="pg"><h3>Cambiar la cita</h3><ul><li>☎ Teléfono: (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;No necesita estar en ayunas&#x27; se escribió como &#x27;Puede comer antes&#x27;.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p18">
+  <h2>18. Su prednisona: la dosis baja poco a poco</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>test-medicamento-prednisona-es</b> · es ·
+    medication · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PREDNISONA 10 MG TABLETAS — DOSIS QUE BAJA POCO A POCO
+Paciente: Teresa Campos | Médico: Dr. Tomás Aguilar
+Tome las tabletas por la boca cada mañana con el desayuno:
+| Días | Tabletas cada mañana | Dosis |
+| Días 1 a 3 | 4 tabletas | 40 mg |
+| Días 4 a 6 | 3 tabletas | 30 mg |
+| Días 7 a 9 | 2 tabletas | 20 mg |
+| Días 10 a 12 | 1 tableta | 10 mg |
+Luego pare.
+No deje de tomarla de repente. Puede subir su azúcar en la sangre; si tiene diabetes, revise su azúcar 2 veces al día. Puede causar problemas para dormir y cambios de humor.
+Llame al (919) 555-0144 si su azúcar pasa de 300 o tiene fiebre.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su medicina</h3><ul><li>Para: <strong>Teresa Campos</strong> <span class="pic">[persona]</span></li><li><strong>Prednisona 10 mg</strong>, tabletas <span class="pic">[pastilla]</span></li><li>Del <strong>Dr. Tomás Aguilar</strong>. <span class="pic">[médico]</span></li><li>Tómela cada <strong>mañana</strong> con el <strong>desayuno</strong>, por la boca. <span class="pic">[desayuno]</span></li></ul></div><div class="pg"><h3>Días 1 a 3</h3><ul><li><strong>4 tabletas</strong> cada mañana (<strong>40 mg</strong>). <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Días 4 a 6</h3><ul><li><strong>3 tabletas</strong> cada mañana (<strong>30 mg</strong>). <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Días 7 a 9</h3><ul><li><strong>2 tabletas</strong> cada mañana (<strong>20 mg</strong>). <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Días 10 a 12</h3><ul><li><strong>1 tableta</strong> cada mañana (<strong>10 mg</strong>). <span class="pic">[pastilla]</span></li><li>Luego <strong>pare</strong>. <span class="pic">[parar]</span></li></ul></div><div class="pg"><h3>Importante</h3><ul><li><strong>No deje</strong> de tomarla de <strong>repente</strong>. <span class="pic">[no parar]</span></li><li>Puede <strong>subir</strong> su <strong>azúcar</strong>. <span class="pic">[glucómetro]</span></li><li>¿Tiene <strong>diabetes</strong>? Revise su azúcar <strong>2 veces</strong> al día. <span class="pic">[glucómetro]</span></li><li>Puede causar problemas para <strong>dormir</strong> y cambios de <strong>humor</strong>. <span class="pic">[cama]</span></li></ul></div><div class="pg"><h3>Llame</h3><ul><li>¿Azúcar de <strong>más de 300</strong>? ¿<strong>Fiebre</strong>? <span class="pic">[termómetro]</span></li><li>☎ Teléfono: (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Cada paso de la dosis tiene su propia página; marque los días en un calendario puede ayudar (no está en el original).</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p19">
+  <h2>19. La ansiedad después de un derrame</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.2</span><b>test-salud-mental-ansiedad-es</b> · es ·
+    mental_health · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">LA ANSIEDAD DESPUÉS DE UN DERRAME CEREBRAL
+Muchas personas sienten nervios, preocupación o miedo después de un derrame. Con la afasia, puede dar ansiedad hablar con otros o contestar el teléfono.
+Lo que puede ayudar: respirar despacio (inhale contando 4, exhale contando 6); tener una tarjeta que diga &quot;Tengo afasia. Por favor hable despacio&quot;; practicar conversaciones con su terapeuta del habla; y hablar con un consejero.
+El Centro de Consejería Oak Valley tiene consejeros que hablan español: (919) 555-0160.
+Si piensa en hacerse daño, llame o envíe un mensaje de texto al 988. Si está en peligro, llame al 911.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Sentir nervios</h3><ul><li>Muchas personas sienten <strong>nervios</strong> o <strong>miedo</strong> después de un <strong>derrame</strong>. <span class="pic">[nervioso]</span></li><li>Con <strong>afasia</strong>, hablar o contestar el <strong>teléfono</strong> puede dar <strong>ansiedad</strong>. <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>Respire despacio</h3><ul><li>1. <strong>Inhale</strong> contando hasta <strong>4</strong>. <span class="pic">[inhalar]</span></li><li>2. <strong>Exhale</strong> contando hasta <strong>6</strong>. <span class="pic">[exhalar]</span></li></ul></div><div class="pg"><h3>Una tarjeta</h3><ul><li>Lleve una <strong>tarjeta</strong> que diga: <span class="pic">[tarjeta]</span></li><li><strong>&quot;Tengo afasia. Por favor hable despacio.&quot;</strong> <span class="pic">[tarjeta]</span></li></ul></div><div class="pg"><h3>Más ayuda</h3><ul><li>Practique <strong>conversaciones</strong> con su <strong>terapeuta del habla</strong>. <span class="pic">[terapeuta del habla]</span></li><li>Hable con un <strong>consejero</strong>. <span class="pic">[consejero]</span></li></ul></div><div class="pg"><h3>Consejería en español</h3><ul><li><strong>Centro de Consejería Oak Valley</strong> <span class="pic">[edificio]</span></li><li>☎ Teléfono: (919) 555-0160 <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>Ayuda ahora</h3><ul><li>¿Piensa en <strong>hacerse daño</strong>? <span class="pic">[ayuda]</span></li><li class="crisis">⚠ Llame o envíe un mensaje de texto al 988 <span class="pic">[teléfono]</span></li><li class="crisis">⚠ ¿Está en peligro? Llame al 911 <span class="pic">[ambulancia]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p20">
+  <h2>20. Sus resultados de la resonancia</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.7</span><b>test-resultados-resonancia-es</b> · es ·
+    results · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">Estimada Sra. Esperanza Vidal:
+La Dra. Lucía Herrera revisó su resonancia magnética del cerebro del 11/02/2027.
+Resultado: Se ve el área del derrame cerebral que tuvo en enero, en el lado izquierdo. No hay derrames nuevos. No hay sangrado. Las arterias del cuello se ven bien.
+Qué significa: su tratamiento está funcionando. Siga tomando el clopidogrel 75 mg y la atorvastatina 40 mg igual.
+Su próxima cita es el viernes 9 de abril de 2027 a las 11:30 a.m.
+Si tiene preguntas, llame al (919) 555-0145.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Sus resultados</h3><ul><li>Para: <strong>Sra. Esperanza Vidal</strong> <span class="pic">[persona]</span></li><li>La <strong>Dra. Lucía Herrera</strong> revisó su <strong>resonancia</strong> del <strong>cerebro</strong>. <span class="pic">[resonancia magnética]</span></li></ul></div><div class="pg"><h3>Lo que se ve</h3><ul><li>Se ve el área del <strong>derrame</strong> de <strong>enero</strong>, en el lado <strong>izquierdo</strong>. <span class="pic">[cerebro]</span></li><li><strong>No</strong> hay derrames <strong>nuevos</strong>. <span class="pic">[bien]</span></li><li><strong>No</strong> hay <strong>sangrado</strong>. <span class="pic">[bien]</span></li><li>Las <strong>arterias</strong> del cuello se ven <strong>bien</strong>. <span class="pic">[cuello]</span></li></ul></div><div class="pg"><h3>Qué significa</h3><ul><li>Su tratamiento está <strong>funcionando</strong>. <span class="pic">[pulgar arriba]</span></li></ul></div><div class="pg"><h3>Sus medicinas</h3><ul><li>Siga tomando <strong>clopidogrel 75 mg</strong> igual. <span class="pic">[pastilla]</span></li><li>Siga tomando <strong>atorvastatina 40 mg</strong> igual. <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Próxima cita</h3><ul><li><strong>viernes 9 de abril de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>11:30 a.m.</strong> <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>¿Preguntas?</h3><ul><li>☎ Teléfono: (919) 555-0145 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: Fecha de la resonancia 11/02/2027: fecha pasada</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p21">
+  <h2>21. Renueve su Medicaid</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.4</span><b>test-seguro-renovacion-es</b> · es ·
+    insurance · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">AVISO DE RENOVACIÓN DE MEDICAID — ACCIÓN REQUERIDA
+Miembro: Carmen Ruiz | Número de caso: 7730-551
+Es hora de renovar su Medicaid. Si no renueva antes del 31 de mayo de 2027, su cobertura puede terminar.
+Cómo renovar: en línea en www.example.org/renovar, por teléfono al 1-800-555-0182, o en persona en el Departamento de Servicios Sociales del Condado, 300 Elm Street.
+Envíe: comprobante de ingresos de los últimos 30 días (talones de pago o carta del Seguro Social) y comprobante de domicilio (factura de luz o contrato de renta).
+Si necesita ayuda por su afasia, puede pedir que alguien de su confianza le ayude o pedir una cita con un trabajador de casos.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Renueve su Medicaid</h3><ul><li>Para: <strong>Carmen Ruiz</strong> <span class="pic">[persona]</span></li><li>Número de caso: <strong>7730-551</strong> <span class="pic">[tarjeta]</span></li><li>Es hora de <strong>renovar</strong> su <strong>Medicaid</strong>. <span class="pic">[formulario]</span></li></ul></div><div class="pg"><h3>Fecha límite</h3><ul><li>Renueve antes del <strong>31 de mayo de 2027</strong>. <span class="pic">[calendario]</span></li><li>Si no, su <strong>cobertura</strong> puede <strong>terminar</strong>. <span class="pic">[advertencia]</span></li></ul></div><div class="pg"><h3>Qué enviar</h3><ul><li>Prueba de <strong>ingresos</strong> de los últimos <strong>30 días</strong>. <span class="pic">[dinero]</span></li><li>Como <strong>talones de pago</strong> o carta del <strong>Seguro Social</strong>. <span class="pic">[documento]</span></li><li>Prueba de <strong>domicilio</strong>: factura de <strong>luz</strong> o contrato de <strong>renta</strong>. <span class="pic">[casa]</span></li></ul></div><div class="pg"><h3>Ayuda con la afasia</h3><ul><li>Alguien de su <strong>confianza</strong> le puede <strong>ayudar</strong>. <span class="pic">[familia]</span></li><li>O pida una cita con un <strong>trabajador de casos</strong>. <span class="pic">[trabajadora social]</span></li></ul></div><div class="pg"><h3>Dónde, en persona</h3><ul><li><strong>Departamento de Servicios Sociales</strong> del <strong>Condado</strong> <span class="pic">[edificio]</span></li></ul></div><div class="pg"><h3>Cómo renovar</h3><ul><li>1. <strong>En línea</strong>: www.example.org/renovar <span class="pic">[computadora]</span></li><li>2. Por <strong>teléfono</strong>. <span class="pic">[teléfono]</span></li><li>3. En persona: <strong>300 Elm Street</strong>. <span class="pic">[edificio]</span></li><li>☎ Teléfono: 1-800-555-0182 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>La dirección &#x27;300 Elm Street&#x27; no tiene ciudad en el original.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p22">
+  <h2>22. Cómo usar su inhalador</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.2</span><b>test-como-inhalador-es</b> · es ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CÓMO USAR SU INHALADOR CON ESPACIADOR
+Medicina: albuterol, 2 inhalaciones cada 4 a 6 horas si le falta el aire.
+1. Agite el inhalador 5 veces. 2. Ponga el inhalador en el espaciador. 3. Saque todo el aire de sus pulmones. 4. Ponga la boquilla en su boca y cierre bien los labios. 5. Oprima el inhalador una vez. 6. Respire lento y profundo. 7. Aguante la respiración 10 segundos. 8. Espere 1 minuto y repita para la segunda inhalación.
+Lave el espaciador una vez por semana con agua y jabón; déjelo secar al aire.
+Llame al 911 si le falta mucho el aire, tiene los labios azules o no puede hablar por la falta de aire. Preguntas: Farmacia Central (919) 555-0154.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su inhalador</h3><ul><li>Medicina: <strong>albuterol</strong>. <span class="pic">[inhalador]</span></li><li><strong>2 inhalaciones</strong> cada <strong>4 a 6 horas</strong>. <span class="pic">[reloj]</span></li><li>Solo si le <strong>falta el aire</strong>. <span class="pic">[respirar]</span></li></ul></div><div class="pg"><h3>Prepare</h3><ul><li>1. <strong>Agite</strong> el inhalador <strong>5 veces</strong>. <span class="pic">[agitar]</span></li><li>2. Póngalo en el <strong>espaciador</strong>. <span class="pic">[espaciador]</span></li><li>3. Saque <strong>todo el aire</strong> de sus pulmones. <span class="pic">[exhalar]</span></li></ul></div><div class="pg"><h3>Use</h3><ul><li>4. Boquilla en la <strong>boca</strong>. Cierre bien los <strong>labios</strong>. <span class="pic">[boca]</span></li><li>5. <strong>Oprima</strong> el inhalador <strong>una vez</strong>. <span class="pic">[oprimir]</span></li><li>6. Respire <strong>lento</strong> y <strong>profundo</strong>. <span class="pic">[inhalar]</span></li></ul></div><div class="pg"><h3>Termine</h3><ul><li>7. <strong>Aguante</strong> la respiración <strong>10 segundos</strong>. <span class="pic">[reloj]</span></li><li>8. Espere <strong>1 minuto</strong>. <strong>Repita</strong> una vez más. <span class="pic">[repetir]</span></li></ul></div><div class="pg"><h3>Limpieza</h3><ul><li>Lave el <strong>espaciador</strong> una vez por <strong>semana</strong>. <span class="pic">[lavar]</span></li><li>Con <strong>agua</strong> y <strong>jabón</strong>. Déjelo <strong>secar</strong> al aire. <span class="pic">[secar]</span></li></ul></div><div class="pg"><h3>Emergencia</h3><ul><li>¿Le falta <strong>mucho</strong> el aire? ¿Labios <strong>azules</strong>? <span class="pic">[respirar]</span></li><li>¿No puede <strong>hablar</strong> por la falta de aire? <span class="pic">[hablar]</span></li><li class="crisis">⚠ Llame al 911 <span class="pic">[ambulancia]</span></li></ul></div><div class="pg"><h3>¿Preguntas?</h3><ul><li><strong>Farmacia Central</strong> <span class="pic">[farmacia]</span></li><li>☎ Teléfono: (919) 555-0154 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p23">
+  <h2>23. Su plan de terapia ocupacional</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.4</span><b>test-plan-to-es</b> · es ·
+    therapy_plan · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PLAN DE CUIDADO — TERAPIA OCUPACIONAL
+Lakeside Therapy Partners | Paciente: Jorge Castillo | Terapeuta: Luis Romero, OTR/L
+Diagnóstico: debilidad del lado derecho después de un derrame cerebral (I69.351).
+METAS (8 semanas): (1) Vestirse la parte de arriba sin ayuda. (2) Abotonar una camisa en menos de 3 minutos. (3) Preparar un sándwich de forma segura. (4) Escribir su nombre de forma que se pueda leer.
+FRECUENCIA: 2 veces por semana por 8 semanas.
+TRATAMIENTO: ejercicios para la mano, práctica de tareas diarias, y enseñar a la familia.
+Firma del médico: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Su plan de terapia</h3><ul><li>Para: <strong>Jorge Castillo</strong> <span class="pic">[persona]</span></li><li>Terapeuta: <strong>Luis Romero, OTR/L</strong> <span class="pic">[terapia ocupacional]</span></li><li>En <strong>Lakeside Therapy Partners</strong>. <span class="pic">[clínica]</span></li><li>Su lado <strong>derecho</strong> está <strong>débil</strong> por el <strong>derrame</strong>. <span class="pic">[brazo débil]</span></li></ul></div><div class="pg"><h3>Meta 1 y meta 2</h3><ul><li><strong>Vestirse</strong> la parte de arriba <strong>sin ayuda</strong>. <span class="pic">[camisa]</span></li><li><strong>Abotonar</strong> una camisa en menos de <strong>3 minutos</strong>. <span class="pic">[botones]</span></li></ul></div><div class="pg"><h3>Meta 3 y meta 4</h3><ul><li>Preparar un <strong>sándwich</strong> de forma <strong>segura</strong>. <span class="pic">[sándwich]</span></li><li><strong>Escribir</strong> su nombre para que se pueda <strong>leer</strong>. <span class="pic">[escribir]</span></li></ul></div><div class="pg"><h3>Cada cuánto</h3><ul><li><strong>2 veces</strong> por semana. <span class="pic">[calendario]</span></li><li>Por <strong>8 semanas</strong>. <span class="pic">[calendario]</span></li></ul></div><div class="pg"><h3>Qué va a hacer</h3><ul><li><strong>Ejercicios</strong> para la <strong>mano</strong>. <span class="pic">[mano]</span></li><li>Practicar <strong>tareas diarias</strong>. <span class="pic">[práctica]</span></li><li>Su <strong>familia</strong> aprende a <strong>ayudar</strong>. <span class="pic">[familia]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: Código I69.351: código de facturación</li><li>Left out on purpose: Línea de firma del médico: para el médico</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p24">
+  <h2>24. Ejercicio para su corazón</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.3</span><b>test-referido-cardiaca-es</b> · es ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERIDO A REHABILITACIÓN CARDÍACA
+Paciente: Héctor Navarro | Médico: Dr. Pablo Serrano, Cardiología
+Motivo: fibrilación auricular y derrame cerebral reciente. Programa de ejercicio supervisado para el corazón.
+Programa: 3 sesiones por semana por 12 semanas, en el Centro de Rehabilitación Cardíaca San Marcos, 2do piso. Cada sesión dura 1 hora: ejercicio con monitor del corazón y clases sobre alimentación y medicinas.
+Use ropa y zapatos cómodos. Coma algo ligero 1 a 2 horas antes. Traiga su lista de medicinas.
+El programa lo llamará en 1 semana. Si no lo llaman: (919) 555-0183.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Rehabilitación cardíaca</h3><ul><li>Para: <strong>Héctor Navarro</strong> <span class="pic">[persona]</span></li><li>El <strong>Dr. Pablo Serrano</strong> lo refirió. <span class="pic">[médico]</span></li><li>Es <strong>ejercicio</strong> con <strong>supervisión</strong> para su <strong>corazón</strong>. <span class="pic">[corazón]</span></li></ul></div><div class="pg"><h3>Por qué</h3><ul><li>Usted tiene <strong>fibrilación auricular</strong>. <span class="pic">[corazón]</span></li><li>Y tuvo un <strong>derrame cerebral</strong> hace poco. <span class="pic">[cerebro]</span></li></ul></div><div class="pg"><h3>El programa</h3><ul><li><strong>3 sesiones</strong> por semana, por <strong>12 semanas</strong>. <span class="pic">[calendario]</span></li><li>Cada sesión dura <strong>1 hora</strong>. <span class="pic">[reloj]</span></li><li><strong>Centro de Rehabilitación Cardíaca San Marcos</strong>, <strong>2do piso</strong> <span class="pic">[edificio]</span></li></ul></div><div class="pg"><h3>En cada sesión</h3><ul><li><strong>Ejercicio</strong> con un <strong>monitor</strong> del corazón. <span class="pic">[monitor cardíaco]</span></li><li><strong>Clases</strong> sobre <strong>comida</strong> y <strong>medicinas</strong>. <span class="pic">[clase]</span></li></ul></div><div class="pg"><h3>Antes de cada sesión</h3><ul><li>Use ropa y zapatos <strong>cómodos</strong>. <span class="pic">[zapatos]</span></li><li>Coma algo <strong>ligero</strong> <strong>1 a 2 horas</strong> antes. <span class="pic">[comida]</span></li><li>Traiga su <strong>lista</strong> de <strong>medicinas</strong>. <span class="pic">[lista de medicamentos]</span></li></ul></div><div class="pg"><h3>Lo van a llamar</h3><ul><li>El programa lo llamará en <strong>1 semana</strong>. <span class="pic">[teléfono]</span></li><li>¿No lo llamaron? <strong>Llame</strong> usted. <span class="pic">[teléfono]</span></li><li>☎ Teléfono: (919) 555-0183 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p25">
+  <h2>25. Su medicina está lista</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.0</span><b>test-buzon-farmacia-es</b> · es ·
+    message · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">[Transcripción de mensaje de voz, 4:05 PM] &quot;Buenas tardes, este mensaje es para Marisol Vega, de la Farmacia Central. Su receta de empagliflozina 10 mg ya está lista. Eh, el seguro la cubrió y su copago es de $15. La puede recoger hoy hasta las 9:00 p.m. o mañana desde las 8:00 a.m. Si prefiere que se la mandemos a su casa, el envío es gratis, nada más llámenos. Recuerde traer su identificación. Nuestro número es el (919) 555-0154. Gracias.&quot;</div></div>
+    <div><b>Aphasia-friendly version</b> (4 pages)<div class="pages"><div class="pg"><h3>Su medicina está lista</h3><ul><li>Para: <strong>Marisol Vega</strong> <span class="pic">[persona]</span></li><li>Llamó la <strong>Farmacia Central</strong>. <span class="pic">[farmacia]</span></li><li>Su <strong>empagliflozina 10 mg</strong> está <strong>lista</strong>. <span class="pic">[pastilla]</span></li></ul></div><div class="pg"><h3>Costo</h3><ul><li>El seguro la <strong>cubrió</strong>. <span class="pic">[tarjeta de seguro]</span></li><li>Usted paga <strong>$15</strong>. <span class="pic">[dinero]</span></li></ul></div><div class="pg"><h3>Cuándo recogerla</h3><ul><li><strong>Hoy</strong>, hasta las <strong>9:00 p.m.</strong> <span class="pic">[reloj]</span></li><li>O <strong>mañana</strong>, desde las <strong>8:00 a.m.</strong> <span class="pic">[reloj]</span></li><li>Traiga su <strong>identificación</strong>. <span class="pic">[identificación]</span></li></ul></div><div class="pg"><h3>Envío a su casa</h3><ul><li>Se la pueden <strong>mandar</strong> a su casa <strong>gratis</strong>. <span class="pic">[casa]</span></li><li><strong>Llame</strong> para pedirlo. <span class="pic">[teléfono]</span></li><li>☎ Farmacia Central: (919) 555-0154 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Hoy&#x27; y &#x27;mañana&#x27; dependen del día del mensaje; el mensaje no da la fecha.</li><li>Left out on purpose: Hora del mensaje 4:05 PM: cuándo llamaron</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section></body></html>
