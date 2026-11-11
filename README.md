@@ -32,8 +32,7 @@ examples/                            sample inputs and finished outputs (open th
 | `batch2_es` | 12 | made up, Spanish: same mix, plus caregiver support and social work referral |
 
 **50 pairs**: English 30, Spanish 20. All pass the fact check.
-SLP status: the first 25 (seed, unc_batch1, madeup_batch1) were approved by a CCC-SLP (anonymous) on 2026-11-11 with no
-changes. Batch 2 (25 pairs) is waiting for review: `review/review_book.html`.
+SLP status: **all 50 approved** by a CCC-SLP (anonymous) on 2026-11-11, with no changes.
 Never put real patient documents in this repo; keep them in a `private/` folder (it is never uploaded).
 
 ## Setup (once)

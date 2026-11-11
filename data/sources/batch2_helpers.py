@@ -29,6 +29,12 @@ def pair(pid, lang, doc_type, source, original, title, pages, notes=()):
     }
 
 
+def mark_reviewed(pairs, reviewer, date):
+    """Record SLP approval for every pair in a batch."""
+    for p in pairs:
+        p.update({"slp_reviewed": True, "reviewed_by": reviewer, "review_date": date})
+
+
 def write(pairs, filename):
     out = Path(__file__).resolve().parent.parent / "pairs" / filename
     with out.open("w", encoding="utf-8") as fh:

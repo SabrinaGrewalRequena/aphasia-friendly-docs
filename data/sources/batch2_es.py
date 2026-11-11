@@ -1,5 +1,5 @@
 """Batch 2 (Spanish): 12 made-up pairs. All names, clinics, IDs and numbers are invented
-(phones use 555-01xx; websites use example.org). Not SLP-reviewed yet.
+(phones use 555-01xx; websites use example.org). Approved with no changes by a CCC-SLP (anonymous) on 2026-11-11.
 
 Run:  python data/sources/batch2_es.py
 """
@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch2_helpers import B, C, CR, P, PH, S, T, pair, write  # noqa: E402
+from batch2_helpers import B, C, CR, P, PH, S, T, mark_reviewed, pair, write  # noqa: E402
 
 TEL = "teléfono"
 
@@ -362,4 +362,5 @@ pair("referral-social-work-es-001", "es", "referral", "Referido a trabajo social
         PH("Teléfono: (919) 555-0122", TEL))]),
 ]
 
+mark_reviewed(PAIRS, "CCC-SLP (anonymous)", "2026-11-11")
 write(PAIRS, "batch2_es.jsonl")
