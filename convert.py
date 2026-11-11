@@ -30,17 +30,16 @@ from pathlib import Path
 import factcheck
 import render
 import score
-from common import ROOT, parse_model_json, read_document, validate
+from common import ROOT, load_pairs, parse_model_json, read_document, validate
 
 LANG_NAMES = {"en": "English", "es": "Spanish"}
 
 
 def load_examples(lang, k, pairs_file, exclude_text=""):
     """Pick up to k training pairs, preferring the same language and reviewed pairs."""
-    path = Path(pairs_file)
-    if not path.exists() or k <= 0:
+    if k <= 0:
         return []
-    pairs = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+    pairs = load_pairs(pairs_file)
     pairs = [p for p in pairs if p.get("split", "train") == "train" and p["original"].strip() != exclude_text.strip()]
     pairs.sort(key=lambda p: (p.get("language") != lang, not p.get("slp_reviewed", False)))
     return pairs[:k]
@@ -101,7 +100,7 @@ def main():
     ap.add_argument("--model", default="claude-sonnet-5-5")
     ap.add_argument("--base-url", default="http://localhost:11434/v1")
     ap.add_argument("--examples", type=int, default=2, help="how many example pairs to show the model")
-    ap.add_argument("--pairs", default=str(ROOT / "data" / "pairs.jsonl"))
+    ap.add_argument("--pairs", default=str(ROOT / "data" / "pairs"))
     ap.add_argument("--from-json", help="skip the model; check + render this JSON reply instead")
     ap.add_argument("--keep", action="append", default=[], help="text that must appear exactly, e.g. a clinic name")
     ap.add_argument("--out-dir", default="out")

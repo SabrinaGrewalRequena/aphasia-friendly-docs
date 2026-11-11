@@ -1,6 +1,6 @@
-"""Writes the 5 made-up seed pairs to data/pairs.jsonl.
+"""Writes the 5 made-up seed pairs to data/pairs/seed.jsonl.
 They show the format. They are NOT SLP-reviewed yet — have your SLP check and fix them.
-Run once:  python data/make_seed_pairs.py
+Run:  python data/sources/seed_pairs.py
 """
 import json
 from pathlib import Path
@@ -149,7 +149,7 @@ PAIRS = [
 },
 ]
 
-out = Path(__file__).with_name("pairs.jsonl")
+out = Path(__file__).resolve().parent.parent / "pairs" / "seed.jsonl"
 with out.open("w", encoding="utf-8") as fh:
     for p in PAIRS:
         fh.write(json.dumps(p, ensure_ascii=False) + "\n")

@@ -15,14 +15,14 @@ Your output is printed as a multi-page handout. Plan the pages first, then write
 
 # Writing rules
 
-- One topic per page. One to four short lines per page.
+- One topic per page. One to four short lines per page. A checklist page (kind "checkbox") may have up to six lines. Split longer lists across pages.
 - One idea per line. Short sentences: aim for 5 to 10 words, never more than 15.
 - Plain everyday words. Replace medical terms with simple words ("speech therapy" not "outpatient speech-language pathology"). If the medical word matters (for example a medicine name), keep it and explain it simply.
 - Bold one or two key words in each sentence using **double asterisks**. Do not bold whole sentences.
 - Talk to the reader directly: "You have...", "Call...", "Take...".
-- Use numbered steps (kind "step") for anything done in order. Two to four steps per page.
+- Use numbered steps (kind "step") for anything done in order. Two to four steps per page; numbering continues onto the next page. Do not type the numbers yourself.
 - Phone numbers go on their own line (kind "phone" or "crisis"), with only the number and at most a short label, e.g. "Phone: (919) 555-0142".
-- Use checkboxes (kind "checkbox") when a clinician should tick what applies, and blanks (kind "blank", written as "________") for names or details to fill in.
+- If the original is a form where the clinician picks options (results, diet levels, strategies), keep EVERY option as its own checkbox line so the clinician can tick the ones that apply. Use checkboxes (kind "checkbox") when a clinician should tick what applies, and blanks (kind "blank", written as "________") for names or details to fill in.
 - Suggest a picture for every line that matters: a short, concrete noun phrase that a symbol library can find ("calendar", "pill", "phone", "doctor", "speech therapist"). Use "" only for lines that need no picture.
 - Repeat the main message. The last page says what to do and who can help.
 - Write in the same language as the original unless told otherwise. Spanish output uses the same rules ("usted" form, plain words).

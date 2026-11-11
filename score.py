@@ -56,8 +56,9 @@ def score(doc, max_grade=5, max_lines=4, max_words=15):
     pages = doc.get("pages", [])
     for i, page in enumerate(pages, 1):
         lines = page.get("lines", [])
-        if len(lines) > max_lines:
-            issues.append(f"page {i}: {len(lines)} lines (max {max_lines})")
+        limit = 6 if lines and all(l.get("kind") in ("checkbox", "blank") for l in lines) else max_lines
+        if len(lines) > limit:
+            issues.append(f"page {i}: {len(lines)} lines (max {limit})")
         for j, line in enumerate(lines, 1):
             t, kind = line.get("text", ""), line.get("kind")
             n = len(words(strip_md(t)))
@@ -75,7 +76,8 @@ def score(doc, max_grade=5, max_lines=4, max_words=15):
             fact_line = re.fullmatch(r"\*\*[^*]+\*\*\.?", t.strip())   # e.g. a date or address alone
             if bolds and not fact_line and sum(len(words(b)) for b in bolds) > max(4, n // 2):
                 issues.append(f"page {i} line {j}: too much bold")
-    if pages:
+    has_contact = any(l.get("kind") in ("phone", "crisis") for _, l in all_lines(doc))
+    if pages and has_contact:
         last_kinds = {l.get("kind") for l in pages[-1].get("lines", [])}
         if not last_kinds & {"phone", "crisis"}:
             issues.append("last page has no phone/contact line (should end with who can help)")

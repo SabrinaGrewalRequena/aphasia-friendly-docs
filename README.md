@@ -6,17 +6,31 @@ What it still needs is **your data, an SLP, and a model run**.
 ```
 prompts/system.md            Step 1  the writing rules, as the model's instructions (confirm with your SLP)
 prompts/system_short.md              short version used for fine-tuning
-data/pairs.jsonl             Step 2  your example pairs (5 made-up seed pairs to start)
+data/pairs/                  Step 2  example pairs, one .jsonl file per batch (25 so far)
+data/sources/                        the scripts that write each batch (edit these, then re-run)
+check_pairs.py                       fact check + score every pair
+review_pairs.py                      review book for you and your SLP (review/review_book.html)
 data/make_seed_pairs.py              recreates the 5 seed pairs
 convert.py                   Step 3  baseline: document in -> checked, printable handout out
 factcheck.py                         every name/date/time/dose/address/phone kept? any number invented?
 score.py                             reading grade level + format rules (lines per page, bold, pictures...)
 render.py                            JSON -> printable HTML, one topic per page, ARASAAC pictures
-build_dataset.py             Step 4  pairs.jsonl -> train.jsonl / test.jsonl
+build_dataset.py             Step 4  data/pairs/ -> train.jsonl / test.jsonl
 notebooks/finetune_colab.ipynb       LoRA fine-tune of Qwen3-4B on free Colab GPU
 evaluate.py                  Step 5  run + compare systems, make a blinded SLP review sheet
 examples/                            sample inputs and finished outputs (open the .html files)
 ```
+
+## Data so far
+
+| Batch | Pairs | Where from |
+|---|---|---|
+| `seed` | 5 | made up |
+| `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts; originals written for this project |
+| `madeup_batch1` | 12 | made up (fake names, 555 numbers, example.org) |
+
+English 17, Spanish 8. All pass the fact check. **None are SLP-reviewed yet.**
+Never put real patient documents in this repo; keep them in a `private/` folder (it is never uploaded).
 
 ## Setup (once)
 
@@ -50,15 +64,15 @@ python convert.py my_letter.txt --from-json reply.json
 **1. Rules.** `prompts/system.md` holds every rule from the proposal. Go through it with your SLP and edit
 it in plain English — the model reads it as written. Keep `prompts/system_short.md` in step with it.
 
-**2. Example pairs.** Each line of `data/pairs.jsonl` is one original + its aphasia-friendly version (see the
-5 seed pairs for the format). Fastest way to grow the set:
+**2. Example pairs.** Each line of a file in `data/pairs/` is one original + its aphasia-friendly version.
+Run `python check_pairs.py` to fact-check them all and `python review_pairs.py` to make a review book. Fastest way to grow the set:
 
 ```bash
 python convert.py new_original.txt --save-pair data/drafts.jsonl
 ```
 
 Then **correct each draft by hand** (and with your SLP), set `"slp_reviewed": true`, fill in `provenance`
-and `license`, and move it into `pairs.jsonl`. Never train on uncorrected drafts — the fine-tuned model
+and `license`, and move it into a file in `data/pairs/`. Never train on uncorrected drafts — the fine-tuned model
 would just copy the baseline's mistakes. Aim for a spread of all 5 document types in both languages.
 
 **3. Baseline.** `convert.py` (above). Score a batch with `evaluate.py run`.

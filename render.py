@@ -126,8 +126,13 @@ def render(doc, report_text="", passed=None, pictos=True, reviewed_by=""):
         parts.append('<div class="banner">Notes for reviewer (not printed):\n'
                      + "\n".join("• " + html.escape(n) for n in notes) + "</div>")
 
+    step = 0
+    prev_last_kind = None
     for i, page in enumerate(doc.get("pages", [])):
-        step = 0
+        page_lines = page.get("lines", [])
+        if not (page_lines and page_lines[0].get("kind") == "step" and prev_last_kind == "step"):
+            step = 0
+        prev_last_kind = page_lines[-1].get("kind") if page_lines else None
         lines_html = []
         for line in page.get("lines", []):
             if line.get("kind") == "step":

@@ -138,7 +138,7 @@ def main():
     r.add_argument("--model", default="claude-sonnet-5-5")
     r.add_argument("--base-url", default="http://localhost:11434/v1")
     r.add_argument("--examples", type=int, default=2)
-    r.add_argument("--pairs", default=str(ROOT / "data" / "pairs.jsonl"))
+    r.add_argument("--pairs", default=str(ROOT / "data" / "pairs"))
     c = sub.add_parser("compare")
     c.add_argument("test")
     c.add_argument("dirs", nargs="+")

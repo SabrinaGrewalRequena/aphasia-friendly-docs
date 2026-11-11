@@ -52,6 +52,18 @@ def validate(doc):
     return problems
 
 
+def load_pairs(path):
+    """Load example pairs from one .jsonl file or every .jsonl file in a folder."""
+    p = Path(path)
+    files = sorted(p.glob("*.jsonl")) if p.is_dir() else [p] if p.exists() else []
+    pairs = []
+    for f in files:
+        for line in f.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                pairs.append(json.loads(line))
+    return pairs
+
+
 def strip_md(text):
     return text.replace("**", "")
 

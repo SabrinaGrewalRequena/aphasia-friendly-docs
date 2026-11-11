@@ -1,4 +1,4 @@
-"""Turn data/pairs.jsonl into training files for fine-tuning (Step 4).
+"""Turn the pairs in data/pairs/ into training files for fine-tuning (Step 4).
 
 Writes:
   data/train.jsonl  chat-format examples for the Colab notebook
@@ -17,20 +17,20 @@ import random
 from collections import defaultdict
 from pathlib import Path
 
-from common import ROOT, validate
+from common import ROOT, load_pairs, validate
 from convert import user_message
 import factcheck
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--pairs", default=str(ROOT / "data" / "pairs.jsonl"))
+    ap.add_argument("--pairs", default=str(ROOT / "data" / "pairs"))
     ap.add_argument("--reviewed-only", action="store_true")
     ap.add_argument("--test-share", type=float, default=0.15)
     a = ap.parse_args()
 
     system = (ROOT / "prompts" / "system_short.md").read_text(encoding="utf-8").strip()
-    pairs = [json.loads(l) for l in Path(a.pairs).read_text(encoding="utf-8").splitlines() if l.strip()]
+    pairs = load_pairs(a.pairs)
 
     kept, skipped = [], []
     for p in pairs:
@@ -50,6 +50,12 @@ def main():
             rng.shuffle(g)
             for p in g[:round(len(g) * a.test_share)]:
                 p["split"] = "test"
+        # small groups round down to 0, so top up to the overall share
+        rest = [p for p, _ in kept if p.get("split") != "test"]
+        rng.shuffle(rest)
+        need = round(len(kept) * a.test_share) - sum(p.get("split") == "test" for p, _ in kept)
+        for p in rest[:max(need, 0)]:
+            p["split"] = "test"
 
     train, test = [], []
     for p, _ in kept:
