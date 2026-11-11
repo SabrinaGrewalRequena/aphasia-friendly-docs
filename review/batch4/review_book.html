@@ -1,0 +1,456 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Example Pair Review</title><style>
+:root { --bg:#f4f4f2; --card:#fff; --ink:#1b1b1b; --muted:#666; --line:#ddd; --ok:#2e7d32; --warn:#b26a00; --bad:#b00020; }
+@media (prefers-color-scheme: dark) { :root { --bg:#161616; --card:#222; --ink:#eee; --muted:#aaa; --line:#3a3a3a; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+header { padding:24px 16px 8px; max-width:1200px; margin:auto; }
+h1 { margin:0 0 4px; font-size:24px; }
+.sub { color:var(--muted); }
+.toc { max-width:1200px; margin:8px auto 16px; padding:0 16px; columns: 2 280px; }
+.toc a { color:inherit; display:block; padding:2px 0; }
+.pair { max-width:1200px; margin:0 auto 28px; padding:16px; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.pair h2 { margin:0; font-size:19px; }
+.meta { color:var(--muted); font-size:13px; margin:4px 0 10px; }
+.badge { display:inline-block; padding:1px 8px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid currentColor; margin-right:6px; }
+.ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+.cols { display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.6fr); gap:16px; }
+@media (max-width: 800px) { .cols { grid-template-columns: 1fr; } }
+.orig { white-space:pre-wrap; background:var(--bg); border-radius:8px; padding:12px; font-size:14px; }
+.pages { display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:10px; }
+.pg { border:1px solid var(--line); border-radius:8px; padding:10px; background:var(--card); }
+.pg h3 { margin:0 0 6px; font-size:14px; border-bottom:2px solid var(--ink); padding-bottom:4px; }
+.pg ol, .pg ul { margin:0; padding-left:18px; } .pg li { margin:4px 0; font-size:14px; }
+.pg ul { list-style:none; padding-left:0; }
+.pic { color:var(--muted); font-size:11px; }
+.crisis { color:var(--bad); font-weight:700; }
+.notes { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--warn); background:var(--bg); border-radius:4px; font-size:14px; }
+.box { margin-top:10px; font-size:14px; }
+.box span { display:inline-block; margin-right:18px; }
+@media print { body { background:#fff; } .pair { break-inside: avoid-page; page-break-after: always; border:none; } .toc { display:none; } }
+</style></head><body><header><h1>Example pair review</h1><div class='sub'>25 pairs waiting for review. Original on the left, aphasia-friendly version on the right. ☐ = clinician ticks what applies, ☎ = phone line, ⚠ = emergency line, [grey words] = picture suggestion.</div></header><nav class='toc'><a href="#p1">1. Speech therapy by video <span class="sub">(en, consent)</span></a><a href="#p2">2. Photos of you <span class="sub">(en, consent)</span></a><a href="#p3">3. Your insurance said no <span class="sub">(en, insurance)</span></a><a href="#p4">4. Filling your pill box <span class="sub">(en, how_to)</span></a><a href="#p5">5. Check your blood pressure <span class="sub">(en, how_to)</span></a><a href="#p6">6. Your brain wave test (EEG) <span class="sub">(en, procedure)</span></a><a href="#p7">7. A program for people with aphasia <span class="sub">(en, referral)</span></a><a href="#p8">8. Meeting a dietitian <span class="sub">(en, referral)</span></a><a href="#p9">9. Going back to work <span class="sub">(en, letter)</span></a><a href="#p10">10. Signing up for MyChart <span class="sub">(en, how_to)</span></a><a href="#p11">11. Terapia del habla por video <span class="sub">(es, consent)</span></a><a href="#p12">12. Compartir su información médica <span class="sub">(es, consent)</span></a><a href="#p13">13. Su seguro dijo que no <span class="sub">(es, insurance)</span></a><a href="#p14">14. Cómo llenar su pastillero <span class="sub">(es, how_to)</span></a><a href="#p15">15. Tomarse la presión <span class="sub">(es, how_to)</span></a><a href="#p16">16. Su prueba de ondas del cerebro (EEG) <span class="sub">(es, procedure)</span></a><a href="#p17">17. Su ecocardiograma <span class="sub">(es, procedure)</span></a><a href="#p18">18. Un programa para personas con afasia <span class="sub">(es, referral)</span></a><a href="#p19">19. Cita con la nutricionista <span class="sub">(es, referral)</span></a><a href="#p20">20. Volver al trabajo <span class="sub">(es, letter)</span></a><a href="#p21">21. Inscribirse en el portal <span class="sub">(es, how_to)</span></a><a href="#p22">22. Su equipo está aprobado <span class="sub">(es, insurance)</span></a><a href="#p23">23. Cómo usar su andador <span class="sub">(es, how_to)</span></a><a href="#p24">24. Cita para sus ojos <span class="sub">(es, referral)</span></a><a href="#p25">25. Fotos de usted <span class="sub">(es, consent)</span></a></nav>
+<section class="pair" id="p1">
+  <h2>1. Speech therapy by video</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.7</span><b>consent-telehealth-en-001</b> · en ·
+    consent · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CONSENT FOR TELEHEALTH SERVICES — Piedmont Speech Clinic
+Telehealth means receiving speech therapy by live video instead of in person. Your therapist will use a secure video platform. Sessions are not recorded unless you give separate written permission. Risks include poor video or sound quality and, rarely, interruptions or privacy breaches. You may stop a telehealth session at any time and ask for an in-person visit instead. Your insurance may cover telehealth differently than in-person visits; check with your plan.
+[ ] I agree to receive speech therapy by telehealth.
+[ ] I do not agree to telehealth. I want in-person visits only.
+Patient signature: ____________ Date: ____________
+Questions: (919) 555-0161</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Speech therapy by video</h3><ul><li>You can have <strong>speech therapy</strong> by <strong>video</strong>. <span class="pic">[video call]</span></li><li>Instead of going to the <strong>clinic</strong>. <span class="pic">[clinic]</span></li><li>The video is <strong>secure</strong>. <span class="pic">[lock]</span></li></ul></div><div class="pg"><h3>Recording</h3><ul><li>We do <strong>not record</strong> the video. <span class="pic">[no camera]</span></li><li>Only if you say <strong>yes</strong> in <strong>writing</strong>. <span class="pic">[signature]</span></li></ul></div><div class="pg"><h3>Possible problems</h3><ul><li>The <strong>picture</strong> or <strong>sound</strong> may be <strong>poor</strong>. <span class="pic">[video call]</span></li><li>Rarely, the call may <strong>stop</strong>. <span class="pic">[pause]</span></li><li>Rarely, <strong>privacy</strong> may be <strong>broken</strong>. <span class="pic">[lock]</span></li></ul></div><div class="pg"><h3>You choose</h3><ul><li>You can <strong>stop</strong> any time. <span class="pic">[stop]</span></li><li>You can ask for an <strong>in-person</strong> visit. <span class="pic">[clinic]</span></li><li><strong>Insurance</strong> may pay <strong>differently</strong>. Ask your plan. <span class="pic">[insurance card]</span></li></ul></div><div class="pg"><h3>Please choose</h3><ul><li>☐ <strong>Yes</strong>, I want therapy by <strong>video</strong>. <span class="pic">[yes]</span></li><li>☐ <strong>No</strong>, I want <strong>in-person</strong> visits only. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Sign</h3><ul><li>Signature: ____________ <span class="pic">[signature]</span></li><li>Date: ____________ <span class="pic">[calendar]</span></li><li>☎ Questions? Call (919) 555-0161 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Consent form: the clinic&#x27;s privacy or legal team should also approve the wording.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p2">
+  <h2>2. Photos of you</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.9</span><b>consent-photo-en-001</b> · en ·
+    consent · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PHOTO RELEASE FORM
+Piedmont Speech Clinic would like to take photos of you to make personal communication materials, such as a picture board or a photo book of your family and daily activities. With your permission, we may also use photos in printed clinic materials or on our website. Your name will not appear with any photo used outside your own materials. You may withdraw this permission at any time by telling your therapist; photos already printed may not be recalled. Saying no will not affect your care.
+[ ] Yes, photos for my own communication materials only.
+[ ] Yes, photos for my materials AND for clinic materials or the website.
+[ ] No photos.
+Signature: ____________ Date: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Photos of you</h3><ul><li>We would like to take <strong>photos</strong> of you. <span class="pic">[camera]</span></li><li>To make your own <strong>picture board</strong> or <strong>photo book</strong>. <span class="pic">[photo album]</span></li><li>Of your <strong>family</strong> and <strong>daily activities</strong>. <span class="pic">[family]</span></li></ul></div><div class="pg"><h3>Other use</h3><ul><li>If you say <strong>yes</strong>, we may also use photos in <strong>clinic papers</strong>. <span class="pic">[brochure]</span></li><li>Or on our <strong>website</strong>. <span class="pic">[website]</span></li><li>Your <strong>name</strong> will <strong>not</strong> be shown with them. <span class="pic">[no name]</span></li></ul></div><div class="pg"><h3>You choose</h3><ul><li>You can <strong>change your mind</strong> any time. <span class="pic">[change]</span></li><li>Tell your <strong>therapist</strong>. <span class="pic">[speech therapist]</span></li><li>Photos <strong>already printed</strong> may <strong>not</strong> come back. <span class="pic">[printer]</span></li><li>Saying no does <strong>not change</strong> your <strong>care</strong>. <span class="pic">[care]</span></li></ul></div><div class="pg"><h3>Please choose</h3><ul><li>☐ <strong>Yes</strong>, for <strong>my own</strong> materials only. <span class="pic">[yes]</span></li><li>☐ <strong>Yes</strong>, for my materials <strong>and</strong> clinic papers or website. <span class="pic">[yes]</span></li><li>☐ <strong>No</strong> photos. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Sign</h3><ul><li>Signature: ____________ <span class="pic">[signature]</span></li><li>Date: ____________ <span class="pic">[calendar]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p3">
+  <h2>3. Your insurance said no</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.3</span><b>insurance-denial-en-001</b> · en ·
+    insurance · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">NOTICE OF DENIAL OF COVERAGE
+Member: Frank Delgado | Member ID: XJH551902 | Plan: Carolina Community Health Plan
+Your request for 10 additional outpatient speech therapy visits has been denied. Reason: the information we received does not show continued measurable progress toward your therapy goals.
+YOUR RIGHT TO APPEAL: You or someone you choose, such as your therapist, may ask us to review this decision. You must file your appeal within 60 days of the date on this letter. Send any new information, such as recent progress notes. To appeal, call Member Services at 1-800-555-0105 (TTY 711) or write to: Appeals Unit, PO Box 4410, Raleigh, NC.
+If you disagree with our appeal decision, you may ask for an independent external review.
+Free help is available from the Health Insurance Help Line at 1-800-555-0162.</div></div>
+    <div><b>Aphasia-friendly version</b> (8 pages)<div class="pages"><div class="pg"><h3>Your insurance said no</h3><ul><li>For: <strong>Frank Delgado</strong> <span class="pic">[person]</span></li><li>Member ID: <strong>XJH551902</strong> <span class="pic">[card]</span></li><li>You asked for <strong>10 more</strong> speech therapy visits. <span class="pic">[speech therapist]</span></li><li>Your plan said <strong>no</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Why</h3><ul><li>The plan did not see enough <strong>progress</strong> toward your <strong>goals</strong>. <span class="pic">[chart]</span></li></ul></div><div class="pg"><h3>You can appeal</h3><ul><li><strong>Appeal</strong> means asking them to <strong>look again</strong>. <span class="pic">[review]</span></li><li>You or someone you <strong>choose</strong> can do it. <span class="pic">[person]</span></li><li>Your <strong>therapist</strong> can help. <span class="pic">[speech therapist]</span></li></ul></div><div class="pg"><h3>Deadline</h3><ul><li>Appeal within <strong>60 days</strong> of the date on the letter. <span class="pic">[calendar]</span></li><li>Send <strong>new information</strong>, like <strong>progress notes</strong>. <span class="pic">[document]</span></li></ul></div><div class="pg"><h3>How to appeal: call</h3><ul><li>Call <strong>Member Services</strong>. <span class="pic">[phone]</span></li><li>☎ Phone: 1-800-555-0105 <span class="pic">[phone]</span></li><li>☎ TTY: 711 <span class="pic">[tty]</span></li></ul></div><div class="pg"><h3>How to appeal: write</h3><ul><li>Write to: <strong>Appeals Unit, PO Box 4410, Raleigh, NC</strong> <span class="pic">[envelope]</span></li></ul></div><div class="pg"><h3>Still disagree?</h3><ul><li>Ask for an <strong>outside review</strong>. <span class="pic">[review]</span></li><li>Someone <strong>outside</strong> the plan will look at it. <span class="pic">[person]</span></li></ul></div><div class="pg"><h3>Free help</h3><ul><li><strong>Health Insurance Help Line</strong> <span class="pic">[help]</span></li><li>☎ Phone: 1-800-555-0162 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Independent external review&#x27; became &#x27;outside review: someone outside the plan will look at it&#x27;. Please confirm.</li><li>The letter&#x27;s own date is not printed here because the original gives no date; the reader must use the date on the letter.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p4">
+  <h2>4. Filling your pill box</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.2</span><b>how-to-pill-organizer-en-001</b> · en ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">HOW TO FILL YOUR WEEKLY PILL ORGANIZER
+Use a pill organizer with 7 days and 2 times per day (AM and PM).
+1. Pick one day each week to fill it, for example Sunday. 2. Wash and dry your hands. 3. Line up your pill bottles and your medication list. 4. Fill one medicine at a time: put it in every box where it belongs, then put the bottle away. 5. When you finish, compare each box with your medication list. 6. Close all the lids.
+Do not put liquid medicines, inhalers, or pills that must stay in their package into the organizer.
+If a pill is a different color or shape than usual, call your pharmacy before taking it: (919) 555-0102.
+Ask a family member or your pharmacist to check your organizer the first few times.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Your pill box</h3><ul><li>Your pill box has <strong>7 days</strong>. <span class="pic">[pill organizer]</span></li><li><strong>2 times</strong> a day: <strong>AM</strong> and <strong>PM</strong>. <span class="pic">[sun and moon]</span></li></ul></div><div class="pg"><h3>Get ready</h3><ul><li>1. Pick <strong>one day</strong> each week, like <strong>Sunday</strong>. <span class="pic">[calendar]</span></li><li>2. <strong>Wash</strong> and <strong>dry</strong> your hands. <span class="pic">[wash hands]</span></li><li>3. Line up your <strong>pill bottles</strong> and your <strong>medicine list</strong>. <span class="pic">[pill bottle]</span></li></ul></div><div class="pg"><h3>Fill it</h3><ul><li>4. Fill <strong>one medicine</strong> at a time. <span class="pic">[pill]</span></li><li>5. Put it in <strong>every box</strong> where it belongs. <span class="pic">[pill organizer]</span></li><li>6. Put that <strong>bottle away</strong>. <span class="pic">[pill bottle]</span></li></ul></div><div class="pg"><h3>Check it</h3><ul><li>7. <strong>Compare</strong> each box with your <strong>list</strong>. <span class="pic">[check]</span></li><li>8. <strong>Close</strong> all the lids. <span class="pic">[close]</span></li></ul></div><div class="pg"><h3>Not in the pill box</h3><ul><li><strong>Liquid</strong> medicines. <span class="pic">[liquid medicine]</span></li><li><strong>Inhalers</strong>. <span class="pic">[inhaler]</span></li><li>Pills that must stay in their <strong>package</strong>. <span class="pic">[blister pack]</span></li></ul></div><div class="pg"><h3>Get help</h3><ul><li>Ask <strong>family</strong> or your <strong>pharmacist</strong> to check it. <span class="pic">[family]</span></li><li>Do this the <strong>first few times</strong>. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Pill looks different?</h3><ul><li>Different <strong>color</strong> or <strong>shape</strong>? <span class="pic">[pill]</span></li><li><strong>Call</strong> your pharmacy <strong>before</strong> you take it. <span class="pic">[pharmacy]</span></li><li>☎ Pharmacy: (919) 555-0102 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Step 4 of the original (fill one medicine, put it in every box, put the bottle away) is split into 3 steps; step numbers on the handout therefore differ from the original.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p5">
+  <h2>5. Check your blood pressure</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.9</span><b>how-to-blood-pressure-en-001</b> · en ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">HOW TO CHECK YOUR BLOOD PRESSURE AT HOME
+Before: Do not smoke, exercise, or drink coffee for 30 minutes. Empty your bladder.
+Steps: 1. Sit in a chair with your back supported and both feet flat on the floor. 2. Rest quietly for 5 minutes. 3. Put the cuff on your bare upper arm, at heart level, on the arm your doctor told you to use. 4. Press start. Do not talk or move. 5. Write down both numbers and the time. 6. Wait 1 minute and take a second reading.
+Your goal: below 130/80. Bring your log to every visit.
+Call your doctor at (919) 555-0123 if your top number is above 180 or your bottom number is above 110 on two readings.
+Call 911 if your blood pressure is that high AND you have chest pain, trouble speaking, weakness, or vision changes.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Before you check</h3><ul><li><strong>No smoking</strong>, <strong>exercise</strong> or <strong>coffee</strong> for <strong>30 minutes</strong>. <span class="pic">[no coffee]</span></li><li>Go to the <strong>bathroom</strong> first. <span class="pic">[toilet]</span></li></ul></div><div class="pg"><h3>Sit and rest</h3><ul><li>1. <strong>Sit</strong> with your <strong>back</strong> supported. <span class="pic">[chair]</span></li><li>2. Both <strong>feet flat</strong> on the floor. <span class="pic">[feet]</span></li><li>3. <strong>Rest</strong> quietly for <strong>5 minutes</strong>. <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Put on the cuff</h3><ul><li>4. Put the cuff on your <strong>bare upper arm</strong>. <span class="pic">[blood pressure cuff]</span></li><li>5. Keep it at <strong>heart level</strong>. <span class="pic">[heart]</span></li><li>6. Use the arm your <strong>doctor</strong> told you. <span class="pic">[arm]</span></li></ul></div><div class="pg"><h3>Take the reading</h3><ul><li>7. Press <strong>start</strong>. Do <strong>not talk</strong> or <strong>move</strong>. <span class="pic">[button]</span></li><li>8. <strong>Write down</strong> both numbers and the <strong>time</strong>. <span class="pic">[write]</span></li><li>9. Wait <strong>1 minute</strong>. Check it <strong>again</strong>. <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Your goal</h3><ul><li>Below <strong>130/80</strong>. <span class="pic">[target]</span></li><li>Bring your <strong>list</strong> to <strong>every visit</strong>. <span class="pic">[list]</span></li></ul></div><div class="pg"><h3>Call your doctor</h3><ul><li>Top number above <strong>180</strong>? <span class="pic">[blood pressure]</span></li><li>Or bottom number above <strong>110</strong>? <span class="pic">[blood pressure]</span></li><li>On <strong>two</strong> readings? <strong>Call</strong>. <span class="pic">[phone]</span></li><li>☎ Doctor: (919) 555-0123 <span class="pic">[phone]</span></li></ul></div><div class="pg"><h3>Emergency</h3><ul><li>Blood pressure <strong>that high</strong>, and: <span class="pic">[warning]</span></li><li><strong>Chest pain</strong>? Trouble <strong>speaking</strong>? <span class="pic">[chest pain]</span></li><li><strong>Weakness</strong>? <strong>Vision</strong> changes? <span class="pic">[weak arm]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>The original&#x27;s 6 steps are split into 9 shorter steps.</li><li>&#x27;Empty your bladder&#x27; became &#x27;go to the bathroom first&#x27;.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p6">
+  <h2>6. Your brain wave test (EEG)</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.9</span><b>procedure-eeg-en-001</b> · en ·
+    procedure · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">ROUTINE EEG (ELECTROENCEPHALOGRAM) — PATIENT INSTRUCTIONS
+An EEG records the electrical activity of your brain using small metal discs (electrodes) placed on your scalp with a paste. It does not hurt and does not send electricity into your body.
+Appointment: Monday, February 22, 2027 at 1:00 p.m., Neurology Testing, Westfield Medical Plaza, 600 Oakmont Drive, Suite 310.
+The night before: wash your hair with shampoo only. Do not use conditioner, oil, gel, or hairspray. Your doctor may ask you to sleep less than usual the night before; follow the instructions on your order.
+Take your usual medications unless your doctor tells you otherwise. Avoid caffeine on the day of the test.
+The test takes about 60 to 90 minutes. You may be asked to breathe deeply and look at a flashing light.
+To reschedule: (919) 555-0103.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Your EEG</h3><ul><li>An <strong>EEG</strong> checks your <strong>brain waves</strong>. <span class="pic">[brain]</span></li><li>Small <strong>metal discs</strong> go on your <strong>head</strong> with a <strong>paste</strong>. <span class="pic">[electrodes]</span></li></ul></div><div class="pg"><h3>It does not hurt</h3><ul><li>It does <strong>not hurt</strong>. <span class="pic">[no pain]</span></li><li>It does <strong>not</strong> put <strong>electricity</strong> into your body. <span class="pic">[no electricity]</span></li></ul></div><div class="pg"><h3>When and where</h3><ul><li><strong>Monday, February 22, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>1:00 p.m.</strong> <span class="pic">[clock]</span></li><li><strong>Neurology Testing</strong>, <strong>Westfield Medical Plaza</strong> <span class="pic">[hospital]</span></li><li><strong>600 Oakmont Drive, Suite 310</strong> <span class="pic">[map]</span></li></ul></div><div class="pg"><h3>The night before</h3><ul><li>Wash your <strong>hair</strong> with <strong>shampoo only</strong>. <span class="pic">[shampoo]</span></li><li><strong>No</strong> conditioner, oil, gel or hairspray. <span class="pic">[no]</span></li><li>Your doctor may ask you to <strong>sleep less</strong>. <span class="pic">[sleep]</span></li><li>Follow the <strong>instructions</strong> on your <strong>order</strong>. <span class="pic">[document]</span></li></ul></div><div class="pg"><h3>Medicine and caffeine</h3><ul><li>Take your <strong>usual medicines</strong>. <span class="pic">[pill]</span></li><li>Unless your <strong>doctor</strong> says something else. <span class="pic">[doctor]</span></li><li><strong>No caffeine</strong> on the test day. <span class="pic">[no coffee]</span></li></ul></div><div class="pg"><h3>During the test</h3><ul><li>It takes about <strong>60 to 90 minutes</strong>. <span class="pic">[clock]</span></li><li>You may <strong>breathe deeply</strong>. <span class="pic">[breathe]</span></li><li>You may look at a <strong>flashing light</strong>. <span class="pic">[light]</span></li></ul></div><div class="pg"><h3>Change your visit</h3><ul><li>☎ Phone: (919) 555-0103 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p7">
+  <h2>7. A program for people with aphasia</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.2</span><b>referral-aphasia-program-en-001</b> · en ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERRAL — COMMUNITY APHASIA PROGRAM
+To: Triangle Aphasia Connections | From: Jordan Ellis, M.S., CCC-SLP, Piedmont Speech Clinic
+Client: Bernard Okafor has completed outpatient speech therapy and is referred for ongoing participation in your community program to maintain communication skills and social participation.
+Program information for the client: Triangle Aphasia Connections offers conversation groups, a book club, and a computer skills class for adults with aphasia. Groups meet Tuesdays and Thursdays, 10:00 a.m. to 12:00 p.m. Membership is $25 per month; scholarships are available. Care partners may attend at no cost.
+Next step: an intake coordinator will call you within 2 weeks to schedule a 30-minute intake visit. If you do not hear from them, call (919) 555-0163.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>A program for you</h3><ul><li>For: <strong>Bernard Okafor</strong> <span class="pic">[person]</span></li><li><strong>Jordan Ellis, M.S., CCC-SLP</strong> sent you to a <strong>program</strong>. <span class="pic">[speech therapist]</span></li><li>It is <strong>Triangle Aphasia Connections</strong>. <span class="pic">[group]</span></li></ul></div><div class="pg"><h3>Why</h3><ul><li>To keep your <strong>communication skills</strong>. <span class="pic">[conversation]</span></li><li>To stay <strong>social</strong>. <span class="pic">[friends]</span></li></ul></div><div class="pg"><h3>What they offer</h3><ul><li><strong>Conversation</strong> groups. <span class="pic">[conversation]</span></li><li>A <strong>book club</strong>. <span class="pic">[book]</span></li><li>A <strong>computer</strong> class. <span class="pic">[computer]</span></li></ul></div><div class="pg"><h3>When</h3><ul><li><strong>Tuesdays</strong> and <strong>Thursdays</strong>. <span class="pic">[calendar]</span></li><li><strong>10:00 a.m.</strong> to <strong>12:00 p.m.</strong> <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Cost</h3><ul><li><strong>$25</strong> a month. <span class="pic">[money]</span></li><li>Help with cost (<strong>scholarships</strong>) is available. <span class="pic">[money]</span></li><li>Your <strong>care partner</strong> comes <strong>free</strong>. <span class="pic">[family]</span></li></ul></div><div class="pg"><h3>Next step</h3><ul><li>They will <strong>call you</strong> within <strong>2 weeks</strong>. <span class="pic">[phone]</span></li><li>To plan a <strong>30-minute</strong> first visit. <span class="pic">[clock]</span></li><li>No call? <strong>Call them</strong>. <span class="pic">[phone]</span></li><li>☎ Phone: (919) 555-0163 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p8">
+  <h2>8. Meeting a dietitian</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.3</span><b>referral-dietitian-en-001</b> · en ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERRAL: MEDICAL NUTRITION THERAPY
+Patient: Shirley Abernathy | Referring provider: Dr. Karen Liu | Diagnoses: hypertension, hyperlipidemia, history of stroke.
+Reason for referral: Education on a heart-healthy, low-sodium diet (less than 2,000 mg sodium per day) and weight management.
+Appointment: Wednesday, March 17, 2027 at 2:30 p.m. with Nadia Fontaine, RD, at Maple Ridge Family Medicine. Covered by most insurance plans when ordered by your doctor.
+Please bring: a 3-day food diary (everything you eat and drink), your medication list, and any food labels you have questions about. A family member who shops or cooks for you is encouraged to attend.
+To change your appointment, call (919) 555-0123.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Meeting a dietitian</h3><ul><li>For: <strong>Shirley Abernathy</strong> <span class="pic">[person]</span></li><li><strong>Dr. Karen Liu</strong> wants you to see a <strong>dietitian</strong>. <span class="pic">[dietitian]</span></li><li>A dietitian helps with <strong>food</strong> and <strong>health</strong>. <span class="pic">[healthy food]</span></li></ul></div><div class="pg"><h3>Why</h3><ul><li>To learn about <strong>heart-healthy</strong> eating. <span class="pic">[heart]</span></li><li>To eat <strong>less salt</strong>: under <strong>2,000 mg</strong> of <strong>sodium</strong> a day. <span class="pic">[salt]</span></li><li>To help with your <strong>weight</strong>. <span class="pic">[scale]</span></li></ul></div><div class="pg"><h3>When and where</h3><ul><li><strong>Wednesday, March 17, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>2:30 p.m.</strong> <span class="pic">[clock]</span></li><li>With <strong>Nadia Fontaine, RD</strong> <span class="pic">[dietitian]</span></li><li>At <strong>Maple Ridge Family Medicine</strong>. <span class="pic">[clinic]</span></li></ul></div><div class="pg"><h3>Cost</h3><ul><li>Most <strong>insurance</strong> pays when your <strong>doctor</strong> orders it. <span class="pic">[insurance card]</span></li></ul></div><div class="pg"><h3>What to bring</h3><ul><li>1. A <strong>food diary</strong> for <strong>3 days</strong>: everything you eat and drink. <span class="pic">[diary]</span></li><li>2. Your <strong>medicine list</strong>. <span class="pic">[medicine list]</span></li><li>3. <strong>Food labels</strong> you have questions about. <span class="pic">[food label]</span></li></ul></div><div class="pg"><h3>Bring a helper</h3><ul><li>Does someone <strong>shop</strong> or <strong>cook</strong> for you? <span class="pic">[cooking]</span></li><li><strong>Bring them</strong> too. <span class="pic">[family]</span></li></ul></div><div class="pg"><h3>Change your visit</h3><ul><li>☎ Phone: (919) 555-0123 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;A dietitian helps with food and health&#x27; adds a short plain explanation. Diagnoses (hypertension, hyperlipidemia) are not listed; the reasons page covers them.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p9">
+  <h2>9. Going back to work</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.7</span><b>letter-work-en-001</b> · en ·
+    letter · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">WORK STATUS REPORT
+Patient: Anthony Russo | Employer: Harbor Freight Logistics | Provider: Dr. Ravi Patel, Neurology
+The patient is under my care following a stroke on 12/02/2026.
+Status: Off work until Monday, March 1, 2027. Then return to work with restrictions for 4 weeks: maximum 4 hours per day; no driving company vehicles; no operating heavy machinery; written instructions should be provided for new tasks; allow extra time for phone calls and emails.
+Restrictions will be reviewed at the next appointment on Monday, March 29, 2027 at 11:00 a.m.
+Please contact our office at (919) 555-0125 with questions. Employees may request reasonable accommodations under the Americans with Disabilities Act (ADA).</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>About your work</h3><ul><li>For: <strong>Anthony Russo</strong> <span class="pic">[person]</span></li><li>From <strong>Dr. Ravi Patel</strong>. <span class="pic">[doctor]</span></li><li>For your job at <strong>Harbor Freight Logistics</strong>. <span class="pic">[work]</span></li></ul></div><div class="pg"><h3>Not working yet</h3><ul><li><strong>Do not work</strong> until <strong>Monday, March 1, 2027</strong>. <span class="pic">[no work]</span></li></ul></div><div class="pg"><h3>Going back slowly</h3><ul><li>Then go back with <strong>limits</strong> for <strong>4 weeks</strong>. <span class="pic">[calendar]</span></li><li>Work <strong>4 hours</strong> a day at most. <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Limits at work</h3><ul><li><strong>No driving</strong> company vehicles. <span class="pic">[no driving]</span></li><li><strong>No heavy machines</strong>. <span class="pic">[machine]</span></li><li>Get <strong>written instructions</strong> for <strong>new tasks</strong>. <span class="pic">[document]</span></li><li>Get <strong>extra time</strong> for <strong>calls</strong> and <strong>emails</strong>. <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Next visit</h3><ul><li>We will check your <strong>limits</strong> again. <span class="pic">[check]</span></li><li><strong>Monday, March 29, 2027</strong> <span class="pic">[calendar]</span></li><li><strong>11:00 a.m.</strong> <span class="pic">[clock]</span></li></ul></div><div class="pg"><h3>Your rights</h3><ul><li>You can ask your <strong>employer</strong> for <strong>changes</strong> at work. <span class="pic">[work]</span></li><li>This is your right under the <strong>ADA</strong> law. <span class="pic">[law]</span></li></ul></div><div class="pg"><h3>Questions?</h3><ul><li>☎ Phone: (919) 555-0125 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Reasonable accommodations under the ADA&#x27; became &#x27;ask your employer for changes at work; this is your right under the ADA law&#x27;. Please confirm.</li><li>Left out on purpose: Date of stroke 12/02/2026: past date</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p10">
+  <h2>10. Signing up for MyChart</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.5</span><b>how-to-portal-en-001</b> · en ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">SIGN UP FOR MYCHART
+With MyChart you can see test results, request prescription refills, and send messages to your care team.
+Your activation code: 7KQ2-MX4P-R9TD. This code expires on April 30, 2027.
+1. Go to www.example.org/mychart. 2. Click &quot;Sign Up Now.&quot; 3. Enter your activation code, your date of birth, and your ZIP code. 4. Create a username and password. Write them down and keep them in a safe place. 5. Choose a security question.
+A family member can get proxy access to help you manage your account; ask at the front desk for a proxy form.
+Do not use MyChart messages for emergencies. Call 911.
+Help with MyChart: (919) 555-0164, Monday to Friday, 8:00 a.m. to 5:00 p.m.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>What is MyChart?</h3><ul><li>See your <strong>test results</strong>. <span class="pic">[computer]</span></li><li>Ask for <strong>medicine refills</strong>. <span class="pic">[pill bottle]</span></li><li>Send <strong>messages</strong> to your <strong>care team</strong>. <span class="pic">[message]</span></li></ul></div><div class="pg"><h3>Your code</h3><ul><li>Your code: <strong>7KQ2-MX4P-R9TD</strong> <span class="pic">[key]</span></li><li>Use it before <strong>April 30, 2027</strong>. <span class="pic">[calendar]</span></li></ul></div><div class="pg"><h3>Sign up</h3><ul><li>1. Go to <strong>www.example.org/mychart</strong> <span class="pic">[website]</span></li><li>2. Click <strong>&quot;Sign Up Now.&quot;</strong> <span class="pic">[click]</span></li><li>3. Type your <strong>code</strong>, <strong>birthday</strong> and <strong>ZIP code</strong>. <span class="pic">[keyboard]</span></li></ul></div><div class="pg"><h3>Make your login</h3><ul><li>4. Make a <strong>username</strong> and <strong>password</strong>. <span class="pic">[password]</span></li><li>5. <strong>Write them down</strong>. Keep them <strong>safe</strong>. <span class="pic">[write]</span></li><li>6. Choose a <strong>security question</strong>. <span class="pic">[question]</span></li></ul></div><div class="pg"><h3>Family can help</h3><ul><li>A <strong>family member</strong> can help with your account. <span class="pic">[family]</span></li><li>Ask the <strong>front desk</strong> for a <strong>proxy form</strong>. <span class="pic">[document]</span></li></ul></div><div class="pg"><h3>Not for emergencies</h3><ul><li>Do <strong>not</strong> use messages for <strong>emergencies</strong>. <span class="pic">[no]</span></li><li class="crisis">⚠ Call 911 <span class="pic">[ambulance]</span></li></ul></div><div class="pg"><h3>Help with MyChart</h3><ul><li><strong>Monday</strong> to <strong>Friday</strong>, <strong>8:00 a.m.</strong> to <strong>5:00 p.m.</strong> <span class="pic">[clock]</span></li><li>☎ Phone: (919) 555-0164 <span class="pic">[phone]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p11">
+  <h2>11. Terapia del habla por video</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.1</span><b>consentimiento-telesalud-es-001</b> · es ·
+    consent · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CONSENTIMIENTO PARA SERVICIOS DE TELESALUD — Clínica del Habla Piedmont
+Telesalud significa recibir terapia del habla por video en vivo, en lugar de ir a la clínica. Su terapeuta usará una plataforma de video segura. Las sesiones no se graban sin su permiso por escrito. Puede haber problemas con la imagen o el sonido y, en raras ocasiones, interrupciones o fallas de privacidad. Usted puede terminar una sesión en cualquier momento y pedir una visita en persona. Su seguro puede pagar la telesalud de forma diferente; pregunte a su plan.
+[ ] Acepto recibir terapia del habla por telesalud.
+[ ] No acepto telesalud. Quiero solo visitas en persona.
+Firma del paciente: ____________ Fecha: ____________
+Preguntas: (919) 555-0165</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Terapia por video</h3><ul><li>Puede recibir <strong>terapia del habla</strong> por <strong>video</strong>. <span class="pic">[videollamada]</span></li><li>En lugar de ir a la <strong>clínica</strong>. <span class="pic">[clínica]</span></li><li>El video es <strong>seguro</strong>. <span class="pic">[candado]</span></li></ul></div><div class="pg"><h3>Grabación</h3><ul><li><strong>No grabamos</strong> el video. <span class="pic">[no cámara]</span></li><li>Solo si usted dice que <strong>sí</strong> por <strong>escrito</strong>. <span class="pic">[firma]</span></li></ul></div><div class="pg"><h3>Posibles problemas</h3><ul><li>La <strong>imagen</strong> o el <strong>sonido</strong> pueden fallar. <span class="pic">[videollamada]</span></li><li>A veces la llamada se puede <strong>cortar</strong>. <span class="pic">[pausa]</span></li><li>Rara vez puede fallar la <strong>privacidad</strong>. <span class="pic">[candado]</span></li></ul></div><div class="pg"><h3>Usted decide</h3><ul><li>Puede <strong>terminar</strong> cuando quiera. <span class="pic">[parar]</span></li><li>Puede pedir una visita <strong>en persona</strong>. <span class="pic">[clínica]</span></li><li>Su <strong>seguro</strong> puede pagar <strong>diferente</strong>. Pregunte a su plan. <span class="pic">[tarjeta de seguro]</span></li></ul></div><div class="pg"><h3>Por favor escoja</h3><ul><li>☐ <strong>Sí</strong>, quiero terapia por <strong>video</strong>. <span class="pic">[sí]</span></li><li>☐ <strong>No</strong>, quiero solo visitas <strong>en persona</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Firme</h3><ul><li>Firma: ____________ <span class="pic">[firma]</span></li><li>Fecha: ____________ <span class="pic">[calendario]</span></li><li>☎ ¿Preguntas? Llame al (919) 555-0165 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Formulario de consentimiento: el equipo legal o de privacidad de la clínica también debe aprobar el texto.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p12">
+  <h2>12. Compartir su información médica</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 3.4</span><b>autorizacion-informacion-es-001</b> · es ·
+    consent · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">AUTORIZACIÓN PARA DIVULGAR INFORMACIÓN MÉDICA
+Paciente: Isabel Fuentes | Fecha de nacimiento: 09/11/1960
+Yo autorizo a la Clínica del Habla Piedmont a compartir mi información médica con: Nombre: ____________ Relación: ____________
+Información que se puede compartir: [ ] Resultados de evaluaciones [ ] Notas de terapia [ ] Horario de citas [ ] Toda mi información de terapia del habla.
+Esta autorización vence el 31 de diciembre de 2027, a menos que yo la cancele antes por escrito. No tengo que firmar esta autorización para recibir tratamiento. La información compartida puede ya no estar protegida por las leyes de privacidad.
+Firma: ____________ Fecha: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Compartir su información</h3><ul><li>Para: <strong>Isabel Fuentes</strong> <span class="pic">[persona]</span></li><li>Usted puede dejar que la clínica <strong>comparta</strong> su información. <span class="pic">[compartir]</span></li><li>Con una <strong>persona</strong> que usted <strong>escoja</strong>. <span class="pic">[persona]</span></li></ul></div><div class="pg"><h3>¿Con quién?</h3><ul><li>Nombre: ____________ <span class="pic">[persona]</span></li><li>Relación: ____________ <span class="pic">[familia]</span></li></ul></div><div class="pg"><h3>¿Qué información?</h3><ul><li>☐ <strong>Resultados</strong> de evaluaciones <span class="pic">[informe]</span></li><li>☐ <strong>Notas</strong> de terapia <span class="pic">[notas]</span></li><li>☐ <strong>Horario</strong> de citas <span class="pic">[calendario]</span></li><li>☐ <strong>Toda</strong> mi información de terapia del habla <span class="pic">[carpeta]</span></li></ul></div><div class="pg"><h3>¿Hasta cuándo?</h3><ul><li>Hasta el <strong>31 de diciembre de 2027</strong>. <span class="pic">[calendario]</span></li><li>Puede <strong>cancelarla</strong> antes, <strong>por escrito</strong>. <span class="pic">[escribir]</span></li></ul></div><div class="pg"><h3>Importante</h3><ul><li><strong>No tiene que</strong> firmar para recibir <strong>tratamiento</strong>. <span class="pic">[no]</span></li><li>La información compartida puede ya <strong>no estar protegida</strong>. <span class="pic">[candado abierto]</span></li></ul></div><div class="pg"><h3>Firme</h3><ul><li>Firma: ____________ <span class="pic">[firma]</span></li><li>Fecha: ____________ <span class="pic">[calendario]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Formulario legal (HIPAA): la clínica debe aprobar el texto. &#x27;Ya no estar protegida por las leyes de privacidad&#x27; se acortó.</li><li>Left out on purpose: Fecha de nacimiento 09/11/1960: no la necesita el lector</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p13">
+  <h2>13. Su seguro dijo que no</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.7</span><b>negacion-seguro-es-001</b> · es ·
+    insurance · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">AVISO DE NEGACIÓN DE COBERTURA
+Miembro: Teresa Campos | Número de miembro: MCD660314 | Plan: Plan Comunitario de Salud de Carolina
+Su solicitud de una silla de ruedas eléctrica fue negada. Motivo: la información recibida no muestra que una silla de ruedas manual o un andador no sean suficientes para usted.
+SU DERECHO A APELAR: Usted o alguien que usted escoja, como su médico, puede pedirnos que revisemos esta decisión. Debe apelar dentro de 60 días a partir de la fecha de esta carta. Envíe información nueva, como notas de su terapeuta físico. Para apelar, llame a Servicios para Miembros al 1-800-555-0115 (TTY 711).
+Si no está de acuerdo con la decisión de la apelación, puede pedir una revisión externa independiente.
+Ayuda gratis: Línea de Ayuda de Seguros Médicos 1-800-555-0162. Hay intérpretes de español.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su seguro dijo que no</h3><ul><li>Para: <strong>Teresa Campos</strong> <span class="pic">[persona]</span></li><li>Número de miembro: <strong>MCD660314</strong> <span class="pic">[tarjeta]</span></li><li>Usted pidió una <strong>silla de ruedas eléctrica</strong>. <span class="pic">[silla de ruedas eléctrica]</span></li><li>Su plan dijo que <strong>no</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Por qué</h3><ul><li>El plan cree que una silla <strong>manual</strong> o un <strong>andador</strong> pueden ser <strong>suficientes</strong>. <span class="pic">[andador]</span></li></ul></div><div class="pg"><h3>Puede apelar</h3><ul><li><strong>Apelar</strong> es pedir que lo <strong>revisen otra vez</strong>. <span class="pic">[revisar]</span></li><li>Usted o alguien que <strong>escoja</strong> lo puede hacer. <span class="pic">[persona]</span></li><li>Su <strong>médico</strong> puede ayudar. <span class="pic">[médico]</span></li></ul></div><div class="pg"><h3>Fecha límite</h3><ul><li>Apele dentro de <strong>60 días</strong> de la fecha de la carta. <span class="pic">[calendario]</span></li><li>Envíe <strong>información nueva</strong>, como notas de su <strong>terapeuta físico</strong>. <span class="pic">[documento]</span></li></ul></div><div class="pg"><h3>Cómo apelar</h3><ul><li>Llame a <strong>Servicios para Miembros</strong>. <span class="pic">[teléfono]</span></li><li>☎ Teléfono: 1-800-555-0115 <span class="pic">[teléfono]</span></li><li>☎ TTY: 711 <span class="pic">[tty]</span></li></ul></div><div class="pg"><h3>¿Sigue sin estar de acuerdo?</h3><ul><li>Pida una <strong>revisión externa</strong>. <span class="pic">[revisar]</span></li><li>Alguien <strong>fuera</strong> del plan la va a revisar. <span class="pic">[persona]</span></li></ul></div><div class="pg"><h3>Ayuda gratis</h3><ul><li><strong>Línea de Ayuda de Seguros Médicos</strong> <span class="pic">[ayuda]</span></li><li>Hay <strong>intérpretes</strong> de <strong>español</strong>. <span class="pic">[intérprete]</span></li><li>☎ Teléfono: 1-800-555-0162 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;La información recibida no muestra que una silla manual o un andador no sean suficientes&#x27; se explicó como &#x27;el plan cree que pueden ser suficientes&#x27;. Por favor confirme.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p14">
+  <h2>14. Cómo llenar su pastillero</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.4</span><b>como-pastillero-es-001</b> · es ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CÓMO LLENAR SU PASTILLERO SEMANAL
+Use un pastillero de 7 días con 2 horarios por día (mañana y noche).
+1. Escoja un día de la semana para llenarlo, por ejemplo el domingo. 2. Lávese y séquese las manos. 3. Ponga en fila sus frascos de pastillas y su lista de medicamentos. 4. Llene un medicamento a la vez: póngalo en cada cajita donde va y luego guarde el frasco. 5. Al terminar, compare cada cajita con su lista. 6. Cierre todas las tapas.
+No ponga en el pastillero medicamentos líquidos, inhaladores ni pastillas que deben quedarse en su paquete.
+Si una pastilla tiene otro color o forma, llame a su farmacia antes de tomarla: (919) 555-0149.
+Pida a un familiar o a su farmacéutico que revise su pastillero las primeras veces.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su pastillero</h3><ul><li>Su pastillero tiene <strong>7 días</strong>. <span class="pic">[pastillero]</span></li><li><strong>2 horarios</strong>: <strong>mañana</strong> y <strong>noche</strong>. <span class="pic">[sol y luna]</span></li></ul></div><div class="pg"><h3>Prepárese</h3><ul><li>1. Escoja <strong>un día</strong> cada semana, como el <strong>domingo</strong>. <span class="pic">[calendario]</span></li><li>2. <strong>Lávese</strong> y <strong>séquese</strong> las manos. <span class="pic">[lavarse las manos]</span></li><li>3. Ponga en fila sus <strong>frascos</strong> y su <strong>lista</strong>. <span class="pic">[frasco de pastillas]</span></li></ul></div><div class="pg"><h3>Llénelo</h3><ul><li>4. Llene <strong>un medicamento</strong> a la vez. <span class="pic">[pastilla]</span></li><li>5. Póngalo en <strong>cada cajita</strong> donde va. <span class="pic">[pastillero]</span></li><li>6. <strong>Guarde</strong> ese frasco. <span class="pic">[frasco de pastillas]</span></li></ul></div><div class="pg"><h3>Revíselo</h3><ul><li>7. <strong>Compare</strong> cada cajita con su <strong>lista</strong>. <span class="pic">[revisar]</span></li><li>8. <strong>Cierre</strong> todas las tapas. <span class="pic">[cerrar]</span></li></ul></div><div class="pg"><h3>No van en el pastillero</h3><ul><li>Medicamentos <strong>líquidos</strong>. <span class="pic">[jarabe]</span></li><li><strong>Inhaladores</strong>. <span class="pic">[inhalador]</span></li><li>Pastillas que deben quedarse en su <strong>paquete</strong>. <span class="pic">[blíster]</span></li></ul></div><div class="pg"><h3>Pida ayuda</h3><ul><li>Pida a un <strong>familiar</strong> o a su <strong>farmacéutico</strong> que lo revise. <span class="pic">[familia]</span></li><li>Las <strong>primeras veces</strong>. <span class="pic">[calendario]</span></li></ul></div><div class="pg"><h3>¿Pastilla diferente?</h3><ul><li>¿Otro <strong>color</strong> u otra <strong>forma</strong>? <span class="pic">[pastilla]</span></li><li><strong>Llame</strong> a su farmacia <strong>antes</strong> de tomarla. <span class="pic">[farmacia]</span></li><li>☎ Farmacia: (919) 555-0149 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>El paso 4 del original se dividió en 3 pasos; los números de los pasos cambian.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p15">
+  <h2>15. Tomarse la presión</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.9</span><b>como-presion-es-001</b> · es ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CÓMO TOMARSE LA PRESIÓN ARTERIAL EN CASA
+Antes: no fume, no haga ejercicio y no tome café por 30 minutos. Vaya al baño.
+Pasos: 1. Siéntese en una silla con la espalda apoyada y los dos pies en el piso. 2. Descanse en silencio por 5 minutos. 3. Póngase el brazalete en la parte de arriba del brazo, sin ropa, a la altura del corazón. 4. Oprima el botón. No hable ni se mueva. 5. Anote los dos números y la hora. 6. Espere 1 minuto y tómela otra vez.
+Su meta: menos de 130/80. Traiga sus anotaciones a cada cita.
+Llame a su médico al (919) 555-0144 si el número de arriba es más de 180 o el de abajo es más de 110 en dos lecturas.
+Llame al 911 si su presión está así de alta Y tiene dolor de pecho, dificultad para hablar, debilidad o cambios en la vista.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Antes</h3><ul><li><strong>No fume</strong>, no haga <strong>ejercicio</strong>, no tome <strong>café</strong> por <strong>30 minutos</strong>. <span class="pic">[no café]</span></li><li>Vaya al <strong>baño</strong> primero. <span class="pic">[inodoro]</span></li></ul></div><div class="pg"><h3>Siéntese y descanse</h3><ul><li>1. <strong>Siéntese</strong> con la <strong>espalda</strong> apoyada. <span class="pic">[silla]</span></li><li>2. Los dos <strong>pies</strong> en el <strong>piso</strong>. <span class="pic">[pies]</span></li><li>3. <strong>Descanse</strong> en silencio <strong>5 minutos</strong>. <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Póngase el brazalete</h3><ul><li>4. En la parte de <strong>arriba</strong> del <strong>brazo</strong>, sin ropa. <span class="pic">[brazalete de presión]</span></li><li>5. A la altura del <strong>corazón</strong>. <span class="pic">[corazón]</span></li></ul></div><div class="pg"><h3>Tome la lectura</h3><ul><li>6. Oprima el <strong>botón</strong>. <strong>No hable</strong> ni se mueva. <span class="pic">[botón]</span></li><li>7. <strong>Anote</strong> los dos números y la <strong>hora</strong>. <span class="pic">[escribir]</span></li><li>8. Espere <strong>1 minuto</strong>. Tómela <strong>otra vez</strong>. <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Su meta</h3><ul><li>Menos de <strong>130/80</strong>. <span class="pic">[meta]</span></li><li>Traiga sus <strong>anotaciones</strong> a <strong>cada cita</strong>. <span class="pic">[lista]</span></li></ul></div><div class="pg"><h3>Llame a su médico</h3><ul><li>¿El número de <strong>arriba</strong> más de <strong>180</strong>? <span class="pic">[presión arterial]</span></li><li>¿O el de <strong>abajo</strong> más de <strong>110</strong>? <span class="pic">[presión arterial]</span></li><li>¿En <strong>dos</strong> lecturas? <strong>Llame</strong>. <span class="pic">[teléfono]</span></li><li>☎ Médico: (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>Emergencia</h3><ul><li>¿Presión <strong>así de alta</strong>, y además: <span class="pic">[advertencia]</span></li><li>¿<strong>Dolor de pecho</strong>? ¿Le cuesta <strong>hablar</strong>? <span class="pic">[dolor de pecho]</span></li><li>¿<strong>Debilidad</strong>? ¿Cambios en la <strong>vista</strong>? <span class="pic">[brazo débil]</span></li><li class="crisis">⚠ Llame al 911 <span class="pic">[ambulancia]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p16">
+  <h2>16. Su prueba de ondas del cerebro (EEG)</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.8</span><b>procedimiento-eeg-es-001</b> · es ·
+    procedure · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">ELECTROENCEFALOGRAMA (EEG) DE RUTINA — INSTRUCCIONES
+Un EEG registra la actividad eléctrica de su cerebro con pequeños discos de metal (electrodos) que se pegan en la cabeza con una pasta. No duele y no le pasa electricidad al cuerpo.
+Cita: martes 23 de febrero de 2027 a las 8:30 a.m., Pruebas de Neurología, Plaza Médica Westfield, 600 Oakmont Drive, Suite 310.
+La noche antes: lávese el pelo solo con champú. No use acondicionador, aceite, gel ni laca.
+Tome sus medicamentos de siempre, a menos que su médico le diga otra cosa. No tome café ni bebidas con cafeína el día de la prueba.
+La prueba dura de 60 a 90 minutos. Le pueden pedir que respire hondo y que mire una luz que parpadea.
+Para cambiar la cita: (919) 555-0113.</div></div>
+    <div><b>Aphasia-friendly version</b> (7 pages)<div class="pages"><div class="pg"><h3>Su EEG</h3><ul><li>Un <strong>EEG</strong> revisa las <strong>ondas</strong> de su <strong>cerebro</strong>. <span class="pic">[cerebro]</span></li><li>Le pegan <strong>discos de metal</strong> en la <strong>cabeza</strong> con una <strong>pasta</strong>. <span class="pic">[electrodos]</span></li></ul></div><div class="pg"><h3>No duele</h3><ul><li><strong>No duele</strong>. <span class="pic">[sin dolor]</span></li><li><strong>No</strong> le pasa <strong>electricidad</strong> al cuerpo. <span class="pic">[sin electricidad]</span></li></ul></div><div class="pg"><h3>Cuándo y dónde</h3><ul><li><strong>martes 23 de febrero de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>8:30 a.m.</strong> <span class="pic">[reloj]</span></li><li><strong>Pruebas de Neurología</strong>, <strong>Plaza Médica Westfield</strong> <span class="pic">[hospital]</span></li><li><strong>600 Oakmont Drive, Suite 310</strong> <span class="pic">[mapa]</span></li></ul></div><div class="pg"><h3>La noche antes</h3><ul><li>Lávese el <strong>pelo</strong> solo con <strong>champú</strong>. <span class="pic">[champú]</span></li><li><strong>Sin</strong> acondicionador, aceite, gel ni laca. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Medicinas y café</h3><ul><li>Tome sus <strong>medicinas</strong> de siempre. <span class="pic">[pastilla]</span></li><li>A menos que su <strong>médico</strong> diga otra cosa. <span class="pic">[médico]</span></li><li><strong>Sin café</strong> ni <strong>cafeína</strong> el día de la prueba. <span class="pic">[no café]</span></li></ul></div><div class="pg"><h3>Durante la prueba</h3><ul><li>Dura de <strong>60 a 90 minutos</strong>. <span class="pic">[reloj]</span></li><li>Puede que <strong>respire hondo</strong>. <span class="pic">[respirar]</span></li><li>Puede que mire una <strong>luz</strong> que <strong>parpadea</strong>. <span class="pic">[luz]</span></li></ul></div><div class="pg"><h3>Cambiar la cita</h3><ul><li>☎ Teléfono: (919) 555-0113 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p17">
+  <h2>17. Su ecocardiograma</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.3</span><b>procedimiento-eco-es-001</b> · es ·
+    procedure · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">ECOCARDIOGRAMA TRANSTORÁCICO — LO QUE DEBE SABER
+Su médico pidió un ecocardiograma para ver cómo funciona su corazón y buscar coágulos que pudieron causar su derrame cerebral. La prueba usa ondas de sonido; no usa radiación y no duele.
+Cita: jueves 25 de febrero de 2027 a las 10:00 a.m., Laboratorio de Cardiología, Hospital Comunitario San Marcos, tercer piso.
+Puede comer, beber y tomar sus medicamentos como siempre. Use ropa cómoda; le pedirán que se quite la ropa de la cintura para arriba y le darán una bata.
+Se acostará sobre el lado izquierdo. El técnico pondrá gel y moverá un aparato pequeño sobre su pecho. Puede durar unos 45 minutos.
+Su médico le dará los resultados en su próxima cita. Preguntas: (919) 555-0166.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Su ecocardiograma</h3><ul><li>Es una prueba del <strong>corazón</strong>. <span class="pic">[corazón]</span></li><li>Mira cómo <strong>funciona</strong> su corazón. <span class="pic">[corazón]</span></li><li>Busca <strong>coágulos</strong> que pudieron causar su <strong>derrame</strong>. <span class="pic">[coágulo]</span></li></ul></div><div class="pg"><h3>No duele</h3><ul><li>Usa <strong>ondas de sonido</strong>. <span class="pic">[ondas de sonido]</span></li><li><strong>Sin radiación</strong>. <strong>No duele</strong>. <span class="pic">[sin dolor]</span></li></ul></div><div class="pg"><h3>Cuándo y dónde</h3><ul><li><strong>jueves 25 de febrero de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>10:00 a.m.</strong> <span class="pic">[reloj]</span></li><li><strong>Laboratorio de Cardiología</strong>, <strong>tercer piso</strong> <span class="pic">[puerta]</span></li><li><strong>Hospital Comunitario San Marcos</strong> <span class="pic">[hospital]</span></li></ul></div><div class="pg"><h3>Antes</h3><ul><li>Puede <strong>comer</strong>, <strong>beber</strong> y tomar sus <strong>medicinas</strong> como siempre. <span class="pic">[comer]</span></li><li>Use ropa <strong>cómoda</strong>. <span class="pic">[ropa]</span></li></ul></div><div class="pg"><h3>Durante la prueba</h3><ul><li>Se quita la <strong>ropa</strong> de la cintura para <strong>arriba</strong>. Le dan una <strong>bata</strong>. <span class="pic">[bata]</span></li><li>Se <strong>acuesta</strong> sobre el lado <strong>izquierdo</strong>. <span class="pic">[acostado]</span></li><li>Le ponen <strong>gel</strong> y mueven un <strong>aparato</strong> sobre el <strong>pecho</strong>. <span class="pic">[ultrasonido]</span></li><li>Dura unos <strong>45 minutos</strong>. <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Resultados</h3><ul><li>Su <strong>médico</strong> le da los <strong>resultados</strong> en la <strong>próxima cita</strong>. <span class="pic">[médico]</span></li><li>☎ Preguntas: (919) 555-0166 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Transtorácico&#x27; no se usa en el folleto.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p18">
+  <h2>18. Un programa para personas con afasia</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.5</span><b>referido-grupo-afasia-es-001</b> · es ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERIDO — PROGRAMA COMUNITARIO DE AFASIA
+Para: Conexiones de Afasia del Triángulo | De: Laura Méndez, M.S., CCC-SLP, Clínica del Habla Piedmont
+El señor Rafael Ortega terminó la terapia del habla y se refiere a su programa para mantener sus habilidades de comunicación y su participación social.
+Información para el paciente: el programa tiene un grupo de conversación en español los miércoles de 2:00 p.m. a 3:30 p.m. y una clase de computación. La membresía cuesta $25 al mes; hay becas. Los familiares pueden asistir gratis.
+Próximo paso: una coordinadora lo llamará dentro de 2 semanas para una visita de admisión de 30 minutos. Si no lo llaman, llame al (919) 555-0163.</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Un programa para usted</h3><ul><li>Para: <strong>Rafael Ortega</strong> <span class="pic">[persona]</span></li><li><strong>Laura Méndez, M.S., CCC-SLP</strong> lo refirió a un <strong>programa</strong>. <span class="pic">[terapeuta del habla]</span></li><li>Es <strong>Conexiones de Afasia del Triángulo</strong>. <span class="pic">[grupo]</span></li></ul></div><div class="pg"><h3>Para qué</h3><ul><li>Para mantener su <strong>comunicación</strong>. <span class="pic">[conversación]</span></li><li>Para estar con <strong>otras personas</strong>. <span class="pic">[amigos]</span></li></ul></div><div class="pg"><h3>Qué ofrecen</h3><ul><li>Un <strong>grupo de conversación</strong> en <strong>español</strong>. <span class="pic">[conversación]</span></li><li>Los <strong>miércoles</strong>, de <strong>2:00 p.m.</strong> a <strong>3:30 p.m.</strong> <span class="pic">[calendario]</span></li><li>Una clase de <strong>computación</strong>. <span class="pic">[computadora]</span></li></ul></div><div class="pg"><h3>Costo</h3><ul><li><strong>$25</strong> al mes. <span class="pic">[dinero]</span></li><li>Hay <strong>becas</strong> para ayudar con el costo. <span class="pic">[dinero]</span></li><li>Su <strong>familia</strong> puede ir <strong>gratis</strong>. <span class="pic">[familia]</span></li></ul></div><div class="pg"><h3>Próximo paso</h3><ul><li>Lo van a <strong>llamar</strong> dentro de <strong>2 semanas</strong>. <span class="pic">[teléfono]</span></li><li>Para una primera visita de <strong>30 minutos</strong>. <span class="pic">[reloj]</span></li><li>¿No lo llamaron? <strong>Llame</strong> usted. <span class="pic">[teléfono]</span></li><li>☎ Teléfono: (919) 555-0163 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p19">
+  <h2>19. Cita con la nutricionista</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.3</span><b>referido-nutricion-es-001</b> · es ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERIDO: TERAPIA DE NUTRICIÓN MÉDICA
+Paciente: Marisol Vega | Proveedor: Dr. Tomás Aguilar | Diagnósticos: diabetes tipo 2, presión alta, historia de derrame cerebral.
+Motivo: educación sobre alimentación para la diabetes y una dieta baja en sal (menos de 2,000 mg de sodio al día).
+Cita: lunes 1 de marzo de 2027 a las 11:00 a.m. con Daniela Rojas, nutricionista, en la Clínica Familiar Las Palmas. La consulta es en español.
+Traiga: un diario de comida de 3 días (todo lo que come y bebe), su lista de medicamentos y su glucómetro. Si alguien cocina para usted, invítelo a venir.
+Para cambiar la cita, llame al (919) 555-0144.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Cita con la nutricionista</h3><ul><li>Para: <strong>Marisol Vega</strong> <span class="pic">[persona]</span></li><li>El <strong>Dr. Tomás Aguilar</strong> quiere que vea a una <strong>nutricionista</strong>. <span class="pic">[nutricionista]</span></li><li>Ella le ayuda con la <strong>comida</strong> y la <strong>salud</strong>. <span class="pic">[comida sana]</span></li></ul></div><div class="pg"><h3>Para qué</h3><ul><li>Aprender a comer bien con <strong>diabetes</strong>. <span class="pic">[diabetes]</span></li><li>Comer <strong>menos sal</strong>: menos de <strong>2,000 mg</strong> de <strong>sodio</strong> al día. <span class="pic">[sal]</span></li></ul></div><div class="pg"><h3>Cuándo y dónde</h3><ul><li><strong>lunes 1 de marzo de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>11:00 a.m.</strong> <span class="pic">[reloj]</span></li><li>Con <strong>Daniela Rojas</strong>, nutricionista. <span class="pic">[nutricionista]</span></li><li>En la <strong>Clínica Familiar Las Palmas</strong>. En <strong>español</strong>. <span class="pic">[clínica]</span></li></ul></div><div class="pg"><h3>Qué traer</h3><ul><li>1. Un <strong>diario de comida</strong> de <strong>3 días</strong>. <span class="pic">[diario]</span></li><li>2. Su <strong>lista</strong> de <strong>medicamentos</strong>. <span class="pic">[lista de medicamentos]</span></li><li>3. Su <strong>glucómetro</strong>. <span class="pic">[glucómetro]</span></li></ul></div><div class="pg"><h3>Traiga a quien cocina</h3><ul><li>¿Alguien <strong>cocina</strong> para usted? <span class="pic">[cocinar]</span></li><li><strong>Invítelo</strong> a venir. <span class="pic">[familia]</span></li></ul></div><div class="pg"><h3>Cambiar la cita</h3><ul><li>☎ Teléfono: (919) 555-0144 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Ella le ayuda con la comida y la salud&#x27; agrega una explicación corta.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p20">
+  <h2>20. Volver al trabajo</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.4</span><b>carta-trabajo-es-001</b> · es ·
+    letter · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">INFORME DE ESTADO LABORAL
+Paciente: Jorge Castillo | Empleador: Constructora Piedmont | Proveedor: Dra. Lucía Herrera, Neurología
+El paciente está bajo mi cuidado después de un derrame cerebral el 18/11/2026.
+Estado: no puede trabajar hasta el lunes 15 de marzo de 2027. Después puede volver con restricciones por 6 semanas: máximo 6 horas al día; no subir escaleras de mano ni andamios; no manejar vehículos de la compañía; no levantar más de 20 libras.
+Revisaremos las restricciones en su próxima cita, el lunes 26 de abril de 2027 a las 9:00 a.m.
+Preguntas: (919) 555-0145.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Su trabajo</h3><ul><li>Para: <strong>Jorge Castillo</strong> <span class="pic">[persona]</span></li><li>De la <strong>Dra. Lucía Herrera</strong>. <span class="pic">[doctora]</span></li><li>Para su trabajo en <strong>Constructora Piedmont</strong>. <span class="pic">[trabajo]</span></li></ul></div><div class="pg"><h3>Todavía no trabaje</h3><ul><li><strong>No trabaje</strong> hasta el <strong>lunes 15 de marzo de 2027</strong>. <span class="pic">[no trabajar]</span></li></ul></div><div class="pg"><h3>Volver poco a poco</h3><ul><li>Después, vuelva con <strong>límites</strong> por <strong>6 semanas</strong>. <span class="pic">[calendario]</span></li><li>Máximo <strong>6 horas</strong> al día. <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>Límites en el trabajo</h3><ul><li><strong>No suba</strong> escaleras de mano ni <strong>andamios</strong>. <span class="pic">[escalera]</span></li><li><strong>No maneje</strong> vehículos de la compañía. <span class="pic">[no manejar]</span></li><li><strong>No levante</strong> más de <strong>20 libras</strong>. <span class="pic">[levantar]</span></li></ul></div><div class="pg"><h3>Próxima cita</h3><ul><li>Revisamos sus <strong>límites</strong> otra vez. <span class="pic">[revisar]</span></li><li><strong>lunes 26 de abril de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>9:00 a.m.</strong> <span class="pic">[reloj]</span></li></ul></div><div class="pg"><h3>¿Preguntas?</h3><ul><li>☎ Teléfono: (919) 555-0145 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>Left out on purpose: Fecha del derrame 18/11/2026: fecha pasada</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p21">
+  <h2>21. Inscribirse en el portal</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.0</span><b>como-portal-es-001</b> · es ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">INSCRÍBASE EN EL PORTAL DEL PACIENTE
+En el portal puede ver sus resultados, pedir más medicina y mandar mensajes a su equipo médico. El portal está en español.
+Su código de activación: 4MZ8-QT2L-W7HC. El código vence el 30 de abril de 2027.
+1. Vaya a www.example.org/portal. 2. Haga clic en &quot;Español&quot; y luego en &quot;Inscribirse&quot;. 3. Escriba su código, su fecha de nacimiento y su código postal. 4. Cree un nombre de usuario y una contraseña. Anótelos y guárdelos en un lugar seguro.
+Un familiar puede tener acceso para ayudarle; pida el formulario en la recepción.
+No use los mensajes del portal para emergencias. Llame al 911.
+Ayuda con el portal: (919) 555-0167, de lunes a viernes, de 8:00 a.m. a 5:00 p.m.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>¿Qué es el portal?</h3><ul><li>Vea sus <strong>resultados</strong>. <span class="pic">[computadora]</span></li><li>Pida <strong>más medicina</strong>. <span class="pic">[frasco de pastillas]</span></li><li>Mande <strong>mensajes</strong> a su <strong>equipo médico</strong>. <span class="pic">[mensaje]</span></li><li>Está en <strong>español</strong>. <span class="pic">[hablar]</span></li></ul></div><div class="pg"><h3>Su código</h3><ul><li>Su código: <strong>4MZ8-QT2L-W7HC</strong> <span class="pic">[llave]</span></li><li>Úselo antes del <strong>30 de abril de 2027</strong>. <span class="pic">[calendario]</span></li></ul></div><div class="pg"><h3>Inscríbase</h3><ul><li>1. Vaya a <strong>www.example.org/portal</strong> <span class="pic">[sitio web]</span></li><li>2. Haga clic en <strong>&quot;Español&quot;</strong> y luego en <strong>&quot;Inscribirse&quot;</strong>. <span class="pic">[clic]</span></li><li>3. Escriba su <strong>código</strong>, su fecha de nacimiento y su código postal. <span class="pic">[teclado]</span></li><li>4. Cree un <strong>usuario</strong> y una <strong>contraseña</strong>. <strong>Anótelos</strong>. <span class="pic">[contraseña]</span></li></ul></div><div class="pg"><h3>Su familia puede ayudar</h3><ul><li>Un <strong>familiar</strong> puede ayudarle con el portal. <span class="pic">[familia]</span></li><li>Pida el <strong>formulario</strong> en la <strong>recepción</strong>. <span class="pic">[documento]</span></li></ul></div><div class="pg"><h3>No es para emergencias</h3><ul><li><strong>No</strong> use los mensajes para <strong>emergencias</strong>. <span class="pic">[no]</span></li><li class="crisis">⚠ Llame al 911 <span class="pic">[ambulancia]</span></li></ul></div><div class="pg"><h3>Ayuda con el portal</h3><ul><li>De <strong>lunes</strong> a <strong>viernes</strong>, de <strong>8:00 a.m.</strong> a <strong>5:00 p.m.</strong> <span class="pic">[reloj]</span></li><li>☎ Teléfono: (919) 555-0167 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p22">
+  <h2>22. Su equipo está aprobado</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 0.7</span><b>aprobacion-equipo-es-001</b> · es ·
+    insurance · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">AVISO DE APROBACIÓN — EQUIPO MÉDICO DURADERO
+Miembro: Alberto Ruiz | Número de miembro: MCD449120
+Su plan aprobó: 1 andador con ruedas y asiento; 1 silla para la ducha; 1 barra de apoyo para el inodoro.
+Proveedor de equipo: Suministros Médicos Rest Easy. Ellos lo llamarán dentro de 5 días hábiles para coordinar la entrega a su casa. No tiene que pagar copago.
+Si el equipo no le queda bien o se rompe, llame al proveedor al (919) 555-0139. Para preguntas sobre su cobertura, llame a Servicios para Miembros al 1-800-555-0115 (TTY 711).</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Su equipo está aprobado</h3><ul><li>Para: <strong>Alberto Ruiz</strong> <span class="pic">[persona]</span></li><li>Número de miembro: <strong>MCD449120</strong> <span class="pic">[tarjeta]</span></li><li>Su plan dijo que <strong>sí</strong>. <span class="pic">[sí]</span></li></ul></div><div class="pg"><h3>Lo que va a recibir</h3><ul><li><strong>1 andador</strong> con <strong>ruedas</strong> y <strong>asiento</strong>. <span class="pic">[andador]</span></li><li><strong>1 silla</strong> para la <strong>ducha</strong>. <span class="pic">[silla de ducha]</span></li><li><strong>1 barra de apoyo</strong> para el <strong>inodoro</strong>. <span class="pic">[barra de apoyo]</span></li></ul></div><div class="pg"><h3>La entrega</h3><ul><li><strong>Suministros Médicos Rest Easy</strong> lo va a llamar. <span class="pic">[teléfono]</span></li><li>Dentro de <strong>5 días hábiles</strong>. <span class="pic">[calendario]</span></li><li>Le llevan el equipo a su <strong>casa</strong>. <span class="pic">[casa]</span></li><li><strong>No paga</strong> copago. <span class="pic">[dinero]</span></li></ul></div><div class="pg"><h3>¿Problemas con el equipo?</h3><ul><li>¿No le <strong>queda bien</strong>? ¿Se <strong>rompió</strong>? <span class="pic">[roto]</span></li><li>☎ Rest Easy: (919) 555-0139 <span class="pic">[teléfono]</span></li></ul></div><div class="pg"><h3>Preguntas sobre su seguro</h3><ul><li>Llame a <strong>Servicios para Miembros</strong>. <span class="pic">[teléfono]</span></li><li>☎ Teléfono: 1-800-555-0115 <span class="pic">[teléfono]</span></li><li>☎ TTY: 711 <span class="pic">[tty]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p23">
+  <h2>23. Cómo usar su andador</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.4</span><b>como-andador-es-001</b> · es ·
+    how_to · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">CÓMO USAR SU ANDADOR CON RUEDAS
+Altura: las manijas deben quedar a la altura de su muñeca cuando está parado con los brazos sueltos. Su terapeuta físico ajustará la altura.
+Para caminar: 1. Póngase de pie derecho dentro del andador. 2. Empuje el andador un paso adelante. 3. Dé un paso con la pierna más débil primero. 4. Luego dé un paso con la pierna más fuerte. Mire hacia adelante, no a los pies.
+Para sentarse en el asiento del andador: ponga los frenos primero. Nunca se siente si las ruedas no tienen freno.
+No use el andador en escaleras. Quite tapetes sueltos de su casa.
+Si se cae, no se levante solo si está herido; llame al 911. Preguntas para su terapeuta físico: (919) 555-0121.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>La altura</h3><ul><li>Las <strong>manijas</strong> van a la altura de su <strong>muñeca</strong>. <span class="pic">[andador]</span></li><li>Su <strong>terapeuta físico</strong> ajusta la <strong>altura</strong>. <span class="pic">[terapeuta físico]</span></li></ul></div><div class="pg"><h3>Para caminar</h3><ul><li>1. Párese <strong>derecho</strong> dentro del andador. <span class="pic">[de pie]</span></li><li>2. <strong>Empuje</strong> el andador un paso <strong>adelante</strong>. <span class="pic">[andador]</span></li><li>3. Paso con la pierna <strong>más débil</strong> primero. <span class="pic">[pierna]</span></li><li>4. Luego paso con la pierna <strong>más fuerte</strong>. <span class="pic">[pierna]</span></li></ul></div><div class="pg"><h3>Mire adelante</h3><ul><li>Mire hacia <strong>adelante</strong>, no a los <strong>pies</strong>. <span class="pic">[mirar adelante]</span></li></ul></div><div class="pg"><h3>Para sentarse</h3><ul><li>Ponga los <strong>frenos</strong> primero. <span class="pic">[freno]</span></li><li><strong>Nunca</strong> se siente sin <strong>frenos</strong>. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Seguridad</h3><ul><li><strong>No</strong> use el andador en <strong>escaleras</strong>. <span class="pic">[no escaleras]</span></li><li>Quite los <strong>tapetes</strong> sueltos de su casa. <span class="pic">[tapete]</span></li></ul></div><div class="pg"><h3>Si se cae</h3><ul><li>¿Está <strong>herido</strong>? <strong>No</strong> se levante solo. <span class="pic">[caída]</span></li><li class="crisis">⚠ Llame al 911 <span class="pic">[ambulancia]</span></li><li>☎ Preguntas para su terapeuta físico: (919) 555-0121 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>La frase &#x27;cuando está parado con los brazos sueltos&#x27; no se incluyó; el terapeuta ajusta la altura. Por favor revise.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p24">
+  <h2>24. Cita para sus ojos</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 1.2</span><b>referido-ojos-es-001</b> · es ·
+    referral · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">REFERIDO A OFTALMOLOGÍA
+Paciente: Carmen Ruiz | Médico que refiere: Dra. Lucía Herrera
+Motivo: pérdida del campo visual del lado derecho (hemianopsia homónima derecha) después de un derrame cerebral. Evaluación del campo visual y recomendaciones para la seguridad y la lectura.
+Cita: viernes 12 de marzo de 2027 a las 1:15 p.m. con el Dr. Pablo Serrano, Centro Oftalmológico Valle Verde, 900 Riverside Drive. Le pondrán gotas para dilatar las pupilas; su vista puede quedar borrosa por 4 a 6 horas. Traiga a alguien que maneje y traiga sus lentes.
+Hasta su cita: gire la cabeza hacia la derecha para ver lo que no ve. No maneje.
+Para cambiar la cita: (919) 555-0168.</div></div>
+    <div><b>Aphasia-friendly version</b> (6 pages)<div class="pages"><div class="pg"><h3>Cita para sus ojos</h3><ul><li>Para: <strong>Carmen Ruiz</strong> <span class="pic">[persona]</span></li><li>La <strong>Dra. Lucía Herrera</strong> quiere que vea a un médico de los <strong>ojos</strong>. <span class="pic">[ojo]</span></li></ul></div><div class="pg"><h3>Por qué</h3><ul><li>Después del derrame, <strong>no ve</strong> bien el lado <strong>derecho</strong>. <span class="pic">[ojo]</span></li><li>Van a revisar <strong>cuánto</strong> puede ver. <span class="pic">[examen de la vista]</span></li><li>Le darán ideas para <strong>leer</strong> y estar <strong>seguro</strong>. <span class="pic">[leer]</span></li></ul></div><div class="pg"><h3>Cuándo y dónde</h3><ul><li><strong>viernes 12 de marzo de 2027</strong> <span class="pic">[calendario]</span></li><li><strong>1:15 p.m.</strong> <span class="pic">[reloj]</span></li><li>Con el <strong>Dr. Pablo Serrano</strong>, <strong>Centro Oftalmológico Valle Verde</strong> <span class="pic">[médico]</span></li><li><strong>900 Riverside Drive</strong> <span class="pic">[mapa]</span></li></ul></div><div class="pg"><h3>Gotas en los ojos</h3><ul><li>Le ponen <strong>gotas</strong> en los ojos. <span class="pic">[gotas para los ojos]</span></li><li>Su vista puede quedar <strong>borrosa</strong> de <strong>4 a 6 horas</strong>. <span class="pic">[borroso]</span></li><li>Traiga a alguien que <strong>maneje</strong>. <span class="pic">[carro]</span></li><li>Traiga sus <strong>lentes</strong>. <span class="pic">[lentes]</span></li></ul></div><div class="pg"><h3>Hasta su cita</h3><ul><li><strong>Gire la cabeza</strong> hacia la <strong>derecha</strong> para ver más. <span class="pic">[girar cabeza derecha]</span></li><li><strong>No maneje</strong>. <span class="pic">[no manejar]</span></li></ul></div><div class="pg"><h3>Cambiar la cita</h3><ul><li>☎ Teléfono: (919) 555-0168 <span class="pic">[teléfono]</span></li></ul></div></div></div>
+  </div>
+  <div class='notes'><b>Please check:</b><ul><li>&#x27;Hemianopsia homónima derecha&#x27; se explicó como &#x27;no ve bien el lado derecho&#x27;. Por favor confirme.</li></ul></div>
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section>
+<section class="pair" id="p25">
+  <h2>25. Fotos de usted</h2>
+  <div class="meta"><span class="badge ok">facts ✓</span><span class="badge ok">grade 2.2</span><b>consentimiento-fotos-es-001</b> · es ·
+    consent · made-up (written for this project)</div>
+  <div class="cols">
+    <div><b>Original</b><div class="orig">PERMISO PARA FOTOGRAFÍAS
+La Clínica del Habla Piedmont quiere tomarle fotos para hacer materiales de comunicación personales, como un tablero de dibujos o un libro de fotos de su familia y sus actividades. Con su permiso, también podemos usar fotos en folletos de la clínica o en nuestro sitio web. Su nombre no aparecerá con ninguna foto usada fuera de sus materiales. Puede cancelar este permiso cuando quiera, diciéndole a su terapeuta; las fotos ya impresas tal vez no se puedan recoger. Decir que no no cambia su atención.
+[ ] Sí, fotos solo para mis materiales.
+[ ] Sí, fotos para mis materiales Y para folletos o el sitio web de la clínica.
+[ ] No quiero fotos.
+Firma: ____________ Fecha: ____________</div></div>
+    <div><b>Aphasia-friendly version</b> (5 pages)<div class="pages"><div class="pg"><h3>Fotos de usted</h3><ul><li>Queremos tomarle <strong>fotos</strong>. <span class="pic">[cámara]</span></li><li>Para hacer su <strong>tablero</strong> o su <strong>libro de fotos</strong>. <span class="pic">[álbum de fotos]</span></li><li>De su <strong>familia</strong> y sus <strong>actividades</strong>. <span class="pic">[familia]</span></li></ul></div><div class="pg"><h3>Otro uso</h3><ul><li>Si dice <strong>sí</strong>, podemos usar fotos en <strong>folletos</strong> de la clínica. <span class="pic">[folleto]</span></li><li>O en el <strong>sitio web</strong>. <span class="pic">[sitio web]</span></li><li>Su <strong>nombre</strong> <strong>no</strong> aparece con las fotos. <span class="pic">[sin nombre]</span></li></ul></div><div class="pg"><h3>Usted decide</h3><ul><li>Puede <strong>cambiar de opinión</strong> cuando quiera. <span class="pic">[cambiar]</span></li><li>Dígale a su <strong>terapeuta</strong>. <span class="pic">[terapeuta del habla]</span></li><li>Las fotos <strong>ya impresas</strong> tal vez <strong>no</strong> se puedan recoger. <span class="pic">[impresora]</span></li><li>Decir no <strong>no cambia</strong> su <strong>atención</strong>. <span class="pic">[atención médica]</span></li></ul></div><div class="pg"><h3>Por favor escoja</h3><ul><li>☐ <strong>Sí</strong>, solo para <strong>mis</strong> materiales. <span class="pic">[sí]</span></li><li>☐ <strong>Sí</strong>, para mis materiales <strong>y</strong> folletos o sitio web. <span class="pic">[sí]</span></li><li>☐ <strong>No</strong> quiero fotos. <span class="pic">[no]</span></li></ul></div><div class="pg"><h3>Firme</h3><ul><li>Firma: ____________ <span class="pic">[firma]</span></li><li>Fecha: ____________ <span class="pic">[calendario]</span></li></ul></div></div></div>
+  </div>
+  
+  <div class="box"><span>☐ Approve</span><span>☐ Approve with small changes</span><span>☐ Needs rework</span>
+    <span>Reviewer: __________</span></div>
+</section></body></html>
