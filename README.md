@@ -28,8 +28,12 @@ examples/                            sample inputs and finished outputs (open th
 | `seed` | 5 | made up |
 | `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts; originals written for this project |
 | `madeup_batch1` | 12 | made up (fake names, 555 numbers, example.org) |
+| `batch2_en` | 13 | made up: medication, schedule form, appointments, consent, insurance, home program, results, therapy discharge, education, anxiety, procedure |
+| `batch2_es` | 12 | made up, Spanish: same mix, plus caregiver support and social work referral |
 
-English 17, Spanish 8. All pass the fact check. **All 25 approved by a CCC-SLP (anonymous) on 2026-11-11, with no changes.**
+**50 pairs**: English 30, Spanish 20. All pass the fact check.
+SLP status: the first 25 (seed, unc_batch1, madeup_batch1) were approved by a CCC-SLP (anonymous) on 2026-11-11 with no
+changes. Batch 2 (25 pairs) is waiting for review: `review/review_book.html`.
 Never put real patient documents in this repo; keep them in a `private/` folder (it is never uploaded).
 
 ## Setup (once)
