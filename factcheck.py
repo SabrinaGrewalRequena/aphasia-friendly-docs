@@ -69,6 +69,7 @@ def number_tokens(text):
 def check(original, out_doc, keep=()):
     out_text = output_text(out_doc)
     out_norm, out_digits = norm(out_text), digits(out_text)
+    omitted_norm = norm(" ".join(out_doc.get("omitted") or []))
     results = []
     for f in extract_facts(original, keep):
         v = f["value"]
@@ -76,6 +77,8 @@ def check(original, out_doc, keep=()):
             status = "ok"
         elif f["type"] in ("phone", "date", "time", "dose") and digits(v) and digits(v) in out_digits:
             status = "reformatted"
+        elif norm(v) in omitted_norm and v not in CRISIS_NUMBERS:
+            status = "omitted"          # left out on purpose and listed with a reason
         else:
             status = "missing"
         results.append({**f, "status": status})
@@ -93,14 +96,14 @@ def check(original, out_doc, keep=()):
             if not on_crisis_line:
                 crisis.append(f"{num} is in the original but not on its own 'crisis' line")
 
-    passed = all(r["status"] == "ok" for r in results) and not added and not crisis
+    passed = all(r["status"] in ("ok", "omitted") for r in results) and not added and not crisis
     return {"passed": passed, "facts": results, "added_numbers": added, "crisis_issues": crisis}
 
 
 def format_report(rep):
     lines = ["FACT CHECK: " + ("PASS" if rep["passed"] else "NEEDS REVIEW")]
     for r in rep["facts"]:
-        mark = {"ok": "  ok ", "reformatted": "  ~~ ", "missing": "  XX "}[r["status"]]
+        mark = {"ok": "  ok ", "omitted": "  -- ", "reformatted": "  ~~ ", "missing": "  XX "}[r["status"]]
         lines.append(f"{mark}{r['type']:<8} {r['value']}" + ("" if r["status"] == "ok" else f"   <- {r['status']}"))
     for a in rep["added_numbers"]:
         lines.append(f"  !! number not in original: {a}")

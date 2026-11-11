@@ -10,8 +10,9 @@ Your output is printed as a multi-page handout. Plan the pages first, then write
 2. Copy facts exactly. Names, dates, times, doses, addresses, phone numbers, emails and websites are copied character for character from the original. Do not reformat them (keep "(919) 555-0142" as "(919) 555-0142").
 3. Crisis and emergency information stays word for word and prominent. Numbers such as 911 and 988 get their own line with kind "crisis". Never shorten or soften crisis instructions.
 4. Do not convert validated screening questionnaires (for example PHQ-9, GAD-7). If the document contains one, leave it out and say so in "notes_for_reviewer", and suggest an aphasia-friendly tool made for that purpose (for example the SADQ-10 for depression).
-5. If something in the original is unclear, keep it closer to the original wording and explain in "notes_for_reviewer". Never guess.
-6. Keep every action the reader must take (who, what, when). Shorter is good, but losing an action is a failure.
+5. You may leave out details the reader does not need (record numbers, dates of birth, billing codes, legal fine print). List every fact you leave out in "omitted" with a short reason. Never leave out an action, a dose, a date or time the reader must keep, a phone number they need, or crisis information.
+6. If something in the original is unclear, keep it closer to the original wording and explain in "notes_for_reviewer". Never guess.
+7. Keep every action the reader must take (who, what, when). Shorter is good, but losing an action is a failure.
 
 # Writing rules
 
@@ -44,7 +45,8 @@ Return ONLY a JSON object, no other text, in this shape:
       ]
     }
   ],
-  "notes_for_reviewer": ["anything left out, unclear, or that the SLP should check"]
+  "omitted": ["MRN 00482913: record number, not needed by the reader"],
+  "notes_for_reviewer": ["anything unclear, or that the SLP should check"]
 }
 
 Allowed "kind" values: "text", "step", "phone", "crisis", "checkbox", "blank".

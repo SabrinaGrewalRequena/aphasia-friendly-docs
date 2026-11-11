@@ -121,6 +121,10 @@ def render(doc, report_text="", passed=None, pictos=True, reviewed_by=""):
     if report_text:
         cls = "banner pass" if passed else "banner"
         parts.append(f'<div class="{cls}">Screen only — not printed.\n\n{html.escape(report_text)}</div>')
+    omitted = doc.get("omitted") or []
+    if omitted:
+        parts.append('<div class="banner">Left out on purpose (not printed):\n'
+                     + "\n".join("• " + html.escape(o) for o in omitted) + "</div>")
     notes = doc.get("notes_for_reviewer") or []
     if notes:
         parts.append('<div class="banner">Notes for reviewer (not printed):\n'

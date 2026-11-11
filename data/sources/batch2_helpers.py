@@ -19,13 +19,13 @@ PH = lambda t, p="phone": L("phone", t, p)
 CR = lambda t, p="ambulance": L("crisis", t, p)
 
 
-def pair(pid, lang, doc_type, source, original, title, pages, notes=()):
+def pair(pid, lang, doc_type, source, original, title, pages, notes=(), omitted=(), split="train"):
     return {
-        "id": pid, "language": lang, "doc_type": doc_type, "split": "train",
+        "id": pid, "language": lang, "doc_type": doc_type, "split": split,
         "provenance": "made-up (written for this project)", "license": "CC BY 4.0 (project-authored)",
         "slp_reviewed": False, "source": source, "original": original,
         "target": {"title": title, "language": lang, "source": source, "pages": pages,
-                   "notes_for_reviewer": list(notes)},
+                   "omitted": list(omitted), "notes_for_reviewer": list(notes)},
     }
 
 

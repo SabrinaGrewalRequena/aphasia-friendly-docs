@@ -96,7 +96,7 @@ def main():
             h, step = page_html(pg, step)
             prev_last = lines[-1].get("kind") if lines else None
             pages.append(h)
-        notes = t.get("notes_for_reviewer") or []
+        notes = list(t.get("notes_for_reviewer") or []) + [f"Left out on purpose: {o}" for o in (t.get("omitted") or [])]
         notes_html = ("<div class='notes'><b>Please check:</b><ul>" + "".join(f"<li>{html.escape(n)}</li>" for n in notes)
                       + "</ul></div>") if notes else ""
         anchor = f"p{i}"
