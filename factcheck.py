@@ -77,6 +77,8 @@ def check(original, out_doc, keep=()):
             status = "ok"
         elif f["type"] in ("phone", "date", "time", "dose") and digits(v) and digits(v) in out_digits:
             status = "reformatted"
+        elif f["type"] == "name" and re.search(rf"\b{re.escape(norm(v.split()[0]))}\s.*\b{re.escape(norm(v.split()[-1]))}\b", out_norm):
+            status = "ok"               # short form ("Dr. Ortiz") of a full name the output already has
         elif norm(v) in omitted_norm and v not in CRISIS_NUMBERS:
             status = "omitted"          # left out on purpose and listed with a reason
         else:

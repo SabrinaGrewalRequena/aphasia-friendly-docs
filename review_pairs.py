@@ -4,6 +4,7 @@
 Usage:
     python review_pairs.py                     # all pairs not yet SLP-reviewed
     python review_pairs.py --all               # every pair
+    python review_pairs.py --batch batch3      # only files in data/pairs/ whose name contains "batch3"
 Writes:
     review/review_book.html       open in a browser, or print
     review/review_checklist.csv   one row per pair for approve / changes needed
@@ -74,10 +75,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pairs", default=str(ROOT / "data" / "pairs"))
     ap.add_argument("--all", action="store_true")
+    ap.add_argument("--batch", help="only pair files whose name contains this text")
     ap.add_argument("--out", default=str(ROOT / "review"))
     a = ap.parse_args()
 
-    pairs = [p for p in load_pairs(a.pairs) if a.all or not p.get("slp_reviewed")]
+    src = Path(a.pairs)
+    files = [f for f in sorted(src.glob("*.jsonl")) if a.batch in f.name] if a.batch and src.is_dir() else [src]
+    pairs = [p for f in files for p in load_pairs(f) if a.all or not p.get("slp_reviewed")]
     out = Path(a.out)
     out.mkdir(exist_ok=True)
     body, toc, rows = [], [], []

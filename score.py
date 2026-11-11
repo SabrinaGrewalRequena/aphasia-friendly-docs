@@ -9,6 +9,7 @@ import re
 
 from common import all_lines, strip_md
 
+CONNECTORS = {"de", "del", "la", "las", "el", "los", "en", "y", "para", "of", "the", "and", "for", "in"}
 READ_KINDS = {"text", "step", "checkbox"}   # phone/crisis/blank lines are not prose
 PHONE_RE = re.compile(r"\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b|\b(?:911|988)\b")
 
@@ -72,7 +73,8 @@ def score(doc, max_grade=5, max_lines=4, max_words=15):
                 issues.append(f"page {i} line {j}: no picture suggested")
             # bolded facts (numbers, names, emails) don't count as "too much bold"
             bolds = [b for b in re.findall(r"\*\*(.+?)\*\*", t)
-                     if not re.search(r"[\d@]", b) and not all(w[:1].isupper() for w in words(b))]
+                     if not re.search(r"[\d@]", b)
+                     and not all(w[:1].isupper() for w in words(b) if w.lower() not in CONNECTORS)]
             fact_line = re.fullmatch(r"\*\*[^*]+\*\*\.?", t.strip())   # e.g. a date or address alone
             if bolds and not fact_line and sum(len(words(b)) for b in bolds) > max(4, n // 2):
                 issues.append(f"page {i} line {j}: too much bold")
