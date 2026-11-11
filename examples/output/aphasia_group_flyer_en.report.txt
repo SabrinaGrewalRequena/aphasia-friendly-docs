@@ -1,0 +1,10 @@
+FACT CHECK: PASS
+  ok phone    (919) 555-0158
+  ok email    jordan.ellis@example.org
+  ok time     1:00 p.m
+  ok time     2:30 p.m
+  ok address  220 Maple Avenue, Room B
+  ok keep     Jordan Ellis
+  ok keep     Oakwood Library
+READABILITY: grade 2.1 (OK), avg 4.5 words/sentence, longest 8, 5 pages / 13 lines
+FORMAT: OK

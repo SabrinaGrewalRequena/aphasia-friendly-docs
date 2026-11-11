@@ -1,0 +1,90 @@
+{
+  "title": "Terapia del habla",
+  "language": "es",
+  "source": "therapy_referral_es",
+  "pages": [
+    {
+      "topic": "Terapia del habla",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "Para: **Sr. Ramírez**",
+          "picture": "persona"
+        },
+        {
+          "kind": "text",
+          "text": "Su **médico** quiere que vaya a **terapia del habla**.",
+          "picture": "terapeuta del habla"
+        },
+        {
+          "kind": "text",
+          "text": "Es en el **Centro Médico Valle Verde**.",
+          "picture": "hospital"
+        },
+        {
+          "kind": "text",
+          "text": "Van a ver cómo **habla** y **entiende**.",
+          "picture": "hablar"
+        }
+      ]
+    },
+    {
+      "topic": "Llame para hacer una cita",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "**Llame** para hacer su **primera cita**.",
+          "picture": "teléfono"
+        },
+        {
+          "kind": "phone",
+          "text": "Teléfono: (919) 555-0134",
+          "picture": "teléfono"
+        },
+        {
+          "kind": "text",
+          "text": "De **lunes** a **viernes**.",
+          "picture": "calendario"
+        },
+        {
+          "kind": "text",
+          "text": "De **8:00 a.m.** a **4:30 p.m.**",
+          "picture": "reloj"
+        }
+      ]
+    },
+    {
+      "topic": "Qué traer",
+      "lines": [
+        {
+          "kind": "step",
+          "text": "Su **tarjeta de seguro**.",
+          "picture": "tarjeta de seguro"
+        },
+        {
+          "kind": "step",
+          "text": "Una **lista** de sus **medicamentos**.",
+          "picture": "medicamentos"
+        }
+      ]
+    },
+    {
+      "topic": "Puede venir con alguien",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "Puede venir con un **familiar**.",
+          "picture": "familia"
+        },
+        {
+          "kind": "phone",
+          "text": "¿Preguntas? Llame al (919) 555-0134",
+          "picture": "teléfono"
+        }
+      ]
+    }
+  ],
+  "notes_for_reviewer": [
+    "'evaluación de afasia' simplified to 'van a ver cómo habla y entiende' — SLP please check."
+  ]
+}

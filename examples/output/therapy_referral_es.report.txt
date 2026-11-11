@@ -1,0 +1,8 @@
+FACT CHECK: PASS
+  ok phone    (919) 555-0134
+  ok time     8:00 a.m
+  ok time     4:30 p.m
+  ok name     Sr. Ramírez
+  ok keep     Centro Médico Valle Verde
+READABILITY: grade 0.7 (OK), avg 5.0 words/sentence, longest 9, 4 pages / 12 lines
+FORMAT: OK

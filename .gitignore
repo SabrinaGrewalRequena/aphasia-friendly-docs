@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+out/
+results/
+data/train.jsonl
+data/test.jsonl
+data/drafts.jsonl
+# Never commit real patient documents
+private/

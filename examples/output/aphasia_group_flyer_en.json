@@ -1,0 +1,100 @@
+{
+  "title": "Aphasia talk group",
+  "language": "en",
+  "source": "aphasia_group_flyer_en",
+  "pages": [
+    {
+      "topic": "A group for you",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "A **group** for adults with **aphasia**.",
+          "picture": "group"
+        },
+        {
+          "kind": "text",
+          "text": "You **talk** with others.",
+          "picture": "conversation"
+        },
+        {
+          "kind": "text",
+          "text": "You play **games**.",
+          "picture": "game"
+        }
+      ]
+    },
+    {
+      "topic": "When",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "The **first** and **third Thursday** of each month.",
+          "picture": "calendar"
+        },
+        {
+          "kind": "text",
+          "text": "**1:00 p.m.** to **2:30 p.m.**",
+          "picture": "clock"
+        }
+      ]
+    },
+    {
+      "topic": "Where",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "**Oakwood Library**",
+          "picture": "library"
+        },
+        {
+          "kind": "text",
+          "text": "**220 Maple Avenue, Room B**",
+          "picture": "map"
+        }
+      ]
+    },
+    {
+      "topic": "Good to know",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "It is **free**.",
+          "picture": "free"
+        },
+        {
+          "kind": "text",
+          "text": "Your **care partner** can come too.",
+          "picture": "family"
+        }
+      ]
+    },
+    {
+      "topic": "Sign up",
+      "lines": [
+        {
+          "kind": "text",
+          "text": "Want to **join**? Have a **question**?",
+          "picture": "question"
+        },
+        {
+          "kind": "text",
+          "text": "Contact **Jordan Ellis, M.S., CCC-SLP**.",
+          "picture": "speech therapist"
+        },
+        {
+          "kind": "phone",
+          "text": "Phone: (919) 555-0158",
+          "picture": "phone"
+        },
+        {
+          "kind": "text",
+          "text": "Email: **jordan.ellis@example.org**",
+          "picture": "email"
+        }
+      ]
+    }
+  ],
+  "notes_for_reviewer": [
+    "'supported conversation' simplified to 'you talk with others'."
+  ]
+}

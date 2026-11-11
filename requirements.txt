@@ -1,0 +1,4 @@
+anthropic        # only for the Claude API backend
+python-docx      # only to read .docx input
+pypdf            # only to read .pdf input
+nbformat         # only to rebuild the Colab notebook
