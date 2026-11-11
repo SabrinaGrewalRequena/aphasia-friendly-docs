@@ -29,7 +29,7 @@ examples/                            sample inputs and finished outputs (open th
 | `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts; originals written for this project |
 | `madeup_batch1` | 12 | made up (fake names, 555 numbers, example.org) |
 
-English 17, Spanish 8. All pass the fact check. **None are SLP-reviewed yet.**
+English 17, Spanish 8. All pass the fact check. **All 25 approved by a CCC-SLP (anonymous) on 2026-11-11, with no changes.**
 Never put real patient documents in this repo; keep them in a `private/` folder (it is never uploaded).
 
 ## Setup (once)

@@ -6,7 +6,7 @@ The ORIGINALS were written for this project in clinical language, because the UN
 handouts don't come with their source documents.
 
 Spelling mistakes in the UNC handouts were corrected; every other change is listed
-in notes_for_reviewer. None of these are SLP-reviewed yet.
+in notes_for_reviewer. Reviewed and approved with no changes by a CCC-SLP (anonymous) on 2026-11-11.
 
 Run:  python data/sources/unc_batch1.py
 """
@@ -29,7 +29,7 @@ def pair(pid, lang, doc_type, unc_file, source, original, title, pages, notes):
         "id": pid, "language": lang, "doc_type": doc_type, "split": "train",
         "provenance": f"Target adapted from {UNC}, file {unc_file}; original written for this project",
         "license": "UNC content used with the project owner's confirmation; check UNC terms before publishing",
-        "slp_reviewed": False, "source": source, "original": original,
+        "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11", "source": source, "original": original,
         "target": {"title": title, "language": lang, "source": source, "pages": pages,
                    "notes_for_reviewer": notes},
     }

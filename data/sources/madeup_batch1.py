@@ -2,7 +2,7 @@
 
 Every name, clinic, address and phone number is invented. Phone numbers use the
 fictional 555-01xx range; websites and emails use example.org. Nothing here is a
-real patient document. None of these are SLP-reviewed yet.
+real patient document. Reviewed and approved with no changes by a CCC-SLP (anonymous) on 2026-11-11.
 
 Run:  python data/sources/madeup_batch1.py
 """
@@ -30,7 +30,7 @@ def pair(pid, lang, doc_type, source, original, title, pages, notes=()):
     return {
         "id": pid, "language": lang, "doc_type": doc_type, "split": "train",
         "provenance": "made-up (written for this project)", "license": "CC BY 4.0 (project-authored)",
-        "slp_reviewed": False, "source": source, "original": original,
+        "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11", "source": source, "original": original,
         "target": {"title": title, "language": lang, "source": source, "pages": pages,
                    "notes_for_reviewer": list(notes)},
     }

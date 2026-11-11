@@ -1,5 +1,5 @@
 """Writes the 5 made-up seed pairs to data/pairs/seed.jsonl.
-They show the format. They are NOT SLP-reviewed yet — have your SLP check and fix them.
+They show the format. Reviewed and approved with no changes by a CCC-SLP (anonymous) on 2026-11-11.
 Run:  python data/sources/seed_pairs.py
 """
 import json
@@ -11,7 +11,7 @@ def L(kind, text, picture=""):
 PAIRS = [
 {
  "id": "referral-speech-en-001", "language": "en", "doc_type": "referral", "split": "train",
- "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": False,
+ "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11",
  "source": "Referral letter (made-up example)",
  "original": ("You have been referred to Outpatient Speech-Language Pathology at Riverside Rehabilitation Center "
               "for evaluation and treatment of expressive aphasia. Please contact the scheduling department at "
@@ -39,7 +39,7 @@ PAIRS = [
 },
 {
  "id": "discharge-stroke-en-001", "language": "en", "doc_type": "discharge", "split": "train",
- "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": False,
+ "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11",
  "source": "Discharge instructions (made-up example)",
  "original": ("Discharge Instructions. You were treated for an ischemic stroke. Take clopidogrel 75 mg by mouth once "
               "daily. Do not stop taking this medication unless instructed by your physician. Follow up with "
@@ -70,7 +70,7 @@ PAIRS = [
 },
 {
  "id": "appointment-es-001", "language": "es", "doc_type": "appointment", "split": "train",
- "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": False,
+ "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11",
  "source": "Carta de cita (ejemplo inventado)",
  "original": ("Estimado paciente: Le recordamos que tiene una cita de seguimiento en la Clínica de Rehabilitación "
               "Central el jueves 14 de enero de 2027 a las 2:15 p.m. con la Dra. Ana Morales. Por favor, llegue 15 "
@@ -95,7 +95,7 @@ PAIRS = [
 },
 {
  "id": "medication-en-001", "language": "en", "doc_type": "medication", "split": "train",
- "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": False,
+ "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11",
  "source": "Medication instructions (made-up example)",
  "original": ("Atorvastatin 40 mg tablet. Take 1 tablet by mouth every evening. This medication lowers cholesterol "
               "to reduce your risk of another stroke. Avoid grapefruit and grapefruit juice while taking this "
@@ -121,7 +121,7 @@ PAIRS = [
 },
 {
  "id": "mental-health-en-001", "language": "en", "doc_type": "mental_health", "split": "train",
- "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": False,
+ "provenance": "made-up", "license": "CC BY 4.0 (project-authored)", "slp_reviewed": True, "reviewed_by": "CCC-SLP (anonymous)", "review_date": "2026-11-11",
  "source": "Support resources handout (made-up example)",
  "original": ("Feeling down after a stroke is common. Many survivors experience sadness, frustration, or loss of "
               "interest in activities they once enjoyed. Talk to your doctor if these feelings last more than "
