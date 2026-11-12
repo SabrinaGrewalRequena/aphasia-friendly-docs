@@ -68,12 +68,50 @@ stats = trainer.train()
 print(stats)"""),
 md("""Watch the **loss** in the log: it should go down and level off. If it drops near 0 the model is
 memorising — use fewer epochs (e.g. 2) or more data."""),
-md("## 5. Run the fine-tuned model on the test documents"),
-code("""import json, os, re
+md("""## 5. Save to Google Drive right away
+
+Free Colab **disconnects** if your computer sleeps or the tab sits idle, and everything in Colab's memory is lost.
+This cell saves the trained model (a small ~130 MB adapter) and your data files to your Google Drive, so a
+disconnect can't undo the training. Google will ask you to allow Drive access: click **Allow**."""),
+code("""from google.colab import drive
+import shutil, os
+drive.mount("/content/drive")
+SAVE = "/content/drive/MyDrive/aphasia-model"
+os.makedirs(SAVE, exist_ok=True)
+model.save_pretrained(f"{SAVE}/lora")
+tokenizer.save_pretrained(f"{SAVE}/lora")
+for f in ("train.jsonl", "test.jsonl"):
+    shutil.copy(f, f"{SAVE}/{f}")
+print("Saved to Google Drive:", sorted(os.listdir(SAVE)))"""),
+md("""### Only if Colab disconnected after step 5
+
+Run the **install** cell (top of the notebook) first, then this cell. It loads your trained model back from Drive,
+so you do not have to train again. Skip this cell if nothing disconnected."""),
+code("""from unsloth import FastLanguageModel
+from google.colab import drive
+import shutil
+drive.mount("/content/drive")
+SAVE = "/content/drive/MyDrive/aphasia-model"
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name=f"{SAVE}/lora", max_seq_length=4096, load_in_4bit=True)
+for f in ("train.jsonl", "test.jsonl"):
+    shutil.copy(f"{SAVE}/{f}", f)
+print("Loaded the trained model from Google Drive")"""),
+md("""## 6. Run the trained model on the test documents
+
+Each handout is saved to Google Drive as soon as it is written (about 1 to 2 minutes each, 25 in total). If Colab
+disconnects, reconnect, run the install cell and the "only if Colab disconnected" cell, then run this cell again:
+it **skips** handouts that are already done. **Keep your computer awake** (plugged in, lid open) while it runs."""),
+code("""import json, os, re, shutil
+from google.colab import drive, files
+drive.mount("/content/drive")
+SAVE = "/content/drive/MyDrive/aphasia-model"
+OUT = f"{SAVE}/finetuned"
+os.makedirs(OUT, exist_ok=True)
 
 FastLanguageModel.for_inference(model)
+model.generation_config.max_length = None   # silences a harmless warning
 SYSTEM = json.loads(open("train.jsonl").readline())["messages"][0]["content"]
-os.makedirs("finetuned", exist_ok=True)
 
 def convert(original, source):
     msgs = [{"role": "system", "content": SYSTEM},
@@ -84,23 +122,21 @@ def convert(original, source):
     return tokenizer.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
 
 tests = [json.loads(l) for l in open("test.jsonl")]
-for t in tests:
+for i, t in enumerate(tests, 1):
+    done = [f"{OUT}/{t['id']}.json", f"{OUT}/{t['id']}.raw.txt"]
+    if any(os.path.exists(d) for d in done):
+        print(f"{i}/{len(tests)} already done", t["id"]); continue
     raw = convert(t["original"], t.get("source", t["id"]))
     m = re.search(r"\\{.*\\}", raw, re.S)
-    path = f"finetuned/{t['id']}.json"
-    open(path if m else path.replace(".json", ".raw.txt"), "w").write(m.group(0) if m else raw)
-    print("done", t["id"], "" if m else "(no JSON — saved raw)")
+    open(done[0] if m else done[1], "w").write(m.group(0) if m else raw)
+    print(f"{i}/{len(tests)} done", t["id"], "" if m else "(no JSON — saved raw)")
 
-!zip -qr finetuned.zip finetuned
-files.download("finetuned.zip")"""),
-md("""Unzip `finetuned.zip` into `results/finetuned/` on your computer, then run
+shutil.make_archive("/content/finetuned", "zip", SAVE, "finetuned")
+files.download("/content/finetuned.zip")"""),
+md("""`finetuned.zip` downloads to your computer, and the handouts are also in Google Drive under
+`aphasia-model/finetuned`. Unzip it into `results/finetuned/`, then run
 `python evaluate.py compare data/test.jsonl results/baseline results/finetuned`."""),
-md("## 6. Save the model"),
-code("""# Small LoRA adapter (~100 MB) — save to Google Drive so you don't lose it
-from google.colab import drive
-drive.mount("/content/drive")
-model.save_pretrained("/content/drive/MyDrive/aphasia-lora")
-tokenizer.save_pretrained("/content/drive/MyDrive/aphasia-lora")"""),
+md("## 7. Optional extras"),
 code("""# OPTIONAL: export a GGUF file to run privately on a laptop with Ollama (takes ~10 min)
 # model.save_pretrained_gguf("/content/drive/MyDrive/aphasia-gguf", tokenizer, quantization_method="q4_k_m")
 # Then on your computer:  ollama create aphasia-qwen -f Modelfile   (see README)"""),
