@@ -29,12 +29,12 @@ examples/                            sample inputs and finished outputs (open th
 | `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts | ✅ approved |
 | `madeup_batch1` | 12 | made up, short | ✅ approved |
 | `batch2_en`, `batch2_es` | 25 | made up: consent, insurance, home programs, schedules, education | ✅ approved |
-| `batch3_en`, `batch3_es` | 25 | **long, realistic** hospital paperwork (headers, record numbers, codes, fine print) | waiting |
-| `batch4_en`, `batch4_es` | 25 | under-represented types: consent, insurance, how-to, procedures, referrals, letters | waiting |
-| `batch5_en`, `batch5_es` | 25 | **messy formats**: portal messages, pharmacy labels, texts, voicemail, faxes, scans, tables, email | waiting |
-| `batch6_test` | 25 | **TEST SET** (`split: test`): never used for training; covers every type, 15 English / 10 Spanish | waiting |
+| `batch3_en`, `batch3_es` | 25 | **long, realistic** hospital paperwork (headers, record numbers, codes, fine print) | ✅ approved |
+| `batch4_en`, `batch4_es` | 25 | under-represented types: consent, insurance, how-to, procedures, referrals, letters | ✅ approved |
+| `batch5_en`, `batch5_es` | 25 | **messy formats**: portal messages, pharmacy labels, texts, voicemail, faxes, scans, tables, email | ✅ approved |
+| `batch6_test` | 25 | **TEST SET** (`split: test`): never used for training; covers every type, 15 English / 10 Spanish | ✅ approved |
 
-**150 pairs**: English 81, Spanish 69. 125 for training, 25 for testing. All pass the fact check, the weekday check
+**150 pairs**: English 81, Spanish 69. **All 150 approved by a CCC-SLP (anonymous)**: batches 1–2 on 2026-11-11, batches 3–6 on 2026-11-12, with no changes. 125 for training, 25 for testing. All pass the fact check, the weekday check
 and the format rules. Review books for each batch are in `review/<batch>/`.
 
 All names, clinics, IDs and phone numbers in made-up documents are invented (phones use the fictional 555-01xx

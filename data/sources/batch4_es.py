@@ -1,6 +1,6 @@
 """Batch 4 (Spanish): 15 made-up pairs for document types the set had few of (consent,
 insurance, how-to, procedure, referral, letters, equipment). All names, clinics, IDs and
-numbers are invented (phones use 555-01xx; websites use example.org). Not SLP-reviewed yet.
+numbers are invented (phones use 555-01xx; websites use example.org). Approved with no changes by a CCC-SLP (anonymous) on 2026-11-12.
 
 Run:  python data/sources/batch4_es.py
 """
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch2_helpers import B, C, CR, P, PH, S, T, pair, write  # noqa: E402,F401
+from batch2_helpers import B, C, CR, P, PH, S, T, mark_reviewed, pair, write  # noqa: E402,F401
 
 TEL = "teléfono"
 PHs = lambda t: PH(t, TEL)
@@ -550,4 +550,5 @@ pair("consentimiento-fotos-es-001", "es", "consent", "Permiso para fotos (ejempl
         B("Fecha: ____________", "calendario"))]),
 ]
 
+mark_reviewed(PAIRS, "CCC-SLP (anonymous)", "2026-11-12")
 write(PAIRS, "batch4_es.jsonl")

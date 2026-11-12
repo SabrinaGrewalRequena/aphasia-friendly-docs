@@ -1,6 +1,6 @@
 """Batch 4 (English): 10 made-up pairs for document types the set had few of (consent,
 insurance, how-to, procedure, referral, work letter). All names, clinics, IDs and numbers
-are invented (phones use 555-01xx; websites use example.org). Not SLP-reviewed yet.
+are invented (phones use 555-01xx; websites use example.org). Approved with no changes by a CCC-SLP (anonymous) on 2026-11-12.
 
 Run:  python data/sources/batch4_en.py
 """
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch2_helpers import B, C, CR, P, PH, S, T, pair, write  # noqa: E402,F401
+from batch2_helpers import B, C, CR, P, PH, S, T, mark_reviewed, pair, write  # noqa: E402,F401
 
 PAIRS = [
 # 1 ── Telehealth consent ───────────────────────────────────────────────────────
@@ -392,4 +392,5 @@ pair("how-to-portal-en-001", "en", "how_to", "How to sign up for the patient por
         PH("Phone: (919) 555-0164"))]),
 ]
 
+mark_reviewed(PAIRS, "CCC-SLP (anonymous)", "2026-11-12")
 write(PAIRS, "batch4_en.jsonl")

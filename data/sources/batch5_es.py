@@ -1,7 +1,7 @@
 """Batch 5 (Spanish): 12 made-up pairs in messy real-world formats (portal messages, bilingual
 pharmacy labels, text reminders, voicemail, abbreviations, legal fine print, tables, mixed
 English/Spanish forms, scanning errors, email, nurse call notes). All names, clinics, IDs and
-numbers are invented (phones use 555-01xx; websites use example.org). Not SLP-reviewed yet.
+numbers are invented (phones use 555-01xx; websites use example.org). Approved with no changes by a CCC-SLP (anonymous) on 2026-11-12.
 
 Run:  python data/sources/batch5_es.py
 """
@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch2_helpers import B, C, CR, P, PH, S, T, pair, write  # noqa: E402,F401
+from batch2_helpers import B, C, CR, P, PH, S, T, mark_reviewed, pair, write  # noqa: E402,F401
 
 TEL = "teléfono"
 PHs = lambda t: PH(t, TEL)
@@ -406,4 +406,5 @@ pair("llamada-enfermera-es-001", "es", "message", "Resumen de llamada a la líne
      omitted=["Hora de la llamada dom 02/14/2027 19:40: cuándo llamaron", "Nombre de quien llamó (Alberto Ruiz, hijo): no se necesita"]),
 ]
 
+mark_reviewed(PAIRS, "CCC-SLP (anonymous)", "2026-11-12")
 write(PAIRS, "batch5_es.jsonl")

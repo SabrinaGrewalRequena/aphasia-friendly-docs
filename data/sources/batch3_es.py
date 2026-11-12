@@ -1,6 +1,6 @@
 """Batch 3 (Spanish): 12 long, realistic made-up pairs, written to look like real hospital
 paperwork. All names, clinics, IDs and numbers are invented (phones use 555-01xx; websites use
-example.org). Not SLP-reviewed yet.
+example.org). Approved with no changes by a CCC-SLP (anonymous) on 2026-11-12.
 
 Run:  python data/sources/batch3_es.py
 """
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch2_helpers import B, C, CR, P, PH, S, T, pair, write  # noqa: E402,F401
+from batch2_helpers import B, C, CR, P, PH, S, T, mark_reviewed, pair, write  # noqa: E402,F401
 
 TEL = "teléfono"
 PHs = lambda t: PH(t, TEL)
@@ -540,4 +540,5 @@ pair("recursos-salud-mental-es-001", "es", "mental_health", "Recursos de salud m
         CR("Llame al 911", "ambulancia"))]),
 ]
 
+mark_reviewed(PAIRS, "CCC-SLP (anonymous)", "2026-11-12")
 write(PAIRS, "batch3_es.jsonl")

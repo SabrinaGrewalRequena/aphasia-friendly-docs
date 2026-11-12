@@ -1,7 +1,7 @@
 """Batch 6: 25 made-up pairs reserved as the TEST SET (split="test"). These are never used for
 training. They cover every document type and format in the project, in English (15) and
 Spanish (10). All names, clinics, IDs and numbers are invented (phones use 555-01xx; websites
-use example.org). Not SLP-reviewed yet.
+use example.org). Approved with no changes by a CCC-SLP (anonymous) on 2026-11-12.
 
 Run:  python data/sources/batch6_test.py
 """
@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from batch2_helpers import B, C, CR, P, PH, S, T, pair as _pair, write  # noqa: E402,F401
+from batch2_helpers import B, C, CR, P, PH, S, T, mark_reviewed, pair as _pair, write  # noqa: E402,F401
 
 TEL = "teléfono"
 PHs = lambda t: PH(t, TEL)
@@ -852,4 +852,5 @@ pair("test-buzon-farmacia-es", "es", "message", "Mensaje de voz de la farmacia (
      omitted=["Hora del mensaje 4:05 PM: cuándo llamaron"]),
 ]
 
+mark_reviewed(PAIRS, "CCC-SLP (anonymous)", "2026-11-12")
 write(PAIRS, "batch6_test.jsonl")
