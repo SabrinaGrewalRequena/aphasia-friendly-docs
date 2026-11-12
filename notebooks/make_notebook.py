@@ -52,9 +52,9 @@ code("""from trl import SFTTrainer, SFTConfig
 from unsloth.chat_templates import train_on_responses_only
 
 trainer = SFTTrainer(
-    model=model, tokenizer=tokenizer, train_dataset=train,
+    model=model, processing_class=tokenizer, train_dataset=train,
     args=SFTConfig(
-        dataset_text_field="text", max_seq_length=MAX_LEN,
+        dataset_text_field="text", max_length=MAX_LEN,
         per_device_train_batch_size=1, gradient_accumulation_steps=8,
         num_train_epochs=3, learning_rate=2e-4, warmup_steps=5,
         lr_scheduler_type="linear", optim="adamw_8bit", weight_decay=0.01,
@@ -78,9 +78,10 @@ os.makedirs("finetuned", exist_ok=True)
 def convert(original, source):
     msgs = [{"role": "system", "content": SYSTEM},
             {"role": "user", "content": f"Source name: {source}\\n\\nOriginal document:\\n<<<\\n{original.strip()}\\n>>>"}]
-    ids = tokenizer.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to("cuda")
-    out = model.generate(input_ids=ids, max_new_tokens=2500, temperature=0.2, top_p=0.9, do_sample=True)
-    return tokenizer.decode(out[0][ids.shape[1]:], skip_special_tokens=True)
+    inputs = tokenizer.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True,
+                                           return_dict=True, return_tensors="pt").to("cuda")
+    out = model.generate(**inputs, max_new_tokens=3000, temperature=0.2, top_p=0.9, do_sample=True)
+    return tokenizer.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
 
 tests = [json.loads(l) for l in open("test.jsonl")]
 for t in tests:
