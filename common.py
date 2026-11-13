@@ -32,7 +32,34 @@ def parse_model_json(raw):
     start, end = raw.find("{"), raw.rfind("}")
     if start == -1 or end == -1:
         raise ValueError("No JSON object found in model output")
-    return json.loads(raw[start:end + 1])
+    try:
+        return json.loads(raw[start:end + 1])
+    except json.JSONDecodeError:
+        doc = json.loads(_close_brackets(raw[start:end + 1]))
+        doc.setdefault("notes_for_reviewer", []).append(
+            "The model's output was cut off at the very end; missing closing brackets were added automatically. "
+            "Check that the last page is complete.")
+        return doc
+
+
+def _close_brackets(text):
+    """Add the ] and } a model left off when it stopped just before the end of its JSON."""
+    stack, in_str, esc = [], False, False
+    for ch in text:
+        if in_str:
+            esc = (ch == "\\" and not esc)
+            if ch == '"' and not esc:
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch in "[{":
+            stack.append("]" if ch == "[" else "}")
+        elif ch in "]}" and stack:
+            stack.pop()
+    if in_str:
+        raise ValueError("Model output ends inside a string; cannot repair safely")
+    return text + "".join(reversed(stack))
 
 
 def validate(doc):
