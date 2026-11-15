@@ -339,6 +339,5 @@ drop.addEventListener("drop", (e) => takeFile(e.dataTransfer?.files?.[0]));
 $("pastebtn").onclick = () => { $("pastebox").hidden = !$("pastebox").hidden; if (!$("pastebox").hidden) $("src").focus(); };
 $("go").onclick = () => run(async () => $("src").value, "Pasted document");
 $("stop").onclick = () => ctl?.abort();
-state.doc = SAMPLE.output; state.original = SAMPLE.original; state.example = true;
-render();
+render();   // nothing to show until a file is uploaded
 </script>
