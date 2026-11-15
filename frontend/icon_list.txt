@@ -1,0 +1,161 @@
+user person
+users people, group
+friends family, friends
+user-heart caregiver, care partner
+old older adult
+baby-carriage baby
+stethoscope doctor, check-up
+nurse nurse
+first-aid-kit first aid, health care
+building-hospital hospital, clinic
+emergency-bed hospital bed, emergency room
+ambulance ambulance, emergency
+urgent urgent, emergency light
+sos SOS, help now
+phone phone, call
+phone-call phone call
+device-mobile cell phone, text message
+message text message, message
+messages conversation, chat
+mail email, letter
+mailbox mail, envelope
+video video visit, video call
+device-laptop computer, laptop
+device-tablet tablet
+world-www website
+link link
+calendar calendar, date
+calendar-event appointment
+calendar-check confirmed appointment
+calendar-x cancelled appointment
+clock time, clock
+alarm alarm, reminder
+hourglass wait, how long
+sun morning, day
+sunset evening
+moon night, bedtime
+pill pill, tablet, medicine
+pills pills, medicines
+prescription prescription
+medicine-syrup liquid medicine
+vaccine shot, injection, vaccine
+needle needle, IV
+bandage bandage, wound
+thermometer fever, temperature
+heartbeat heart rate, heart monitor
+heart heart, love
+brain brain, stroke, thinking
+dental teeth, tooth, brush teeth
+eye eyes, vision
+eyeglass glasses
+ear hearing, ear, hearing aid
+lungs lungs, breathing
+droplet blood, liquid
+droplet-half thick liquid
+bone bone, fracture
+hand-stop stop, do not
+hand-finger pointing, point
+hand-click tap, click
+thumb-up good, okay
+thumb-down bad, no
+check yes, done, correct
+x no, wrong
+ban do not, not allowed
+alert-triangle warning, careful
+alert-circle important
+info-circle information
+help question, help
+mood-smile happy, good mood
+mood-sad sad
+mood-cry crying, very sad
+mood-angry angry
+mood-confuzed confused
+mood-nervous nervous, worried
+zzz sleep, sleepy, tired
+bed bed, rest
+walk walk, walking
+run exercise, run
+stretching stretching, exercise
+wheelchair wheelchair
+stairs stairs, steps
+armchair chair, sit
+bath bath, bathe
+toilet-paper toilet, bathroom
+hand-sanitizer wash hands, clean hands
+home home, house
+building building, office
+building-community community
+map-pin place, address
+map map, directions
+car car, drive, ride
+car-off no driving
+bus bus, transportation
+parking parking
+id ID card
+id-badge-2 badge, name tag
+credit-card card, insurance card, payment
+cash money, cash
+coin cost, coins
+receipt bill
+file-text document, form, paper
+clipboard-list list, checklist
+clipboard-check checklist done
+notes notes
+writing write
+pencil write, edit
+signature sign, signature
+book book, read
+books reading
+news news, newspaper
+headphones listen, audio
+microphone speak, voice
+speakerphone loud, speak up
+volume sound, volume
+message-language language, interpreter
+language language
+school class, learning
+lock private, safe
+shield-check safe, protected
+apple fruit, healthy food
+salad vegetables, salad
+soup soup
+bowl-spoon meal, food
+cup drink, coffee, cup
+glass-full glass of water, drink
+bottle bottle
+tools-kitchen-2 eat, meal
+cookie snack
+candy candy, sweets
+no-copyright free
+salt salt
+scale weight, scale
+activity activity, heart tracing
+report-medical medical report, results
+microscope lab, test
+test-pipe lab test, blood test
+gauge blood pressure gauge
+scan scan, x-ray
+camera camera, photo
+photo photo, picture
+target goal
+trophy success
+plant growing, getting better
+trending-up improve, more
+trending-down less, lower
+arrows-left-right change, swap
+refresh repeat, again
+player-play start
+player-stop stop
+square-check checkbox
+list-numbers steps, list
+puzzle puzzle, problem solving
+cards cards, game
+device-gamepad-2 game
+music music, song
+device-tv TV, television
+gift gift
+dog dog
+smoking smoking
+smoking-no no smoking
+glass-off no alcohol
+beer alcohol

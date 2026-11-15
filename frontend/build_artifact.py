@@ -20,10 +20,10 @@ pairs = {p["id"]: p for p in load_pairs(ROOT / "data" / "pairs")}
 examples = [{"source": pairs[i]["source"], "original": pairs[i]["original"], "target": pairs[i]["target"]}
             for i in EXAMPLE_IDS]
 sample_pair = pairs[SAMPLE_ID]
-# The example handout gets an emoji "icon" per line, the way new handouts do.
-ICONS = {"person": "🧑", "pill": "💊", "doctor": "🩺", "seizure": "⚡", "shield": "🛡️", "clock": "⏰", "stop": "🛑",
-         "sleepy": "😴", "sad": "😔", "phone": "📞", "no driving": "🚫🚗", "bath": "🛁", "ambulance": "🚑",
-         "calendar": "📅", "help": "🆘"}
+# The example handout gets a drawing name ("icon") per line, the way new handouts do.
+ICONS = {"person": "user", "pill": "pill", "doctor": "stethoscope", "seizure": "brain", "shield": "shield-check",
+         "clock": "clock", "stop": "hand-stop", "sleepy": "zzz", "sad": "mood-sad", "phone": "phone",
+         "no driving": "car-off", "bath": "bath", "ambulance": "ambulance", "calendar": "calendar", "help": "sos"}
 output = json.loads(json.dumps(sample_pair["target"]))
 for page in output["pages"]:
     for line in page["lines"]:
@@ -37,7 +37,8 @@ checks = (Path(__file__).with_name("checks.js")).read_text(encoding="utf-8")
 html = (html.replace("__CHECKS__", checks)
             .replace("__RULES__", dump(rules))
             .replace("__EXAMPLES__", dump(examples))
-            .replace("__SAMPLE__", dump(sample)))
+            .replace("__SAMPLE__", dump(sample))
+            .replace("__ICONS__", (Path(__file__).with_name("icons.json")).read_text(encoding="utf-8")))
 out = Path(__file__).with_name("aphasia_handout_maker.html")
 out.write_text(html, encoding="utf-8")
 print(f"Wrote {out} ({len(html):,} bytes)")
