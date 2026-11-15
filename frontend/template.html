@@ -1,0 +1,565 @@
+<title>Aphasia Handout Maker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a working desk — the document you paste on the left, the handout pages it becomes on the right,
+   with the safety check pinned above the pages. Type is Atkinson Hyperlegible, a face made for low-vision
+   readers, so the tool previews handouts in the same type their readers need. */
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --ink: #1d2422;
+  --muted: #5b6662;
+  --line: #d9ddd8;
+  --accent: #1f6b5a;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2efe9;
+  --ok: #23734a;
+  --ok-soft: #e3f2e8;
+  --warn: #a15c00;
+  --warn-soft: #fbefdc;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  --page: #ffffff;
+  --page-ink: #111614;
+  --pic: #eef1ee;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121615; --surface: #1a201e; --ink: #e8ece9; --muted: #9aa6a1; --line: #2c3532;
+    --accent: #5cbfa3; --accent-ink: #0d1412; --accent-soft: #1d302a;
+    --ok: #6cc795; --ok-soft: #1b2e23; --warn: #e6a64c; --warn-soft: #34281a; --bad: #f08a80; --bad-soft: #3a1f1d;
+    --page: #f8faf8; --page-ink: #111614; --pic: #e6ebe7; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121615; --surface: #1a201e; --ink: #e8ece9; --muted: #9aa6a1; --line: #2c3532;
+  --accent: #5cbfa3; --accent-ink: #0d1412; --accent-soft: #1d302a;
+  --ok: #6cc795; --ok-soft: #1b2e23; --warn: #e6a64c; --warn-soft: #34281a; --bad: #f08a80; --bad-soft: #3a1f1d;
+  --page: #f8faf8; --page-ink: #111614; --pic: #e6ebe7; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; }
+h1 { font-size: clamp(24px, 3vw, 32px); line-height: 1.15; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.tagline { color: var(--muted); margin: 4px 0 0; max-width: 62ch; }
+.privacy { font-size: 14px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+.desk { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { .desk { grid-template-columns: 1fr; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; min-width: 0; }
+.panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 12px; }
+label { font-weight: 700; display: block; margin-bottom: 6px; }
+textarea, input[type="text"], select {
+  width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 10px 12px; }
+textarea { min-height: 300px; resize: vertical; font-size: 15px; line-height: 1.45; }
+textarea:focus, input:focus, select:focus, button:focus-visible, [contenteditable]:focus { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; }
+.row > * { flex: 1 1 180px; min-width: 0; }
+.field { display: grid; gap: 4px; margin-bottom: 14px; }
+.hint { font-size: 13px; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 4px; }
+button { font: inherit; font-weight: 700; border-radius: 8px; padding: 10px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+button.link { background: none; border: none; padding: 4px 0; color: var(--accent); text-decoration: underline; font-weight: 400; }
+.status { font-size: 14px; color: var(--muted); min-height: 1.5em; }
+.status.err { color: var(--bad); }
+/* Safety check strip */
+.check { border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; border: 1px solid var(--line); background: var(--surface); }
+.check.pass { background: var(--ok-soft); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.check.fail { background: var(--bad-soft); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+.check-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.verdict { font-weight: 700; font-size: 18px; }
+.check.pass .verdict { color: var(--ok); } .check.fail .verdict { color: var(--bad); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-variant-numeric: tabular-nums; }
+.chip.ok { color: var(--ok); } .chip.warn { color: var(--warn); } .chip.bad { color: var(--bad); }
+details.facts { margin-top: 10px; }
+details.facts summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+.factlist { font-family: var(--font-mono); font-size: 12.5px; list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 3px; }
+.factlist li { display: grid; grid-template-columns: 7.5em 5.5em minmax(0, 1fr); gap: 8px; overflow-wrap: anywhere; }
+.st-ok { color: var(--ok); } .st-omitted { color: var(--muted); } .st-reformatted { color: var(--warn); } .st-missing, .st-added, .st-crisis { color: var(--bad); }
+.notes { font-size: 14px; margin: 10px 0 0; padding-left: 18px; color: var(--ink); }
+.notes li { margin: 3px 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.toolbar .title-edit { font-size: 22px; font-weight: 700; flex: 1 1 260px; min-width: 0; }
+.example-tag { font-family: var(--font-mono); font-size: 12px; color: var(--warn); border: 1px dashed var(--warn); border-radius: 6px; padding: 2px 8px; }
+/* Handout pages: shaped like a sheet of letter paper */
+.pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.sheet { background: var(--page); color: var(--page-ink); border: 1px solid var(--line); border-radius: 6px; padding: 18px;
+  aspect-ratio: 8.5 / 11; max-width: 100%; display: flex; flex-direction: column; gap: 12px; overflow: auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.sheet .pno { font-family: var(--font-mono); font-size: 11px; color: #6b7570; display: flex; justify-content: space-between; }
+.sheet h3 { margin: 0; font-size: 20px; line-height: 1.2; border-bottom: 3px solid var(--page-ink); padding-bottom: 6px; }
+.hline { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 17px; line-height: 1.3; }
+.hpic { width: 54px; height: 54px; border-radius: 6px; background: var(--pic); display: grid; place-items: center; text-align: center;
+  font-size: 9.5px; line-height: 1.1; color: #4c5752; padding: 3px; overflow: hidden; }
+.hpic.none { background: none; }
+.htext { min-width: 0; overflow-wrap: anywhere; }
+.htext b, .htext strong { font-weight: 700; }
+.hline.crisis .htext { border: 3px solid #b3261e; border-radius: 8px; padding: 6px 8px; font-weight: 700; color: #8f1d17; }
+.hline.phone .htext { font-weight: 700; font-size: 18px; }
+.num { font-weight: 700; margin-right: 6px; }
+.box { display: inline-block; width: 16px; height: 16px; border: 2.5px solid var(--page-ink); border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+[contenteditable="true"] { border-radius: 4px; }
+[contenteditable="true"]:hover { background: rgba(31,107,90,0.08); }
+.empty { color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); padding: 32px; text-align: center; }
+.how { margin-top: 18px; font-size: 14px; color: var(--muted); }
+.how ol { padding-left: 18px; margin: 6px 0 0; }
+.progress { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .progress::after { content: " ▍"; animation: blink 1s steps(2) infinite; } }
+@keyframes blink { 50% { opacity: 0; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Aphasia Handout Maker</h1>
+      <p class="tagline">Paste a health document. Get an aphasia-friendly handout in English or Spanish: short lines, one topic per page, bold key words, pictures. Every name, date, dose and phone number is checked against the original.</p>
+    </div>
+    <span class="privacy">Do not paste real patient names or records</span>
+  </header>
+
+  <div class="desk">
+    <section class="panel" aria-labelledby="in-h">
+      <h2 id="in-h">Original document</h2>
+      <div class="field">
+        <label for="src">Paste the text</label>
+        <textarea id="src" spellcheck="false"></textarea>
+        <span class="hint">From a PDF or Word file, select all, copy, and paste here. A .txt file also works: <input id="file" type="file" accept=".txt,text/plain" aria-label="Open a text file"></span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="srcname">Document name</label>
+          <input id="srcname" type="text" placeholder="e.g. Discharge instructions">
+        </div>
+        <div class="field">
+          <label for="lang">Write the handout in</label>
+          <select id="lang">
+            <option value="">Same language as the original</option>
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="go" class="primary" type="button">Make aphasia-friendly</button>
+        <button id="stop" type="button" hidden>Stop</button>
+        <button id="clear" class="link" type="button">Clear</button>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <div class="how">
+        <strong>How it works</strong>
+        <ol>
+          <li>Claude rewrites the document using the project's aphasia-friendly rules.</li>
+          <li>The safety check compares every fact with your original.</li>
+          <li>Click any line on a page to edit it. The check reruns as you type.</li>
+          <li>Download the handout, open it in your browser, and print it.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="out-h" style="min-width:0">
+      <h2 id="out-h" class="visually-hidden" style="position:absolute;left:-9999px">Handout</h2>
+      <div id="out"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+// ───────────────────────────── Data injected by frontend/build_artifact.py ─────────────────────────────
+const RULES = __RULES__;
+const EXAMPLES = __EXAMPLES__;
+const SAMPLE = __SAMPLE__;
+
+// ───────────────────────────── Fact check (port of factcheck.py) ─────────────────────────────
+const MONTHS_EN = "(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)\\.?";
+const MONTHS_ES = "(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)";
+const DAYS = "(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|lunes|martes|miércoles|jueves|viernes|sábado|domingo)";
+const UNITS = "(?:mg|mcg|µg|g|mL|ml|L|units?|unidades|IU|tablets?|tabletas?|pills?|pastillas?|capsules?|cápsulas?|puffs?|inhalaciones|drops?|gotas|teaspoons?|tsp|cucharaditas?|tablespoons?|tbsp|cucharadas?|patch(?:es)?|parches?)";
+const STREET = "(?:Street|St\\.?|Avenue|Ave\\.?|Road|Rd\\.?|Boulevard|Blvd\\.?|Drive|Dr\\.?|Lane|Ln\\.?|Way|Court|Ct\\.?|Parkway|Pkwy\\.?|Place|Pl\\.?|Highway|Hwy\\.?)";
+const W = "[\\p{L}\\p{N}_'’-]";
+const PATTERNS = [
+  ["phone", new RegExp("(?:\\+?1[\\s.-]?)?\\(?\\b\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\\b|\\b(?:911|988|711|211)\\b", "g")],
+  ["email", /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g],
+  ["website", /\b(?:https?:\/\/|www\.)[^\s)<>]+|(?<![@\w.-])[\w-]+\.(?:org|gov|com|net|edu)(?:\/[^\s)<>]*)?/g],
+  ["date", new RegExp(`\\b${DAYS},?\\s+${MONTHS_EN}\\s+\\d{1,2}(?:,\\s*\\d{4})?|\\b${MONTHS_EN}\\s+\\d{1,2}(?:st|nd|rd|th)?(?:,\\s*\\d{4})?|\\b\\d{1,2}\\s+de\\s+${MONTHS_ES}(?:\\s+de\\s+\\d{4})?|\\b\\d{1,2}/\\d{1,2}(?:/\\d{2,4})?\\b`, "gi")],
+  ["time", /\b\d{1,2}(?::\d{2})?\s*(?:a\.?\s?m\.?|p\.?\s?m\.?|AM|PM)(?=\W|$)|\b\d{1,2}:\d{2}\b/gi],
+  ["dose", new RegExp(`\\b\\d+(?:[.,]\\d+)?[ \\t]?${UNITS}\\b`, "gi")],
+  ["name", new RegExp(`\\b(?:Dr|Dra|Mr|Mrs|Ms|Sr|Sra|Srta)\\.\\s+[A-ZÁÉÍÓÚÑ]${W}+(?:\\s+[A-ZÁÉÍÓÚÑ]${W}+)?`, "gu")],
+  ["address", new RegExp(`\\b\\d{1,6}\\s+(?:[A-Z0-9][\\w.'-]*\\s+){1,4}${STREET}(?:,?\\s+(?:Suite|Ste\\.?|Room|Rm\\.?)\\s*\\w+)?|\\b(?:Calle|Avenida|Av\\.)\\s+[\\wÁÉÍÓÚÑáéíóúñ ]+?\\s+\\d+`, "g")],
+];
+const CRISIS = ["911", "988"];
+const stripMd = (t) => String(t || "").replaceAll("**", "");
+const norm = (s) => String(s).toLowerCase().replaceAll("’", "'").replace(/\b([ap])\.?\s?m\.?/g, "$1m").replace(/\s+/g, " ").trim();
+const digits = (s) => String(s).replace(/\D/g, "");
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function allLines(doc) { const out = []; for (const p of doc.pages || []) for (const l of p.lines || []) out.push([p, l]); return out; }
+function outputText(doc) {
+  const parts = [doc.title || ""];
+  for (const [p, l] of allLines(doc)) { parts.push(p.topic || ""); parts.push(stripMd(l.text)); }
+  return parts.join("\n");
+}
+function extractFacts(text) {
+  const facts = [], seen = new Set();
+  for (const [type, re] of PATTERNS) {
+    re.lastIndex = 0;
+    for (const m of text.matchAll(re)) {
+      const v = m[0].trim().replace(/[.,;]+$/, "");
+      const key = type + "|" + norm(v);
+      if (!seen.has(key)) { seen.add(key); facts.push({ type, value: v }); }
+    }
+  }
+  return facts;
+}
+function numberTokens(text) {
+  const t = text.replace(/^\s*(?:step|paso)?\s*\d{1,2}[.)]\s/gim, " ");
+  return t.match(/\d[\d,.:/-]*\d|\d/g) || [];
+}
+function factCheck(original, doc) {
+  const out = outputText(doc), outN = norm(out), outD = digits(out);
+  const omittedN = norm((doc.omitted || []).join(" "));
+  const facts = extractFacts(original).map((f) => {
+    const v = f.value, words = v.split(/\s+/);
+    let status;
+    if (outN.includes(norm(v))) status = "ok";
+    else if (["phone", "date", "time", "dose"].includes(f.type) && digits(v) && outD.includes(digits(v))) status = "reformatted";
+    else if (f.type === "name" && words.length === 2 && new RegExp(`(?<![\\p{L}])${esc(norm(words[1]))}(?![\\p{L}])`, "u").test(outN)) status = "ok";
+    else if (f.type === "name" && new RegExp(`(?<![\\p{L}])${esc(norm(words[0]))}\\s.*(?<![\\p{L}])${esc(norm(words.at(-1)))}(?![\\p{L}])`, "u").test(outN)) status = "ok";
+    else if (omittedN.includes(norm(v)) && !CRISIS.includes(v)) status = "omitted";
+    else status = "missing";
+    return { ...f, status };
+  });
+  const origRuns = new Set(original.match(/\d+/g) || []);
+  const added = [...new Set(numberTokens(out).filter((tok) => !(tok.match(/\d+/g) || []).every((r) => origRuns.has(r))))].sort();
+  const crisis = [];
+  for (const num of CRISIS) {
+    if (new RegExp(`\\b${num}\\b`).test(original) &&
+        !allLines(doc).some(([, l]) => l.kind === "crisis" && String(l.text || "").includes(num)))
+      crisis.push(`${num} is in the original but not in an emergency box`);
+  }
+  const passed = facts.every((f) => f.status === "ok" || f.status === "omitted") && !added.length && !crisis.length;
+  return { passed, facts, added, crisis };
+}
+
+// ───────────────────────────── Reading level + format (port of score.py) ─────────────────────────────
+const READ_KINDS = new Set(["text", "step", "checkbox"]);
+const CONNECTORS = new Set(["de", "del", "la", "las", "el", "los", "en", "y", "para", "of", "the", "and", "for", "in"]);
+const PHONE_RE = /\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b|\b(?:911|988)\b/;
+const sentences = (t) => t.split(/(?<=[.!?])\s+|\n/).filter((s) => s.trim());
+const words = (t) => t.match(/[\p{L}\p{N}_'’-]+/gu) || [];
+function syllables(w, lang) {
+  w = w.toLowerCase();
+  let n = (w.match(lang === "es" ? /[aeiouáéíóúü]+/g : /[aeiouyáéíóúü]+/g) || []).length;
+  if (lang !== "es" && w.endsWith("e") && !w.endsWith("le") && !w.endsWith("ee") && n > 1) n -= 1;
+  return Math.max(n, 1);
+}
+function gradeLevel(text, lang) {
+  const ss = sentences(text), ws = words(text).filter((w) => !/^\d+$/.test(w));
+  if (!ss.length || !ws.length) return 0;
+  const syl = ws.reduce((a, w) => a + syllables(w, lang), 0);
+  const g = lang === "es"
+    ? -0.205 * (100 * ss.length / ws.length) + 0.049 * (100 * syl / ws.length) - 3.407
+    : 0.39 * (ws.length / ss.length) + 11.8 * (syl / ws.length) - 15.59;
+  return Math.round(Math.max(g, 0) * 10) / 10;
+}
+function scoreDoc(doc) {
+  const lang = doc.language || "en";
+  const prose = allLines(doc).filter(([, l]) => READ_KINDS.has(l.kind))
+    .map(([, l]) => stripMd(String(l.text || "").replace(/\*\*([^*]*[A-Z0-9ÁÉÍÓÚÑ][^*]*)\*\*/g, "")));
+  const issues = [];
+  (doc.pages || []).forEach((page, i) => {
+    const lines = page.lines || [];
+    const limit = lines.length && lines.every((l) => l.kind === "checkbox" || l.kind === "blank") ? 6 : 4;
+    if (lines.length > limit) issues.push(`Page ${i + 1}: ${lines.length} lines (max ${limit})`);
+    lines.forEach((l, j) => {
+      const t = String(l.text || ""), n = words(stripMd(t)).length;
+      if (READ_KINDS.has(l.kind) && n > 15) issues.push(`Page ${i + 1}, line ${j + 1}: ${n} words (max 15)`);
+      if ((l.kind === "text" || l.kind === "step") && !t.includes("**")) issues.push(`Page ${i + 1}, line ${j + 1}: no bold key word`);
+      if (READ_KINDS.has(l.kind) && PHONE_RE.test(t)) issues.push(`Page ${i + 1}, line ${j + 1}: phone number should be on its own line`);
+      if (READ_KINDS.has(l.kind) && !l.picture) issues.push(`Page ${i + 1}, line ${j + 1}: no picture`);
+      const factLine = /^\*\*[^*]+\*\*\.?$/.test(t.trim());
+      const bolds = [...t.matchAll(/\*\*(.+?)\*\*/g)].map((m) => m[1])
+        .filter((b) => !/[\d@]/.test(b) && !words(b).filter((w) => !CONNECTORS.has(w.toLowerCase())).every((w) => /^\p{Lu}/u.test(w)));
+      if (bolds.length && !factLine && bolds.reduce((a, b) => a + words(b).length, 0) > Math.max(4, Math.floor(n / 2)))
+        issues.push(`Page ${i + 1}, line ${j + 1}: too much bold`);
+    });
+  });
+  const pages = doc.pages || [];
+  if (pages.length && allLines(doc).some(([, l]) => l.kind === "phone" || l.kind === "crisis")) {
+    const last = new Set((pages.at(-1).lines || []).map((l) => l.kind));
+    if (!last.has("phone") && !last.has("crisis")) issues.push("Last page has no phone line (end with who can help)");
+  }
+  return { grade: gradeLevel(prose.join("\n"), lang), issues, pages: pages.length };
+}
+
+// ───────────────────────────── Talking to Claude ─────────────────────────────
+function userMessage(text, source, lang) {
+  const target = lang ? `Write the output in ${lang === "es" ? "Spanish" : "English"}.\n` : "";
+  return `${target}Source name: ${source}\n\nOriginal document:\n<<<\n${text.trim()}\n>>>`;
+}
+function buildPrompt(text, source, lang) {
+  let p = RULES + "\n\n# Examples\n";
+  EXAMPLES.forEach((ex, i) => {
+    p += `\n## Example ${i + 1}: input\n${userMessage(ex.original, ex.source, "")}\n\n## Example ${i + 1}: output\n${JSON.stringify(ex.target)}\n`;
+  });
+  p += `\n# Your task\n${userMessage(text, source, lang)}\n\nReply with only the JSON object.`;
+  return p;
+}
+function buildFixPrompt(text, doc, check) {
+  const problems = [
+    ...check.facts.filter((f) => f.status === "missing").map((f) => `- The ${f.type} "${f.value}" from the original is missing. Copy it exactly, or list it in "omitted" with a reason if the reader does not need it.`),
+    ...check.facts.filter((f) => f.status === "reformatted").map((f) => `- The ${f.type} "${f.value}" was changed. Copy it exactly as written in the original.`),
+    ...check.added.map((a) => `- The number "${a}" is not in the original. Remove it or use the original's wording.`),
+    ...check.crisis.map((c) => `- ${c}. Put it on its own line with kind "crisis".`),
+  ].join("\n");
+  return RULES + `\n\n# Your task\nA handout was made from the original document below, and the safety check found problems. Fix ONLY these problems and keep everything else the same.\n\nProblems:\n${problems}\n\nOriginal document:\n<<<\n${text.trim()}\n>>>\n\nCurrent handout JSON:\n${JSON.stringify(doc)}\n\nReply with only the corrected JSON object.`;
+}
+function closeBrackets(s) {
+  const stack = []; let inStr = false, escp = false;
+  for (const ch of s) {
+    if (inStr) { escp = ch === "\\" && !escp; if (ch === '"' && !escp) inStr = false; continue; }
+    if (ch === '"') inStr = true;
+    else if (ch === "[" || ch === "{") stack.push(ch === "[" ? "]" : "}");
+    else if ((ch === "]" || ch === "}") && stack.length) stack.pop();
+  }
+  if (inStr) throw new Error("cut off inside text");
+  return s + stack.reverse().join("");
+}
+function parseModelJson(raw) {
+  raw = raw.trim().replace(/^```(?:json)?\s*|\s*```$/g, "");
+  const a = raw.indexOf("{"), b = raw.lastIndexOf("}");
+  if (a < 0 || b < 0) throw new Error("no JSON found");
+  try { return JSON.parse(raw.slice(a, b + 1)); }
+  catch {
+    const doc = JSON.parse(closeBrackets(raw.slice(a, b + 1)));
+    (doc.notes_for_reviewer ||= []).push("The answer was cut off at the very end and closing brackets were added. Check the last page.");
+    return doc;
+  }
+}
+const ERR = {
+  not_granted: "Claude isn't allowed on this page. Allow it when the page asks, then try again.",
+  sampling_disabled: "Claude isn't available for this account.",
+  rate_limited: "Too many requests right now, or your Claude usage limit is reached. Wait a bit and try again.",
+  session_expired: "Your Claude sign-in expired. Sign in again, then try again.",
+  refused: "Claude declined this document. Check that it is a health document and try again.",
+  prompt_too_large: "The document is too long. Paste a shorter part, such as one section.",
+  empty_completion: "Claude returned nothing. Try again.",
+  upstream_error: "Claude couldn't be reached just now. Try again.",
+};
+
+// ───────────────────────────── State + rendering ─────────────────────────────
+const $ = (id) => document.getElementById(id);
+const state = { doc: SAMPLE.output, original: SAMPLE.original, isExample: true, busy: false };
+let sample = null, downloads = null, ctl = null;
+
+function mdToHtml(t) {
+  const d = document.createElement("div"); d.textContent = String(t || "");
+  return d.innerHTML.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+function htmlToMd(el) {
+  let s = "";
+  for (const node of el.childNodes) {
+    if (node.nodeType === 3) s += node.textContent;
+    else if (node.nodeName === "STRONG" || node.nodeName === "B") s += "**" + node.textContent + "**";
+    else if (node.nodeName === "BR") s += " ";
+    else s += htmlToMd(node);
+  }
+  return s.replace(/\*\*\*\*/g, "").replace(/\s+/g, " ").trim();
+}
+
+function render() {
+  const out = $("out");
+  const doc = state.doc;
+  if (!doc) { out.innerHTML = `<div class="empty">Your handout pages will appear here.</div>`; return; }
+  const check = factCheck(state.original, doc);
+  const sc = scoreDoc(doc);
+  const bad = check.facts.filter((f) => f.status === "missing" || f.status === "reformatted");
+  const okN = check.facts.filter((f) => f.status === "ok").length;
+  const omN = check.facts.filter((f) => f.status === "omitted").length;
+  const chips = [
+    `<span class="chip ${check.passed ? "ok" : "bad"}">facts ${okN + omN}/${check.facts.length}</span>`,
+    `<span class="chip ${sc.grade <= 5 ? "ok" : "warn"}">grade ${sc.grade}</span>`,
+    `<span class="chip">${sc.pages} pages</span>`,
+    `<span class="chip ${sc.issues.length ? "warn" : "ok"}">${sc.issues.length} format notes</span>`,
+  ].join("");
+  const factRows = [
+    ...check.facts.map((f) => `<li><span class="st-${f.status}">${f.status}</span><span>${f.type}</span><span>${mdToHtml(f.value)}</span></li>`),
+    ...check.added.map((a) => `<li><span class="st-added">added</span><span>number</span><span>${mdToHtml(a)} is not in the original</span></li>`),
+    ...check.crisis.map((c) => `<li><span class="st-crisis">crisis</span><span>line</span><span>${mdToHtml(c)}</span></li>`),
+  ].join("");
+  const notes = [...(doc.omitted || []).map((o) => "Left out on purpose: " + o), ...(doc.notes_for_reviewer || []), ...sc.issues];
+  const verdict = check.passed
+    ? "Every fact matches the original"
+    : `${bad.length + check.added.length + check.crisis.length} fact problem${bad.length + check.added.length + check.crisis.length === 1 ? "" : "s"} to fix`;
+
+  let step = 0, prevLast = null;
+  const pagesHtml = (doc.pages || []).map((p, pi) => {
+    const lines = p.lines || [];
+    if (!(lines[0]?.kind === "step" && prevLast === "step")) step = 0;
+    prevLast = lines.at(-1)?.kind ?? null;
+    const lh = lines.map((l, li) => {
+      const kind = l.kind || "text";
+      const pic = l.picture ? `<div class="hpic" aria-hidden="true">${mdToHtml(l.picture)}</div>` : `<div class="hpic none"></div>`;
+      const lead = kind === "step" ? `<span class="num">${++step}.</span>` : kind === "checkbox" ? `<span class="box"></span>` : "";
+      return `<div class="hline ${kind}">${pic}<div class="htext">${lead}<span contenteditable="true" spellcheck="true" data-p="${pi}" data-l="${li}">${mdToHtml(l.text)}</span></div></div>`;
+    }).join("");
+    return `<article class="sheet"><div class="pno"><span>Page ${pi + 1} of ${doc.pages.length}</span><span>${doc.language === "es" ? "Español" : "English"}</span></div>
+      <h3 contenteditable="true" data-p="${pi}" data-topic="1">${mdToHtml(p.topic)}</h3>${lh}</article>`;
+  }).join("");
+
+  out.innerHTML = `
+    <div class="check ${check.passed ? "pass" : "fail"}">
+      <div class="check-head"><span class="verdict">${verdict}</span><div class="chips">${chips}</div></div>
+      ${check.passed ? "" : `<p class="hint" style="margin:8px 0 0">Fix the lines yourself, or let Claude fix just these problems.</p>`}
+      <div class="actions" style="margin-top:10px">
+        ${check.passed ? "" : `<button id="fix" type="button" class="primary">Fix with Claude</button>`}
+        <button id="dl" type="button" ${check.passed ? 'class="primary"' : ""}>Download printable handout</button>
+        <button id="dljson" type="button" class="link">Download data (.json)</button>
+      </div>
+      <details class="facts"${check.passed ? "" : " open"}><summary>Fact check details (${check.facts.length} facts found in the original)</summary><ul class="factlist">${factRows || "<li>No names, dates, times, doses, addresses or phone numbers found.</li>"}</ul></details>
+      ${notes.length ? `<details class="facts"><summary>Notes for the reviewer (${notes.length})</summary><ul class="notes">${notes.map((n) => `<li>${mdToHtml(n)}</li>`).join("")}</ul></details>` : ""}
+    </div>
+    <div class="toolbar">
+      <span class="title-edit" contenteditable="true" id="doctitle">${mdToHtml(doc.title)}</span>
+      ${state.isExample ? `<span class="example-tag">Example (made-up document)</span>` : ""}
+    </div>
+    <div class="pages">${pagesHtml}</div>
+    <p class="hint" style="margin-top:12px">Check every handout before giving it to someone. Grey boxes show the picture each line will get; the downloaded handout loads the pictures from ARASAAC.</p>`;
+
+  $("dl").onclick = downloadHandout;
+  $("dljson").onclick = downloadJson;
+  if ($("fix")) $("fix").onclick = () => fixWithClaude(check);
+  $("doctitle").addEventListener("input", (e) => { state.doc.title = htmlToMd(e.target); });
+  out.querySelectorAll("[contenteditable][data-p]").forEach((el) => {
+    el.addEventListener("blur", () => {
+      const p = state.doc.pages[+el.dataset.p];
+      if (el.dataset.topic) p.topic = htmlToMd(el); else p.lines[+el.dataset.l].text = htmlToMd(el);
+      render();
+    });
+  });
+}
+
+function setBusy(on, msg) {
+  state.busy = on;
+  $("go").disabled = on; $("stop").hidden = !on;
+  const fix = document.getElementById("fix"); if (fix) fix.disabled = on;
+  const st = $("status"); st.className = "status" + (on ? " progress" : ""); st.textContent = msg || "";
+}
+function showError(e) {
+  const st = $("status"); st.className = "status err";
+  st.textContent = e?.code === "cancelled" ? "Stopped." : (ERR[e?.code] || (e?.code === "invalid_json" ? "Claude's answer wasn't a complete handout. Try again." : "Something went wrong: " + (e?.message || e)));
+}
+function progressText(text) {
+  const pages = (text.match(/"topic"\s*:/g) || []).length;
+  return pages ? `Writing page ${pages}…` : "Planning the pages…";
+}
+
+async function makeHandout() {
+  const text = $("src").value.trim();
+  if (!text) { $("status").className = "status err"; $("status").textContent = "Paste a document first."; $("src").focus(); return; }
+  if (!sample) { showError({ code: "sampling_disabled" }); return; }
+  const source = $("srcname").value.trim() || "Health document";
+  ctl = new AbortController();
+  setBusy(true, "Thinking…");
+  try {
+    const { text: raw } = await sample(buildPrompt(text, source, $("lang").value), {
+      signal: ctl.signal, onText: ({ text: t }) => { $("status").textContent = progressText(t); },
+    });
+    const doc = parseModelJson(raw);
+    doc.source = doc.source || source;
+    state.doc = doc; state.original = text; state.isExample = false;
+    setBusy(false, "Done. Review the safety check above the pages.");
+    render();
+    $("out").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  } catch (e) { setBusy(false); showError(e); }
+}
+
+async function fixWithClaude(check) {
+  if (!sample) { showError({ code: "sampling_disabled" }); return; }
+  ctl = new AbortController();
+  setBusy(true, "Fixing the flagged facts…");
+  try {
+    const { text: raw } = await sample(buildFixPrompt(state.original, state.doc, check), { signal: ctl.signal, cache: false,
+      onText: ({ text: t }) => { $("status").textContent = progressText(t); } });
+    const doc = parseModelJson(raw);
+    doc.source = doc.source || state.doc.source;
+    state.doc = doc;
+    setBusy(false, "Fixed. Check the result above the pages.");
+    render();
+  } catch (e) { setBusy(false); showError(e); }
+}
+
+// ───────────────────────────── Printable handout (port of render.py) ─────────────────────────────
+const ARASAAC_CREDIT = "Pictographic symbols: Sergio Palao. Origin: ARASAAC (https://arasaac.org). License: CC BY-NC-SA 4.0. Owner: Government of Aragón (Spain).";
+function handoutHtml(doc) {
+  const lang = doc.language || "en", es = lang === "es";
+  const e = (s) => mdToHtml(s);
+  let step = 0, prevLast = null;
+  const sheets = (doc.pages || []).map((p, i) => {
+    const lines = p.lines || [];
+    if (!(lines[0]?.kind === "step" && prevLast === "step")) step = 0;
+    prevLast = lines.at(-1)?.kind ?? null;
+    const lh = lines.map((l) => {
+      const kind = l.kind || "text", kw = (l.picture || "").trim();
+      const pic = kw ? `<div class="pic" data-kw="${e(kw).replaceAll('"', "&quot;")}">[${es ? "imagen" : "picture"}: ${e(kw)}]</div>` : `<div class="pic none"></div>`;
+      let t = e(l.text);
+      if (kind === "phone" || kind === "crisis") t = t.replace(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/g, '<span class="nw">$1</span>');
+      t = t.replace(/(\d{1,2}(?::\d{2})?\s?[ap]\.\s?m\.)/gi, '<span class="nw">$1</span>');
+      const body = kind === "step" ? `<span class="num">${++step}.</span><span>${t}</span>` : kind === "checkbox" ? `<span class="box"></span><span>${t}</span>` : `<span>${t}</span>`;
+      return `<div class="line ${kind}">${pic}<div class="txt">${body}</div></div>`;
+    }).join("");
+    return `<section class="sheet">${i === 0 ? `<h1>${e(doc.title)}</h1>` : ""}<h2>${e(p.topic)}</h2>${lh}
+      <div class="footer"><p>${es ? "Basado en" : "Based on"}: ${e(doc.source || "")}</p><p>${ARASAAC_CREDIT}</p></div></section>`;
+  }).join("");
+  const css = `@page{size:letter;margin:0.6in}*{box-sizing:border-box}body{font-family:"Atkinson Hyperlegible",Verdana,Arial,sans-serif;color:#111;background:#e9e9e9;margin:0}
+.sheet{background:#fff;width:8.5in;max-width:100%;min-height:11in;margin:24px auto;padding:0.6in;display:flex;flex-direction:column;box-shadow:0 1px 6px rgba(0,0,0,.2)}
+h1{font-size:40px;margin:0 0 8px}h2{font-size:34px;margin:0 0 28px;border-bottom:4px solid #111;padding-bottom:10px}
+.line{display:flex;align-items:center;gap:28px;margin:0 0 30px;font-size:32px;line-height:1.4}.line>div{flex:1;min-width:0}
+.pic{flex:0 0 130px!important;height:130px;display:flex;align-items:center;justify-content:center;border:2px dashed #aaa;border-radius:10px;font-size:16px;color:#666;text-align:center;padding:6px;cursor:pointer}
+.pic img{max-width:100%;max-height:100%}.pic.has-img{border:none}.pic.none{visibility:hidden}
+.num{font-weight:bold;font-size:36px;min-width:44px;display:inline-block}.box{display:inline-block;width:40px;height:40px;border:4px solid #111;border-radius:4px;margin-right:14px;vertical-align:middle}
+.phone .txt{font-size:40px;font-weight:bold}.crisis{border:6px solid #b00020;border-radius:12px;padding:12px}.crisis .txt{font-size:42px;font-weight:bold}
+.nw{white-space:nowrap}.footer{margin-top:auto;padding-top:18px;border-top:1px solid #999;font-size:12px;color:#444}.footer p{margin:3px 0}
+.tip{max-width:8.5in;margin:16px auto 0;padding:10px 14px;font:14px/1.4 system-ui,sans-serif;background:#fff8e1;border:1px solid #f0b400;border-radius:8px}
+@media print{body{background:#fff}.sheet{margin:0;box-shadow:none;width:auto;min-height:9.6in;padding:0;page-break-after:always}.sheet:last-of-type{page-break-after:auto}.tip{display:none}.pic{border-color:transparent}}`;
+  const js = `const L=document.documentElement.lang||"en";async function load(el){const kw=el.dataset.kw;if(!kw)return;try{if(!el._ids){const r=await fetch("https://api.arasaac.org/v1/pictograms/"+L+"/search/"+encodeURIComponent(kw));if(!r.ok)throw 0;el._ids=(await r.json()).map(p=>p._id);el._i=0}if(!el._ids.length)return;const id=el._ids[el._i%el._ids.length];el.innerHTML='<img alt="'+kw+'" src="https://static.arasaac.org/pictograms/'+id+'/'+id+'_500.png">';el.classList.add("has-img");el.title="Click for a different picture"}catch(e){}}document.querySelectorAll(".pic[data-kw]").forEach(el=>{load(el);el.addEventListener("click",()=>{if(el._ids){el._i++;load(el)}})});`;
+  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(doc.title)}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style>${css}</style></head>
+<body><div class="tip">${es ? "Para imprimir: Archivo → Imprimir. Haga clic en una imagen para cambiarla." : "To print: File → Print. Click a picture to swap it for another."}</div>${sheets}<script>${js}<\/script></body></html>`;
+}
+const slug = (s) => (String(s || "handout").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "handout").slice(0, 60);
+async function save(filename, data) {
+  if (!downloads) { $("status").className = "status err"; $("status").textContent = "Downloads aren't available in this view."; return; }
+  try { await downloads.save({ filename, data }); $("status").className = "status"; $("status").textContent = "Saved " + filename + ". Open it in your browser, then print."; }
+  catch (e) { if (e?.code !== "declined") { $("status").className = "status err"; $("status").textContent = "Couldn't save the file (" + (e?.code || "error") + ")."; } }
+}
+function downloadHandout() { save(slug(state.doc.title) + ".html", handoutHtml(state.doc)); }
+function downloadJson() { save(slug(state.doc.title) + ".json", JSON.stringify({ original: state.original, handout: state.doc }, null, 2)); }
+
+// ───────────────────────────── Wire up ─────────────────────────────
+$("src").value = SAMPLE.original;
+$("srcname").value = SAMPLE.source;
+$("go").onclick = makeHandout;
+$("stop").onclick = () => ctl?.abort();
+$("clear").onclick = () => { $("src").value = ""; $("srcname").value = ""; $("src").focus(); };
+$("file").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0]; if (!f) return;
+  $("src").value = await f.text();
+  if (!$("srcname").value || state.isExample) $("srcname").value = f.name.replace(/\.[^.]+$/, "");
+});
+render();
+(async () => {
+  try { sample = await window.claude?.use?.("sample"); } catch { sample = null; }
+  try { downloads = await window.claude?.use?.("downloads"); } catch { downloads = null; }
+  if (!sample) { $("go").disabled = true; $("status").textContent = "Open this page in Claude to make new handouts. The example below still works."; }
+})();
+</script>
