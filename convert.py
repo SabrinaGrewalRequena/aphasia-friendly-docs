@@ -62,8 +62,8 @@ def build_messages(text, source, lang, examples):
 def call_anthropic(system, messages, model, max_tokens=8000):
     import anthropic  # pip install anthropic
     client = anthropic.Anthropic()
-    resp = client.messages.create(model=model, system=system, messages=messages,
-                                  max_tokens=max_tokens, temperature=0.2)
+    # Current Anthropic SDKs no longer take a temperature setting; the model's default is used.
+    resp = client.messages.create(model=model, system=system, messages=messages, max_tokens=max_tokens)
     return "".join(b.text for b in resp.content if b.type == "text")
 
 
