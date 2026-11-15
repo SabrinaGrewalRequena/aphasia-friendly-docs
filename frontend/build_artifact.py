@@ -20,12 +20,22 @@ pairs = {p["id"]: p for p in load_pairs(ROOT / "data" / "pairs")}
 examples = [{"source": pairs[i]["source"], "original": pairs[i]["original"], "target": pairs[i]["target"]}
             for i in EXAMPLE_IDS]
 sample_pair = pairs[SAMPLE_ID]
-sample = {"source": sample_pair["source"], "original": sample_pair["original"], "output": sample_pair["target"]}
+# The example handout gets an emoji "icon" per line, the way new handouts do.
+ICONS = {"person": "🧑", "pill": "💊", "doctor": "🩺", "seizure": "⚡", "shield": "🛡️", "clock": "⏰", "stop": "🛑",
+         "sleepy": "😴", "sad": "😔", "phone": "📞", "no driving": "🚫🚗", "bath": "🛁", "ambulance": "🚑",
+         "calendar": "📅", "help": "🆘"}
+output = json.loads(json.dumps(sample_pair["target"]))
+for page in output["pages"]:
+    for line in page["lines"]:
+        line["icon"] = ICONS.get(line.get("picture", ""), "")
+sample = {"source": sample_pair["source"], "original": sample_pair["original"], "output": output}
 
 rules = (ROOT / "prompts" / "system.md").read_text(encoding="utf-8")
 html = (Path(__file__).with_name("template.html")).read_text(encoding="utf-8")
 dump = lambda v: json.dumps(v, ensure_ascii=False).replace("</", "<\\/")
-html = (html.replace("__RULES__", dump(rules))
+checks = (Path(__file__).with_name("checks.js")).read_text(encoding="utf-8")
+html = (html.replace("__CHECKS__", checks)
+            .replace("__RULES__", dump(rules))
             .replace("__EXAMPLES__", dump(examples))
             .replace("__SAMPLE__", dump(sample)))
 out = Path(__file__).with_name("aphasia_handout_maker.html")
