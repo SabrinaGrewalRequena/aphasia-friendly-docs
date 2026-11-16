@@ -28,7 +28,7 @@
   --font: "Atkinson Hyperlegible", "Segoe UI", Verdana, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.45; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.45; }
 .wrap { max-width: 860px; margin: 0 auto; padding-block: 24px 56px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: grid; gap: 16px; }
@@ -78,8 +78,170 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
 .foot { margin-top: auto; font-size: clamp(9px, 1.5vw, 12px); color: #555; border-top: 1px solid #bbb; padding-top: 6px; }
 [contenteditable="true"]:hover { background: rgba(29,78,137,.08); border-radius: 4px; }
 .example { font-size: 13px; color: var(--muted); text-align: center; }
+
+/* ── Site frame: a top bar with the name and three tabs ── */
+.top { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line);
+  backdrop-filter: saturate(1.2) blur(6px); }
+.top-in { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--ink); text-decoration: none; padding-bottom: 10px; }
+.brand-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; padding: 6px; flex: none; }
+.brand-mark svg { width: 100%; height: 100%; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin-bottom: -1px; }
+.tab { flex: none; border: 0; border-radius: 0; background: none; padding: 10px 14px 12px; color: var(--muted); font-weight: 700;
+  border-bottom: 3px solid transparent; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.panel[hidden] { display: none; }
+.page { max-width: 1000px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 48px; }
+.eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.page h2.h { margin: 0 0 14px; font-size: clamp(22px, 3.2vw, 28px); line-height: 1.2; }
+.page p.lede { font-size: 18px; color: var(--muted); margin: 0; max-width: 60ch; }
+
+/* Home */
+.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; align-items: center; }
+.hero h1 { margin: 0 0 14px; font-size: clamp(32px, 5.4vw, 50px); line-height: 1.08; letter-spacing: -.01em; }
+.hero .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.hero-pic { position: relative; }
+.hero-pic .sheet { box-shadow: 0 12px 32px rgba(16,24,40,.12); aspect-ratio: auto; }
+.hero-pic .sheet .foot { margin-top: 12px; }
+.hero-pic .sheet .doc-title:empty { display: none; }
+.hero-pic .tag { position: absolute; top: -12px; left: 16px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 99px; }
+.before { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
+.before b { color: var(--ink); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.card h3 { margin: 0 0 6px; font-size: 18px; }
+.card p { margin: 0; color: var(--muted); }
+.aph { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 18px; align-items: start; }
+.aph .icon, .step .icon, .feat .icon { width: 64px; height: 64px; border-radius: 14px; background: var(--accent-soft); color: var(--accent); padding: 14px; }
+.aph p + p { margin-top: 8px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+.step { counter-increment: s; }
+.step .icon { margin-bottom: 14px; }
+.step h3::before { content: counter(s) ". "; color: var(--accent); }
+.feats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.feat { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 14px; align-items: start; }
+.feat .icon { width: 48px; height: 48px; padding: 11px; }
+.feat h3 { margin: 2px 0 4px; font-size: 17px; }
+.feat p { margin: 0; color: var(--muted); font-size: 15px; }
+.note { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 12px 12px 0; padding: 16px 18px; color: var(--ink); }
+.note p { margin: 0; } .note p + p { margin-top: 6px; }
+
+/* About */
+.about { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; }
+.avatar { width: 100%; aspect-ratio: 1; border-radius: 20px; background: linear-gradient(150deg, #1d4e89, #2f6db3); color: #fff;
+  display: grid; place-items: center; font-size: 72px; font-weight: 700; }
+.about-body p { font-size: 17px; margin: 0 0 14px; max-width: 62ch; }
+.about-body h1 { margin: 0 0 6px; font-size: clamp(30px, 4.6vw, 42px); line-height: 1.1; }
+.about-body .role { color: var(--accent); font-weight: 700; margin: 0 0 22px; font-size: 17px; }
+.values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+.site-foot { border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.site-foot .page { padding-block: 20px 28px; gap: 4px; }
+.site-foot p { margin: 0; }
+.site-foot a { color: inherit; }
+
+@media (max-width: 760px) {
+  .hero, .about { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .hero-pic { max-width: 380px; }
+  .about .avatar { width: 120px; font-size: 44px; border-radius: 16px; }
+  .steps, .feats, .values { grid-template-columns: minmax(0, 1fr); }
+  .page { padding-block: 28px 48px; gap: 36px; }
+}
 </style>
 
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#home" data-go="home"><span class="brand-mark" id="brand-mark"></span>Aphasia Document Converter</a>
+    <nav class="tabs" role="tablist" aria-label="Pages">
+      <button class="tab" role="tab" id="t-home" aria-controls="home" data-go="home">Home</button>
+      <button class="tab" role="tab" id="t-make" aria-controls="make" data-go="make">Make a Handout</button>
+      <button class="tab" role="tab" id="t-about" aria-controls="about" data-go="about">About Me</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ───────── Tab 1: what it is and how to use it ───────── -->
+<main>
+<section class="panel" id="home" role="tabpanel" aria-labelledby="t-home">
+  <div class="page">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Free · English and Spanish</p>
+        <h1>Health papers, made easy to read.</h1>
+        <p class="lede">This tool turns a health document into an <strong>aphasia-friendly handout</strong>: short sentences, big text, key words in bold, and a picture beside every line.</p>
+        <div class="cta">
+          <button class="primary" type="button" data-go="make">Make a handout</button>
+          <button type="button" data-go="about">About me</button>
+        </div>
+      </div>
+      <figure class="hero-pic" style="margin:0">
+        <span class="tag">Example</span>
+        <div id="hero-sheet"></div>
+        <figcaption class="before"><b>Before:</b> “You had a seizure after your stroke. Levetiracetam helps prevent more seizures.”</figcaption>
+      </figure>
+    </div>
+
+    <div class="card aph">
+      <div class="icon" data-icon="brain"></div>
+      <div>
+        <h3>What is aphasia?</h3>
+        <p>Aphasia is a language disorder. It often happens after a <strong>stroke</strong> or a brain injury. It can make it hard to <strong>speak, understand, read or write</strong>. It does not change how smart a person is.</p>
+        <p>Health letters are often long and full of medical words. Everyone deserves to understand their own care.</p>
+      </div>
+    </div>
+
+    <div>
+      <p class="eyebrow">How to use it</p>
+      <h2 class="h">Three easy steps</h2>
+      <ol class="steps">
+        <li class="card step"><div class="icon" data-icon="file-text"></div><h3>Upload</h3><p>Choose a PDF, a Word file, or a photo of a health letter.</p></li>
+        <li class="card step"><div class="icon" data-icon="message-language"></div><h3>Pick a language</h3><p>English or Spanish. Or keep the language of the letter.</p></li>
+        <li class="card step"><div class="icon" data-icon="square-check"></div><h3>Check and print</h3><p>Read the handout, fix any words, then download and print it.</p></li>
+      </ol>
+    </div>
+
+    <div>
+      <p class="eyebrow">What you get</p>
+      <h2 class="h">Made for people with aphasia</h2>
+      <div class="feats">
+        <div class="feat"><div class="icon" data-icon="list-numbers"></div><div><h3>One idea per line</h3><p>Short sentences in large, clear text.</p></div></div>
+        <div class="feat"><div class="icon" data-icon="photo"></div><div><h3>A picture for each line</h3><p>Simple drawings help show what each line means.</p></div></div>
+        <div class="feat"><div class="icon" data-icon="shield-check"></div><div><h3>Facts are checked</h3><p>Names, dates, doses and phone numbers are compared to the original.</p></div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><strong>Please note:</strong> This tool does not give medical advice. Do not upload real patient information. Always check a handout before giving it to someone, and follow the care team’s instructions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Tab 3: about me (shown after tab 2 in the HTML) ───────── -->
+<section class="panel" id="about" role="tabpanel" aria-labelledby="t-about" hidden>
+  <div class="page">
+    <div class="about">
+      <div class="avatar" aria-hidden="true">S</div>
+      <div class="about-body">
+        <p class="eyebrow">About me</p>
+        <h1>Hi, I’m Sabrina.</h1>
+        <p class="role">Incoming medical student</p>
+        <p>I’m an incoming medical student, and I built this tool because I want to <strong>serve my community</strong> and help make <strong>healthcare accessible for all people</strong>.</p>
+        <p>Many patients leave a clinic or hospital with papers that are hard to read. For someone with aphasia, a long letter full of medical words can get in the way of taking medicine safely, keeping appointments, or knowing when to get help.</p>
+        <p>The Aphasia Document Converter turns those papers into clear, picture-supported handouts in English and Spanish, so more people can understand their own care.</p>
+      </div>
+    </div>
+    <div class="values">
+      <div class="card"><h3>Access for all</h3><p>Clear health information should not depend on how well someone can read.</p></div>
+      <div class="card"><h3>Two languages</h3><p>Handouts in English and Spanish, to reach more of my community.</p></div>
+      <div class="card"><h3>Free to use</h3><p>No account and no cost for patients, families or care teams.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Tab 2: the converter ───────── -->
+<section class="panel" id="make" role="tabpanel" aria-labelledby="t-make" hidden>
 <div class="wrap">
   <section class="drop" id="drop" aria-labelledby="up-h">
     <h1 id="up-h">Upload a Document</h1>
@@ -105,6 +267,14 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
 
   <div id="out"></div>
 </div>
+</section>
+</main>
+
+<footer class="site-foot">
+  <div class="page">
+    <p>Aphasia Document Converter · Not medical advice · Drawings: Tabler Icons (MIT)</p>
+  </div>
+</footer>
 
 <script>
 const RULES = __RULES__;
@@ -369,4 +539,28 @@ $("pastebtn").onclick = () => { $("pastebox").hidden = !$("pastebox").hidden; if
 $("go").onclick = () => run(async () => $("src").value, "Pasted document");
 $("stop").onclick = () => ctl?.abort();
 render();   // nothing to show until a file is uploaded
+
+// ───────────────────────────── Tabs ─────────────────────────────
+const TABS = ["home", "make", "about"];
+function show(name, push) {
+  if (!TABS.includes(name)) name = "home";
+  TABS.forEach((t) => {
+    $(t).hidden = t !== name;
+    const b = $("t-" + t); b.setAttribute("aria-selected", t === name); b.tabIndex = t === name ? 0 : -1;
+  });
+  if (push && location.hash !== "#" + name) history.pushState(null, "", "#" + name);
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll("[data-go]").forEach((el) => el.addEventListener("click", (e) => { e.preventDefault(); show(el.dataset.go, true); }));
+$("t-home").parentElement.addEventListener("keydown", (e) => {   // arrow keys move between tabs
+  const i = TABS.indexOf(document.activeElement.id?.slice(2)); if (i < 0) return;
+  const j = e.key === "ArrowRight" ? (i + 1) % 3 : e.key === "ArrowLeft" ? (i + 2) % 3 : -1;
+  if (j >= 0) { show(TABS[j], true); $("t-" + TABS[j]).focus(); }
+});
+addEventListener("popstate", () => show(location.hash.slice(1)));
+// Drawings on the Home tab, and the example handout page.
+document.querySelectorAll("[data-icon]").forEach((el) => { el.innerHTML = svgFor(el.dataset.icon); });
+$("brand-mark").innerHTML = svgFor("file-text");
+$("hero-sheet").innerHTML = sheetsHtml({ title: "", language: "en", source: "a made-up medicine sheet", pages: [SAMPLE.output.pages[1]] }, false);
+show(location.hash.slice(1));
 </script>
