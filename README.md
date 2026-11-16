@@ -10,9 +10,9 @@ Upload a PDF, a Word file, or a photo of a letter. The site turns it into an aph
 
 ## How it works
 
-1. **Read.** The page pulls the text out of the uploaded file. Photos and scanned PDFs are read by Claude.
-2. **Rewrite.** Claude rewrites the document using the project's writing rules ([`prompts/system.md`](prompts/system.md)) and two worked examples.
-3. **Fact check.** The handout is compared with the original. Any fact that is missing or changed, or any number that was invented, is shown on screen, and **Fix with Claude** repairs it.
+1. **Read.** The page pulls the text out of the uploaded file. Photos and scanned PDFs are read in the browser with OCR.
+2. **Rewrite.** My own fine-tuned model writes the handout: Qwen3-4B, trained on 125 expert-approved examples. It runs on a free Hugging Face GPU ([Space](https://huggingface.co/spaces/Sabrinaaaa/aphasia-friendly-docs), [model](https://huggingface.co/Sabrinaaaa/aphasia-qwen3-4b-lora)).
+3. **Fact check.** The handout is compared with the original. Any fact that is missing or changed, or any number that was invented, is shown on screen, and **Try again** asks the model for a new version. Emergency numbers (911, 988) are always shown in a red box.
 4. **Print.** Every line can be edited before downloading a print-ready, letter-size handout.
 
 ## Results
@@ -28,7 +28,13 @@ The project tested two systems on 25 documents that were never used for training
 
 \*The one flag was a false alarm: "1 time a day" for "once daily."
 
-A certified speech-language pathologist reviewed all 49 handouts blind and found no errors. The Claude version powers the website. The fine-tuned model remains a free, offline option. Details are in [`docs/results_round1.md`](docs/results_round1.md).
+A certified speech-language pathologist reviewed all 49 handouts blind and found no errors. **The website now runs on the fine-tuned model**, with a few safeguards added after this test:
+- it always picks its most likely word, which copies facts more reliably
+- the fact check runs on every handout
+- a **Try again** button asks for a new version
+- emergency numbers are always shown in a red box
+
+Details are in [`docs/results_round1.md`](docs/results_round1.md).
 
 ## Training data
 
@@ -43,7 +49,8 @@ A certified speech-language pathologist reviewed all 49 handouts blind and found
 
 | Folder / file | What it is |
 |---|---|
-| [`web/`](web/) | **The website.** `index.html` is the page, and `api/convert.js` is the server that calls Claude. See [`web/README.md`](web/README.md). |
+| [`web/`](web/) | **The website** (`index.html`), hosted on Vercel. |
+| [`space/`](space/) | **The model server**: the Hugging Face Space (ZeroGPU) that runs the fine-tuned model. |
 | [`frontend/`](frontend/) | Source for the page: `template.html` (design and logic), `checks.js` (fact check), `prompts.js`, drawings, and `build_artifact.py`, which builds `web/index.html`. |
 | [`prompts/`](prompts/) | The writing rules the model follows. |
 | [`data/pairs/`](data/pairs/) | The 150 example pairs, one `.jsonl` file per batch. [`data/sources/`](data/sources/) holds the scripts that wrote them. |
@@ -89,7 +96,7 @@ python evaluate.py compare data/test.jsonl results/baseline results/finetuned
 
 ## Credits
 
-- **Writing engine:** Claude by Anthropic.
+- **Model:** Qwen3-4B-Instruct-2507 (Apache 2.0), fine-tuned with LoRA; Claude by Anthropic was used as the comparison baseline.
 - **Drawings on the website:** [Tabler Icons](https://tabler.io/icons) (MIT License; see [`frontend/TABLER_ICONS_LICENSE.txt`](frontend/TABLER_ICONS_LICENSE.txt)).
 - **Pictures in the command-line version (`render.py`):** [ARASAAC](https://arasaac.org) pictograms by Sergio Palao, licensed CC BY-NC-SA 4.0.
 - **Handout style:** inspired by the UNC School of Medicine's aphasia-friendly handouts.
