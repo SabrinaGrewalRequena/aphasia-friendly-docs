@@ -1,7 +1,7 @@
 <title>Aphasia Friendly Docs</title>
 <!-- Drawings: Tabler Icons (https://tabler.io/icons), MIT License, Copyright (c) 2020-2024 Paweł Kuna -->
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=Jost:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
@@ -9,29 +9,30 @@
 /* Layout: one column. A drop zone at the top; below it the handout pages, drawn like the printed
    UNC handouts (letter-size sheets, a title per page, a big picture beside each line, bold key words). */
 :root {
-  /* Baby pink page, baby blue accents; dark ink so every word stays easy to read. */
+  /* Cream, white and black: a warm paper look with black type. */
   color-scheme: light;
-  --bg: #fdf3f4;
+  --bg: #f5efe4;
   --surface: #ffffff;
   --panel: #ffffff;
-  --ink: #2a2430;
-  --muted: #5d5464;
-  --line: #f0d5df;
-  --accent: #3d7558;
-  --accent-ink: #ffffff;
-  --accent-soft: #e2f1e8;
-  --pink: #a9466d;
-  --pink-soft: #fde2ea;
-  --baby-pink: #f2a2bd;
-  --baby-blue: #a9d6bd;  /* light green (kept the name) */
+  --ink: #1d1b18;
+  --muted: #4f4a43;
+  --line: #e2d8c6;
+  --accent: #1d1b18;
+  --accent-ink: #fbf7ef;
+  --accent-soft: #efe7d9;
+  --pink: #1d1b18;
+  --pink-soft: #efe7d9;
+  --baby-pink: #e8dcc6;
+  --baby-blue: #d8cab2;
   --ok: #1b6e45;
   --ok-soft: #eaf6ef;
   --bad: #b42318;
   --bad-soft: #fdeceb;
   --sheet: #ffffff;
   --sheet-ink: #111827;
-  --font: "Jost", "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --display: "Playfair Display", Georgia, serif;
+  /* One font family for every heading, label and paragraph; handouts keep their own. */
+  --font: "Lora", Georgia, serif;
+  --display: "Lora", Georgia, serif;
   --reading: "Lora", Georgia, serif;
   --sheet-font: "Atkinson Hyperlegible", Verdana, sans-serif;
 }
@@ -244,6 +245,29 @@ body { font-size: 18px; }
   .hero h1 { font-size: 25px; }
 }
 
+/* ── Cream / white / black ── */
+.top { background: rgba(245,239,228,.96); }
+.brand-mark { background: var(--ink); color: var(--accent-ink); }
+.hero, .about { background: #faf6ee; border-color: var(--line); }
+.drop { border-color: #cdbfa6; }
+.step:nth-child(1), .step:nth-child(3) { background: #ffffff; border-color: var(--line); }
+.step:nth-child(2) { background: #efe7d9; border-color: #e2d6c1; }
+.step .icon, .step:nth-child(2) .icon { background: #f5efe4; color: var(--ink); }
+.step:nth-child(2) .icon { background: #ffffff; }
+.aph .icon, .feat .icon, .feat:nth-child(2) .icon { background: #efe7d9; color: var(--ink); }
+.aph { background: #ffffff; }
+.card p { color: var(--muted); }
+.hero h1 em { color: var(--ink); }
+.hero-pic .tag { background: var(--ink); color: var(--accent-ink); font-weight: 500; }
+.note { border-left-color: var(--ink); }
+.about-body strong { font-weight: 600; color: var(--ink); }
+.pic { background: #f1ebe0; color: #1d1b18; }
+[contenteditable="true"]:hover { background: rgba(29,27,24,.06); }
+.eyebrow { letter-spacing: .02em; }
+/* weights do the work, not size */
+.hero h1, .page h2.h, .card h3, .drop h1 { font-weight: 700; }
+.feat h3, .brand { font-weight: 600; }
+.tab, button, .filebtn { font-weight: 500; }
 </style>
 
 __DECO_DEFS__

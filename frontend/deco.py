@@ -5,7 +5,7 @@ import random
 
 BLOB1 = "M421 64c74 41 118 133 104 216s-86 158-176 182-198-3-262-62S-2 260 21 177 112 22 199 8s148 15 222 56z"
 BLOB2 = "M370 40c66 27 102 99 96 168s-55 135-128 160-160 9-220-38S30 205 50 132 130 15 205 8s99 5 165 32z"
-PINK, BLUE, DOT_BLUE, DOT_PINK, STEM = "#f8d4de", "#d4ecdf", "#8cc4a4", "#e7a1b8", "#c27b95"  # BLUE/DOT_BLUE are now sage green
+PINK, BLUE, DOT_BLUE, DOT_PINK, STEM = "#e8dcc6", "#ffffff", "#2a2622", "#bba98a", "#2a2622"  # sand, white, black dots, tan dots, black sprig
 
 
 def dots(rng, cx, cy, n, r, color, spread):
