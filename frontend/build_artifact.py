@@ -37,6 +37,7 @@ dump = lambda v: json.dumps(v, ensure_ascii=False).replace("</", "<\\/")
 checks = (HERE / "checks.js").read_text(encoding="utf-8")
 prompts = (HERE / "prompts.js").read_text(encoding="utf-8")
 icons_json = (HERE / "icons.json").read_text(encoding="utf-8")
+photo = "data:image/jpeg;base64," + __import__("base64").b64encode((HERE / "sabrina.jpg").read_bytes()).decode()
 
 
 def page(web):
@@ -46,7 +47,8 @@ def page(web):
                     .replace("__RULES__", dump(rules))
                     .replace("__EXAMPLES__", dump(examples))
                     .replace("__SAMPLE__", dump(sample))
-                    .replace("__ICONS__", icons_json))
+                    .replace("__ICONS__", icons_json)
+                    .replace("__PHOTO__", photo))
 
 
 # 1) The Claude page (published as a Claude artifact; uses the viewer's own Claude).
