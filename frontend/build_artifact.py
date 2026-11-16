@@ -50,8 +50,15 @@ icons_json = (HERE / "icons.json").read_text(encoding="utf-8")
 photo = "data:image/jpeg;base64," + __import__("base64").b64encode((HERE / "sabrina.jpg").read_bytes()).decode()
 
 
+# The Hugging Face Space that runs the fine-tuned model (see space/). One line, e.g.
+# https://your-name-aphasia-friendly-docs.hf.space
+SPACE_FILE = HERE / "space_url.txt"
+space_url = SPACE_FILE.read_text(encoding="utf-8").strip().rstrip("/") if SPACE_FILE.exists() else ""
+
+
 def page(web):
     return (template.replace("__WEB__", "true" if web else "false")
+                    .replace("__SPACE__", space_url)
                     .replace("__CHECKS__", checks)
                     .replace("__PROMPTS__", prompts)
                     .replace("__RULES__", dump(rules))
@@ -84,12 +91,4 @@ site = head + body[:title_end] + "\n</head>\n<body>\n" + body[title_end:] + "\n<
 (WEB / "index.html").write_text(site, encoding="utf-8")
 print(f"Wrote {WEB / 'index.html'} ({len(site):,} bytes)")
 
-# The server gets the same rules, examples and drawing names (labels only; it never draws).
-labels = {n: {"label": v["label"]} for n, v in json.loads(icons_json).items()}
-server = ("// MADE BY frontend/build_artifact.py — do not edit by hand.\n"
-          f"const RULES = {json.dumps(rules, ensure_ascii=False)};\n"
-          f"const EXAMPLES = {json.dumps(examples, ensure_ascii=False)};\n"
-          f"const ICONS = {json.dumps(labels, ensure_ascii=False)};\n"
-          + prompts + "\nmodule.exports = { systemText, taskText };\n")
-(WEB / "api" / "_prompts.js").write_text(server, encoding="utf-8")
-print(f"Wrote {WEB / 'api' / '_prompts.js'} ({len(server):,} bytes)")
+print(f"Website model: {space_url or '(not set: add frontend/space_url.txt)'}")

@@ -464,7 +464,30 @@ async function pdfImages(pdf, max) {
 }
 async function transcribe(images) {
   setStatus("Reading the picture of the document…");
+  if (WEB) return readPictures(images);
   return (await ask("transcribe", {}, { images })).trim();
+}
+// On the website, photos and scans are read right in the browser (Tesseract OCR), because the
+// handout model only reads text. Nothing is uploaded for this step.
+let tesseractLoad;
+async function readPictures(images) {
+  tesseractLoad ||= new Promise((ok, bad) => {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js";
+    s.onload = ok; s.onerror = () => { tesseractLoad = null; bad(new Error("The photo reader didn't load. Check your internet, or upload a PDF or Word file instead.")); };
+    document.head.append(s);
+  });
+  await tesseractLoad;
+  const worker = await Tesseract.createWorker(["eng", "spa"]);
+  try {
+    const pages = [];
+    for (let i = 0; i < images.length; i++) {
+      if (ctl.signal.aborted) throw { code: "cancelled" };
+      setStatus(images.length > 1 ? `Reading page ${i + 1} of ${images.length}…` : "Reading the picture of the document…");
+      pages.push((await worker.recognize(images[i])).data.text.trim());
+    }
+    return pages.join("\n\n").trim();
+  } finally { worker.terminate(); }
 }
 async function readFile(file) {
   const name = file.name.toLowerCase();
@@ -487,7 +510,7 @@ async function readFile(file) {
 // Ask Claude. Inside claude.ai this uses the viewer's own Claude; on the website it goes
 // through the site's server, which holds the API key and adds the same instructions.
 async function ask(task, data, { images, onText } = {}) {
-  if (WEB) return askServer(task, data, images, onText);
+  if (WEB) return askModel(data, onText, task === "fix");
   await ensureClaude();
   const opts = { signal: ctl.signal };
   if (images) opts.images = images;
@@ -496,28 +519,60 @@ async function ask(task, data, { images, onText } = {}) {
   const prompt = task === "transcribe" ? taskText(task, data) : systemText() + "\n" + taskText(task, data);
   return (await sample(prompt, opts)).text;
 }
-// Shrink a picture to a JPEG of at most 1568 px on its long side (what Claude reads best; keeps uploads small).
-async function toJpeg(blob) {
-  const bmp = await createImageBitmap(blob);
-  const k = Math.min(1, 1568 / Math.max(bmp.width, bmp.height));
-  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
-  const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", 0.85).split(",")[1];
-}
-async function askServer(task, data, images, onText) {
-  const body = { task, ...data };
-  if (images) body.images = await Promise.all(images.map(toJpeg));
-  let r;
-  try { r = await fetch("/api/convert", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal }); }
+// ── The website's engine: Sabrina's fine-tuned model on a Hugging Face Space (space/app.py) ──
+// The visitor's browser asks the Space directly (Gradio's API), so each visitor uses their own free
+// GPU time. "retry" asks for a slightly different wording when the first try had problems.
+const SPACE = "__SPACE__";
+const wait = (ms) => new Promise((r, x) => { const t = setTimeout(r, ms); ctl.signal.addEventListener("abort", () => { clearTimeout(t); x({ code: "cancelled" }); }, { once: true }); });
+async function askModel(data, onText, retry) {
+  if (!SPACE) throw { code: "not_configured" };
+  const body = JSON.stringify({ data: [data.text, data.source || "Uploaded document", data.lang || "", !!retry] });
+  let id, tries = 0;
+  for (;;) {                                         // a sleeping Space can take a few minutes to wake up
+    let r;
+    try { r = await fetch(`${SPACE}/gradio_api/call/convert`, { method: "POST", headers: { "content-type": "application/json" }, body, signal: ctl.signal }); }
+    catch (e) { if (e?.name === "AbortError") throw { code: "cancelled" }; r = null; }
+    if (r?.ok) { id = (await r.json()).event_id; if (id) break; }
+    if (++tries > 30) throw { code: "offline" };
+    setStatus("The model is waking up. This can take a few minutes the first time…");
+    await wait(10000);
+  }
+  let res;
+  try { res = await fetch(`${SPACE}/gradio_api/call/convert/${id}`, { signal: ctl.signal }); }
   catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "offline" }; }
-  if (!r.ok) { const j = await r.json().catch(() => ({})); throw { code: j.code || (r.status === 413 ? "prompt_too_large" : "upstream_error") }; }
-  const reader = r.body.getReader(), dec = new TextDecoder();
-  let text = "";
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = "", event = "", text = "";
   try {
-    for (;;) { const { done, value } = await reader.read(); if (done) break; text += dec.decode(value, { stream: true }); onText?.({ text }); }
-  } catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "upstream_error" }; }
-  const cut = text.indexOf("\u0000ERR:");            // the server reports a failure that happened mid-answer this way
-  if (cut >= 0) throw { code: text.slice(cut + 5).trim() || "upstream_error" };
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, i).replace(/\r$/, ""); buf = buf.slice(i + 1);
+        if (line.startsWith("event:")) { event = line.slice(6).trim(); continue; }
+        if (!line.startsWith("data:")) continue;
+        const raw = line.slice(5).trim();
+        if (event === "error") {
+          const msg = String(JSON.parse(raw || "null") ?? "");
+          throw { code: /quota|GPU/i.test(msg) ? "quota" : "model_error", message: msg && !/quota|GPU/i.test(msg) ? msg : undefined };
+        }
+        if (event === "generating" || event === "complete") {
+          const v = JSON.parse(raw || "null");
+          if (Array.isArray(v) && typeof v[0] === "string") {
+            text = v[0];
+            if (text.startsWith("\u0000ERR:")) throw { code: text.slice(5).trim() };   // see convert() in space/app.py
+            onText?.({ text });
+          }
+          if (event === "complete") return text;
+        }
+      }
+    }
+  } catch (e) {
+    if (e?.code) throw e;
+    throw { code: e?.name === "AbortError" ? "cancelled" : "model_error" };
+  }
+  if (!text) throw { code: "model_error" };
   return text;
 }
 function problemList(check) {
@@ -546,7 +601,11 @@ const ERR = {
   bad_request: "That file couldn't be sent. Try a smaller file, or paste the text.",
   not_configured: "The site isn't set up yet (no API key). Tell the site owner.",
   busy: "The service is busy right now. Wait a minute and try again.",
+  quota: "Today's free model time for your connection is used up. Please try again later (it resets every 24 hours).",
+  model_error: "The model couldn't finish this handout. Try again, or try a shorter document.",
+  no_text: "No text was found in that file. Try another file, or paste the text.",
 };
+if (WEB) { ERR.not_configured = "The handout model isn't connected yet. Please try again later."; ERR.invalid_json = "The model's answer wasn't a complete handout. Try again."; }
 function setStatus(msg, err) { const s = $("status"); s.textContent = msg || ""; s.className = "status" + (err ? " err" : ""); }
 function fail(e) { setStatus(ERR[e?.code] || e?.message || String(e), e?.code !== "cancelled"); }
 function busy(on) { $("stop").hidden = !on; $("file").disabled = on; $("go").disabled = on; const f = $("fix"); if (f) f.disabled = on; }
@@ -562,11 +621,16 @@ async function run(getText, sourceName) {
     setStatus("Reading the document…");
     const text = await getText();
     if (!text || text.replace(/\s/g, "").length < 20) throw new Error("No text was found in that file. Try another file, or paste the text.");
-    setStatus("Writing the handout… (usually under a minute)");
-    const raw = await ask("convert", { text, source: sourceName, lang: $("lang").value }, {
-      onText: ({ text: t }) => { const n = (t.match(/"topic"\s*:/g) || []).length; setStatus(n ? `Writing page ${n}…` : "Planning the pages…"); },
-    });
-    const doc = parseModelJson(raw);
+    setStatus("Writing the handout… (usually about a minute)");
+    const progress = ({ text: t }) => { const n = (t.match(/"topic"\s*:/g) || []).length; setStatus(n ? `Writing page ${n}…` : "Planning the pages…"); };
+    const data = { text, source: sourceName, lang: $("lang").value };
+    let doc;
+    try { doc = parseModelJson(await ask("convert", data, { onText: progress })); }
+    catch (e) {                                            // one automatic second try if the answer wasn't a handout
+      if (!WEB || e?.code === "cancelled" || e?.code === "quota" || e?.code === "not_configured") throw e;
+      setStatus("Trying once more…");
+      doc = parseModelJson(await ask("fix", data, { onText: progress }));
+    }
     doc.source ||= sourceName;
     state.doc = doc; state.original = text; state.example = false;
     setStatus("");
@@ -578,8 +642,8 @@ async function run(getText, sourceName) {
 async function fixWithClaude(check) {
   ctl = new AbortController(); busy(true);
   try {
-    setStatus("Fixing the flagged facts…");
-    const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check) });
+    setStatus(WEB ? "Writing it again…" : "Fixing the flagged facts…");
+    const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check), source: state.doc.source, lang: $("lang").value });
     const doc = parseModelJson(raw); doc.source ||= state.doc.source;
     state.doc = doc; setStatus(""); render();
   } catch (e) { fail(e); }
@@ -620,7 +684,7 @@ function render() {
     <div class="bar ${check.passed ? "pass" : "fail"}">
       <span class="verdict">${check.passed ? "✓ Every fact matches the original" : `✗ ${probs.length} fact problem${probs.length === 1 ? "" : "s"}`}${state.example ? " · example" : ""}</span>
       <span class="controls">
-        ${check.passed ? "" : `<button id="fix" type="button">Fix with Claude</button>`}
+        ${check.passed ? "" : `<button id="fix" type="button">${WEB ? "Try again" : "Fix with Claude"}</button>`}
         <button id="dl" type="button" class="primary">Download to print</button>
       </span>
     </div>
