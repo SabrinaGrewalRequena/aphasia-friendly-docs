@@ -1,5 +1,7 @@
 # Aphasia-Friendly Health Documents — starter kit
 
+**Try it:** https://aphasia-friendly-docs.vercel.app/ — upload a health document and get an aphasia-friendly handout (English or Spanish). How the website works: [web/README.md](web/README.md).
+
 Code for the 5 steps in the proposal. It is all working and tested on made-up documents.
 What it still needs is **your data, an SLP, and a model run**.
 
