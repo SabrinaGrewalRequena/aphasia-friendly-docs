@@ -56,7 +56,7 @@ def convert(text, source="Uploaded document", lang="", retry=False):
         yield "\x00ERR:" + ("quota" if "quota" in str(e).lower() else "model_error")
 
 
-@spaces.GPU(duration=150)
+@spaces.GPU(duration=75)   # website visitors are guests on Hugging Face, who get a shorter GPU limit
 def generate(text, source, lang, retry):
     messages = [{"role": "system", "content": SYSTEM},
                 {"role": "user", "content": user_message(text, (source or "Uploaded document")[:120], lang)}]
