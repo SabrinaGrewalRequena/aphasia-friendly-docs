@@ -274,12 +274,25 @@ body { font-size: 18px; }
 .hero h1, .page h2.h, .card h3, .drop h1 { font-weight: 700; }
 .feat h3, .brand { font-weight: 600; }
 .tab, button, .filebtn { font-weight: 500; }
-/* "What is aphasia?" a little larger than the other cards */
+/* Home sections all share one size: 24px headings, 20px text (matches "What is aphasia?") */
 .aph { padding: 28px; gap: 22px; grid-template-columns: 72px minmax(0, 1fr); }
-.aph .icon { width: 72px; height: 72px; padding: 16px; }
-.aph h3 { font-size: 24px; margin-bottom: 10px; }
-.aph p { font-size: 20px; line-height: 1.6; }
-@media (max-width: 760px) { .aph { padding: 22px; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; } .aph .icon { width: 56px; height: 56px; padding: 12px; } .aph h3 { font-size: 22px; } .aph p { font-size: 18px; } }
+.aph .icon, .step .icon { width: 72px; height: 72px; padding: 16px; }
+.step { padding: 28px; }
+.aph h3, .step h3, .page h2.h { font-size: 24px; line-height: 1.3; margin-bottom: 10px; }
+.aph p, .step p, .note p { font-size: 20px; line-height: 1.6; }
+.eyebrow { font-size: 20px; margin-bottom: 12px; }
+.feat { grid-template-columns: 56px minmax(0, 1fr); }
+.feat .icon { width: 56px; height: 56px; padding: 13px; }
+.feat h3 { font-size: 21px; }
+.note { padding: 22px 26px; }
+@media (max-width: 760px) {
+  .aph, .step { padding: 22px; }
+  .aph { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
+  .aph .icon, .step .icon { width: 56px; height: 56px; padding: 12px; }
+  .aph h3, .step h3, .page h2.h { font-size: 22px; }
+  .aph p, .step p, .note p { font-size: 18px; }
+  .eyebrow { font-size: 18px; }
+}
 </style>
 </head>
 <body>
