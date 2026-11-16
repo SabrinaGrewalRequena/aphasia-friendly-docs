@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4e89'/%3E%3Cpath d='M9 8h10l4 4v12H9z' fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round'/%3E%3Cpath d='M12.5 15h7M12.5 19h5' stroke='white' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
 <title>Aphasia Friendly Docs</title>
 <!-- Drawings: Tabler Icons (https://tabler.io/icons), MIT License, Copyright (c) 2020-2024 Paweł Kuna -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Instrument+Serif:ital@0;1&family=Jost:wght@400;500;600&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
@@ -15,26 +15,30 @@
 /* Layout: one column. A drop zone at the top; below it the handout pages, drawn like the printed
    UNC handouts (letter-size sheets, a title per page, a big picture beside each line, bold key words). */
 :root {
-  /* One deliberate light look: white page, navy accent, cool greys. */
+  /* Baby pink page, baby blue accents; dark ink so every word stays easy to read. */
   color-scheme: light;
-  --bg: #ffffff;
+  --bg: #fff2f6;
   --surface: #ffffff;
-  --panel: #f8fafd;
-  --ink: #16202e;
-  --muted: #5a6577;
-  --line: #dfe5ee;
-  --accent: #2c5f9e;
+  --panel: #ffffff;
+  --ink: #2a2430;
+  --muted: #5d5464;
+  --line: #f0d5df;
+  --accent: #3f6f9a;
   --accent-ink: #ffffff;
-  --accent-soft: #e8f1fb;
-  --pink: #b3446c;
-  --pink-soft: #fcedf3;
+  --accent-soft: #e2effa;
+  --pink: #a9466d;
+  --pink-soft: #fde2ea;
+  --baby-pink: #f2a2bd;
+  --baby-blue: #9cc8ea;
   --ok: #1b6e45;
   --ok-soft: #eaf6ef;
   --bad: #b42318;
   --bad-soft: #fdeceb;
   --sheet: #ffffff;
   --sheet-ink: #111827;
-  --font: "Atkinson Hyperlegible", "Segoe UI", Verdana, system-ui, sans-serif;
+  --font: "Jost", "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --display: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
+  --sheet-font: "Atkinson Hyperlegible", Verdana, sans-serif;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.45; }
@@ -150,10 +154,42 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
 .about-body p { font-family: "Nunito", var(--font); font-size: clamp(18px, 2.2vw, 21px); line-height: 1.65; margin: 0; max-width: 46ch; color: #2a3445; }
 .about-body strong { color: var(--accent); }
 
-.site-foot { border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
-.site-foot .page { padding-block: 20px 28px; gap: 4px; }
-.site-foot p { margin: 0; }
-.site-foot a { color: inherit; }
+
+/* ── Theme: editorial serif headings, soft pink/blue, pill buttons ── */
+body { font-size: 17px; }
+.sheet { font-family: var(--sheet-font); }               /* handouts keep the easiest-to-read font */
+.top { background: rgba(255,242,246,.94); border-bottom-color: var(--line); }
+.brand { font-family: var(--display); font-weight: 400; font-size: 26px; letter-spacing: .005em; }
+.brand-mark { background: linear-gradient(135deg, var(--baby-pink), var(--baby-blue)); color: var(--ink); border-radius: 50%; }
+.tab { font-weight: 500; font-size: 16px; letter-spacing: .02em; }
+button, .filebtn { font-weight: 500; border-radius: 999px; padding: 11px 22px; letter-spacing: .01em; }
+.linkbtn { padding: 2px; border-radius: 0; }
+.eyebrow { font-family: var(--display); font-style: italic; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 22px; margin-bottom: 4px; }
+.page h2.h, .card h3, .feat h3, .drop h1 { font-family: var(--display); font-weight: 400; letter-spacing: .005em; }
+.page h2.h { font-size: clamp(32px, 4.4vw, 44px); line-height: 1.05; }
+.card h3 { font-size: 26px; line-height: 1.1; margin-bottom: 8px; }
+.feat h3 { font-size: 24px; line-height: 1.1; margin-top: 4px; }
+.drop h1 { font-size: clamp(34px, 5vw, 46px); line-height: 1.05; }
+.drop { background: var(--surface); border-color: #ebbccc; border-radius: 22px; }
+.hero, .about { background: linear-gradient(135deg, #ffe1ea 0%, #fff0f5 48%, #e0eefa 100%); border-color: #f2d0dc; }
+.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 6.4vw, 68px); line-height: 1; letter-spacing: -.01em; }
+.hero h1 em { color: var(--pink); }
+.hero .lede { color: var(--muted); }
+.hero-pic .tag { background: var(--baby-pink); color: var(--ink); font-family: var(--display); font-style: italic; font-weight: 400; font-size: 18px; padding: 2px 14px; }
+.card { background: var(--surface); border-color: var(--line); border-radius: 20px; }
+.aph .icon, .step .icon, .feat .icon { background: var(--accent-soft); color: var(--accent); border-radius: 50%; }
+.step:nth-child(2) .icon, .feat:nth-child(2) .icon, .aph .icon { background: var(--pink-soft); color: var(--pink); }
+.step h3::before { font-family: var(--display); font-style: italic; }
+.note { border-left-color: var(--baby-pink); background: var(--surface); border-radius: 0 16px 16px 0; }
+.disclaimer, .status { color: var(--muted); }
+/* About: everything centered */
+.about { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 28px; padding: clamp(28px, 6vw, 64px) clamp(20px, 5vw, 48px); }
+.photo { width: min(320px, 100%); max-width: none; border-radius: 50% 50% 24px 24px; }
+.about-body { display: grid; justify-items: center; }
+.about-body h1 { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 8vw, 80px); line-height: 1; margin: 0 0 18px; }
+.about-body h1 span { color: #5f97c8; font-style: italic; }
+.about-body p { font-family: var(--display); font-size: clamp(22px, 2.8vw, 28px); line-height: 1.45; max-width: 34ch; color: var(--ink); }
+.about-body strong { font-weight: 400; font-style: italic; color: var(--pink); }
 
 @media (max-width: 760px) {
   .hero, .about { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -184,8 +220,8 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
   <div class="page">
     <div class="hero">
       <div>
-        <p class="eyebrow">Free · English and Spanish</p>
-        <h1>Health papers, made easy to read.</h1>
+        <p class="eyebrow">free · English &amp; Spanish</p>
+        <h1>Turn any document into one people with <em>aphasia</em> can read.</h1>
         <p class="lede">This tool turns a health document into an <strong>aphasia-friendly handout</strong>: short sentences, big text, key words in bold, and a picture beside every line.</p>
         <div class="cta">
           <button class="primary" type="button" data-go="make">Make a handout</button>
@@ -213,7 +249,7 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
       <h2 class="h">Three easy steps</h2>
       <ol class="steps">
         <li class="card step"><div class="icon" data-icon="file-text"></div><h3>Upload</h3><p>Choose a PDF, a Word file, or a photo of a health letter.</p></li>
-        <li class="card step"><div class="icon" data-icon="message-language"></div><h3>Pick a language</h3><p>English or Spanish. Or keep the language of the letter.</p></li>
+        <li class="card step"><div class="icon" data-icon="message-language"></div><h3>Pick a language</h3><p>English, Spanish, or keep the language of the letter.</p></li>
         <li class="card step"><div class="icon" data-icon="square-check"></div><h3>Check and print</h3><p>Read the handout, fix any words, then download and print it.</p></li>
       </ol>
     </div>
