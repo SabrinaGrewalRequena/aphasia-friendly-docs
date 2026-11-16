@@ -296,6 +296,8 @@ body { font-size: 18px; }
 .hero-pic .ln { font-size: 20px; line-height: 1.5; }
 .hero-pic .tag { font-size: 16px; }
 @media (max-width: 760px) { .hero h1, .hero-pic .sheet h2 { font-size: 22px; } .page p.lede, .hero-pic .ln { font-size: 18px; } }
+.bar.plain { background: var(--surface); border-color: var(--line); }
+.bar.plain .verdict { color: var(--ink); font-weight: 600; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="paint" x="-50%" y="-50%" width="200%" height="200%"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="3" seed="4"/><feDisplacementMap in="SourceGraphic" scale="18"/></filter></svg>
@@ -860,15 +862,15 @@ function render() {
   if (!doc) { out.innerHTML = ""; return; }
   const check = factCheck(state.original, doc);
   const probs = problemList(check);
+  // The fact-check result is not shown on screen (Sabrina's choice); "Try again" is always offered.
   out.innerHTML = `
-    <div class="bar ${check.passed ? "pass" : "fail"}">
-      <span class="verdict">${check.passed ? "✓ Every fact matches the original" : `✗ ${probs.length} fact problem${probs.length === 1 ? "" : "s"}`}${state.example ? " · example" : ""}</span>
+    <div class="bar plain">
+      <span class="verdict">Your handout</span>
       <span class="controls">
-        ${check.passed ? "" : `<button id="fix" type="button">${WEB ? "Try again" : "Fix with Claude"}</button>`}
+        <button id="fix" type="button">${WEB ? "Try again" : "Fix with Claude"}</button>
         <button id="dl" type="button" class="primary">Download to print</button>
       </span>
     </div>
-    ${check.passed ? "" : `<ul class="problems">${probs.map((p) => `<li>${mdToHtml(p)}</li>`).join("")}</ul>`}
     <div class="sheets" style="margin-top:16px">${sheetsHtml(doc, true)}</div>`;
   $("dl").onclick = download;
   if ($("fix")) $("fix").onclick = () => fixWithClaude(check);
