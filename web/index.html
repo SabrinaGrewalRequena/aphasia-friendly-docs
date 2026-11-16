@@ -222,7 +222,7 @@ button, .filebtn { font-weight: 500; border-radius: 999px; padding: 11px 22px; l
       <div>
         <p class="eyebrow">Free · English &amp; Spanish</p>
         <h1>Turn any document into one people with <em>aphasia</em> can read.</h1>
-        <p class="lede">This tool turns a health document into an <strong>aphasia-friendly handout</strong>: short sentences, big text, key words in bold, and a picture beside every line.</p>
+        <p class="lede">This tool turns a document into an <strong>aphasia-friendly handout</strong>: short sentences, big text, key words in bold, and a picture beside every line.</p>
         <div class="cta">
           <button class="primary" type="button" data-go="make">Make a handout</button>
           <button type="button" data-go="about">About me</button>
@@ -773,7 +773,7 @@ addEventListener("popstate", () => show(location.hash.slice(1)));
 // Drawings on the Home tab, and the example handout page.
 document.querySelectorAll("[data-icon]").forEach((el) => { el.innerHTML = svgFor(el.dataset.icon); });
 $("brand-mark").innerHTML = svgFor("file-text");
-$("hero-sheet").innerHTML = sheetsHtml({ title: "", language: "en", source: "a made-up medicine sheet", pages: [SAMPLE.output.pages[1]] }, false);
+$("hero-sheet").innerHTML = sheetsHtml({ title: "", language: "en", source: "a made-up medicine sheet", pages: [{"topic": "Things that help", "lines": [{"kind": "text", "text": "**Move** your body, if your **doctor** says okay.", "picture": "walk", "icon": "walk"}, {"kind": "text", "text": "Keep a **daily routine**.", "picture": "calendar", "icon": "calendar"}, {"kind": "text", "text": "**Talk** with people you **trust**.", "picture": "conversation", "icon": "messages"}]}] }, false);
 show(location.hash.slice(1));
 </script>
 

@@ -30,6 +30,14 @@ for page in output["pages"]:
         line["icon"] = ICONS.get(line.get("picture", ""), "")
 sample = {"source": sample_pair["source"], "original": sample_pair["original"], "output": output}
 
+# The example page on the Home tab: a calm coping-skills page from the anxiety handout.
+HERO_ID, HERO_PAGE = "mental-health-anxiety-en-001", 2
+HERO_ICONS = {"walk": "walk", "calendar": "calendar", "conversation": "messages"}
+hero = json.loads(json.dumps(pairs[HERO_ID]["target"]["pages"][HERO_PAGE]))
+hero["topic"] = "Things that help"          # this page stands alone here, so drop "Other"
+for line in hero["lines"]:
+    line["icon"] = HERO_ICONS[line["picture"]]
+
 HERE = Path(__file__).parent
 rules = (ROOT / "prompts" / "system.md").read_text(encoding="utf-8")
 template = (HERE / "template.html").read_text(encoding="utf-8")
@@ -48,7 +56,8 @@ def page(web):
                     .replace("__EXAMPLES__", dump(examples))
                     .replace("__SAMPLE__", dump(sample))
                     .replace("__ICONS__", icons_json)
-                    .replace("__PHOTO__", photo))
+                    .replace("__PHOTO__", photo)
+                    .replace("__HERO__", dump(hero)))
 
 
 # 1) The Claude page (published as a Claude artifact; uses the viewer's own Claude).
