@@ -12,6 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from common import load_pairs  # noqa: E402
+sys.path.insert(0, str(Path(__file__).parent))
+import deco  # noqa: E402
 
 EXAMPLE_IDS = ["medication-en-001", "appointment-es-001"]   # short, SLP-approved
 SAMPLE_ID = "test-medication-levetiracetam-en"               # made-up test document
@@ -57,7 +59,8 @@ def page(web):
                     .replace("__SAMPLE__", dump(sample))
                     .replace("__ICONS__", icons_json)
                     .replace("__PHOTO__", photo)
-                    .replace("__HERO__", dump(hero)))
+                    .replace("__HERO__", dump(hero))
+                    .replace("__DECO_HERO__", deco.hero()).replace("__DECO_ABOUT__", deco.about()).replace("__DECO_DEFS__", deco.DEFS))
 
 
 # 1) The Claude page (published as a Claude artifact; uses the viewer's own Claude).
