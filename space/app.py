@@ -26,7 +26,9 @@ LANG_NAMES = {"en": "English", "es": "Spanish"}
 tokenizer = AutoTokenizer.from_pretrained(BASE)
 model = AutoModelForCausalLM.from_pretrained(BASE, dtype=torch.bfloat16)
 if ADAPTER:
-    model = PeftModel.from_pretrained(model, ADAPTER).merge_and_unload()   # your training, built in
+    # torch_device="cpu": on ZeroGPU the GPU only exists while a handout is being written,
+    # so the trained part is loaded into normal memory first and moved to the GPU below.
+    model = PeftModel.from_pretrained(model, ADAPTER, torch_device="cpu").merge_and_unload()   # your training, built in
 else:
     print("WARNING: ADAPTER is not set, so this is the plain base model, not your fine-tuned one.")
 model.to("cuda")
