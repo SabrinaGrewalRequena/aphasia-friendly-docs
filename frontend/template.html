@@ -9,21 +9,21 @@
 /* Layout: one column. A drop zone at the top; below it the handout pages, drawn like the printed
    UNC handouts (letter-size sheets, a title per page, a big picture beside each line, bold key words). */
 :root {
-  /* Cream, white and black: a warm paper look with black type. */
+  /* Cream and blush with dusty-rose accents; dark brown text so every word stays easy to read. */
   color-scheme: light;
-  --bg: #f5efe4;
+  --bg: #f6f0e8;
   --surface: #ffffff;
   --panel: #ffffff;
-  --ink: #1d1b18;
-  --muted: #4f4a43;
-  --line: #e2d8c6;
-  --accent: #1d1b18;
-  --accent-ink: #fbf7ef;
-  --accent-soft: #efe7d9;
-  --pink: #1d1b18;
-  --pink-soft: #efe7d9;
-  --baby-pink: #e8dcc6;
-  --baby-blue: #d8cab2;
+  --ink: #2f2522;
+  --muted: #6a5550;
+  --line: #ead9d2;
+  --accent: #96604f;
+  --accent-ink: #fdf8f2;
+  --accent-soft: #f4e4df;
+  --pink: #96604f;
+  --pink-soft: #f4e4df;
+  --baby-pink: #f0d5cf;
+  --baby-blue: #e7c3bb;
   --ok: #1b6e45;
   --ok-soft: #eaf6ef;
   --bad: #b42318;
@@ -245,24 +245,24 @@ body { font-size: 18px; }
   .hero h1 { font-size: 25px; }
 }
 
-/* ── Cream / white / black ── */
-.top { background: rgba(245,239,228,.96); }
-.brand-mark { background: var(--ink); color: var(--accent-ink); }
-.hero, .about { background: #faf6ee; border-color: var(--line); }
-.drop { border-color: #cdbfa6; }
+/* ── Cream, blush and dusty rose ── */
+.top { background: rgba(246,240,232,.96); }
+.brand-mark { background: var(--accent); color: var(--accent-ink); }
+.hero, .about { background: #fbf7f1; border-color: var(--line); }
+.drop { border-color: #dcc0b7; }
 .step:nth-child(1), .step:nth-child(3) { background: #ffffff; border-color: var(--line); }
-.step:nth-child(2) { background: #efe7d9; border-color: #e2d6c1; }
-.step .icon, .step:nth-child(2) .icon { background: #f5efe4; color: var(--ink); }
+.step:nth-child(2) { background: #f4e4df; border-color: #ebd3cc; }
+.step .icon, .step:nth-child(2) .icon { background: #f8eeea; color: var(--accent); }
 .step:nth-child(2) .icon { background: #ffffff; }
-.aph .icon, .feat .icon, .feat:nth-child(2) .icon { background: #efe7d9; color: var(--ink); }
+.aph .icon, .feat .icon, .feat:nth-child(2) .icon { background: #f4e4df; color: var(--accent); }
 .aph { background: #ffffff; }
 .card p { color: var(--muted); }
-.hero h1 em { color: var(--ink); }
-.hero-pic .tag { background: var(--ink); color: var(--accent-ink); font-weight: 500; }
-.note { border-left-color: var(--ink); }
-.about-body strong { font-weight: 600; color: var(--ink); }
-.pic { background: #f1ebe0; color: #1d1b18; }
-[contenteditable="true"]:hover { background: rgba(29,27,24,.06); }
+.hero h1 em { color: var(--accent); }
+.hero-pic .tag { background: var(--accent); color: var(--accent-ink); font-weight: 500; }
+.note { border-left-color: var(--accent); }
+.about-body strong { font-weight: 600; color: var(--accent); }
+.pic { background: #f6ebe7; color: #7a4a3d; }
+[contenteditable="true"]:hover { background: rgba(150,96,79,.08); }
 .eyebrow { letter-spacing: .02em; }
 /* weights do the work, not size */
 .hero h1, .page h2.h, .card h3, .drop h1 { font-weight: 700; }
