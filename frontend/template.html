@@ -1,7 +1,7 @@
 <title>Aphasia Friendly Docs</title>
 <!-- Drawings: Tabler Icons (https://tabler.io/icons), MIT License, Copyright (c) 2020-2024 Paweł Kuna -->
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Instrument+Serif:ital@0;1&family=Jost:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=Jost:wght@400;500;600&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
@@ -31,7 +31,8 @@
   --sheet: #ffffff;
   --sheet-ink: #111827;
   --font: "Jost", "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --display: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
+  --display: "Playfair Display", Georgia, serif;
+  --reading: "Lora", Georgia, serif;
   --sheet-font: "Atkinson Hyperlegible", Verdana, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -153,23 +154,23 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
 body { font-size: 17px; }
 .sheet { font-family: var(--sheet-font); }               /* handouts keep the easiest-to-read font */
 .top { background: rgba(255,242,246,.94); border-bottom-color: var(--line); }
-.brand { font-family: var(--display); font-weight: 400; font-size: 26px; letter-spacing: .005em; }
+.brand { font-family: var(--display); font-weight: 500; font-size: 21px; }
 .brand-mark { background: linear-gradient(135deg, var(--baby-pink), var(--baby-blue)); color: var(--ink); border-radius: 50%; }
 .tab { font-weight: 500; font-size: 16px; letter-spacing: .02em; }
 button, .filebtn { font-weight: 500; border-radius: 999px; padding: 11px 22px; letter-spacing: .01em; }
 .linkbtn { padding: 2px; border-radius: 0; }
-.eyebrow { font-family: var(--display); font-style: italic; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 22px; margin-bottom: 4px; }
+.eyebrow { font-family: var(--display); font-style: italic; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 19px; margin-bottom: 6px; }
 .page h2.h, .card h3, .feat h3, .drop h1 { font-family: var(--display); font-weight: 400; letter-spacing: .005em; }
-.page h2.h { font-size: clamp(32px, 4.4vw, 44px); line-height: 1.05; }
-.card h3 { font-size: 26px; line-height: 1.1; margin-bottom: 8px; }
-.feat h3 { font-size: 24px; line-height: 1.1; margin-top: 4px; }
-.drop h1 { font-size: clamp(34px, 5vw, 46px); line-height: 1.05; }
+.page h2.h { font-size: clamp(28px, 3.6vw, 36px); line-height: 1.15; font-weight: 500; }
+.card h3 { font-size: 22px; line-height: 1.2; margin-bottom: 8px; font-weight: 500; }
+.feat h3 { font-size: 20px; line-height: 1.2; margin-top: 6px; font-weight: 500; }
+.drop h1 { font-size: clamp(28px, 4vw, 36px); line-height: 1.15; font-weight: 500; }
 .drop { background: var(--surface); border-color: #ebbccc; border-radius: 22px; }
 .hero, .about { background: linear-gradient(135deg, #ffe1ea 0%, #fff0f5 48%, #e0eefa 100%); border-color: #f2d0dc; }
-.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 6.4vw, 68px); line-height: 1; letter-spacing: -.01em; }
+.hero h1 { font-family: var(--display); font-weight: 500; font-size: clamp(34px, 4.8vw, 50px); line-height: 1.15; letter-spacing: 0; }
 .hero h1 em { color: var(--pink); }
 .hero .lede { color: var(--muted); }
-.hero-pic .tag { background: var(--baby-pink); color: var(--ink); font-family: var(--display); font-style: italic; font-weight: 400; font-size: 18px; padding: 2px 14px; }
+.hero-pic .tag { background: var(--baby-pink); color: var(--ink); font-family: var(--display); font-style: italic; font-weight: 400; font-size: 16px; padding: 3px 14px; }
 .card { background: var(--surface); border-color: var(--line); border-radius: 20px; }
 .aph .icon, .step .icon, .feat .icon { background: var(--accent-soft); color: var(--accent); border-radius: 50%; }
 .step:nth-child(2) .icon, .feat:nth-child(2) .icon, .aph .icon { background: var(--pink-soft); color: var(--pink); }
@@ -177,13 +178,11 @@ button, .filebtn { font-weight: 500; border-radius: 999px; padding: 11px 22px; l
 .note { border-left-color: var(--baby-pink); background: var(--surface); border-radius: 0 16px 16px 0; }
 .disclaimer, .status { color: var(--muted); }
 /* About: everything centered */
-.about { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 28px; padding: clamp(28px, 6vw, 64px) clamp(20px, 5vw, 48px); }
-.photo { width: min(320px, 100%); max-width: none; border-radius: 50% 50% 24px 24px; }
-.about-body { display: grid; justify-items: center; }
-.about-body h1 { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 8vw, 80px); line-height: 1; margin: 0 0 18px; }
-.about-body h1 span { color: #5f97c8; font-style: italic; }
-.about-body p { font-family: var(--display); font-size: clamp(22px, 2.8vw, 28px); line-height: 1.45; max-width: 34ch; color: var(--ink); }
-.about-body strong { font-weight: 400; font-style: italic; color: var(--pink); }
+.about { grid-template-columns: minmax(0, 340px) minmax(0, 1fr); align-items: center; gap: clamp(28px, 6vw, 60px); }
+.photo { border-radius: 20px; }
+.about-body p { font-family: var(--reading); font-size: clamp(19px, 2.2vw, 22px); line-height: 1.75; max-width: 40ch; color: var(--ink); }
+.about-body strong { font-family: var(--display); font-weight: 500; font-style: italic; color: var(--pink); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media (max-width: 760px) {
   .hero, .about { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -267,7 +266,7 @@ button, .filebtn { font-weight: 500; border-radius: 999px; padding: 11px 22px; l
     <div class="about">
       <figure class="photo"><img src="__PHOTO__" alt="Sabrina Grewal Requena smiling and holding up a green graduation cap"></figure>
       <div class="about-body">
-        <h1>Hi everyone<span>!</span></h1>
+        <h1 class="sr-only">About me</h1>
         <p>My name is <strong>Sabrina Grewal Requena</strong>. I am an incoming medical student, and I wanted to build this tool to serve my community and help make healthcare accessible to all people. I love learning about the connection between physical and mental health, and I want to use my knowledge of medicine and science to help people all over the world :)</p>
       </div>
     </div>
