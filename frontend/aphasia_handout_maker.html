@@ -697,7 +697,7 @@ async function ask(task, data, { images, onText } = {}) {
 // ── The website's engine: Sabrina's fine-tuned model on a Hugging Face Space (space/app.py) ──
 // The visitor's browser asks the Space directly (Gradio's API), so each visitor uses their own free
 // GPU time. "retry" asks for a slightly different wording when the first try had problems.
-const SPACE = "";
+const SPACE = "https://sabrinaaaa-aphasia-friendly-docs.hf.space";
 const wait = (ms) => new Promise((r, x) => { const t = setTimeout(r, ms); ctl.signal.addEventListener("abort", () => { clearTimeout(t); x({ code: "cancelled" }); }, { once: true }); });
 async function askModel(data, onText, retry) {
   if (!SPACE) throw { code: "not_configured" };
