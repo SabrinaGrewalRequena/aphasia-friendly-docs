@@ -575,6 +575,11 @@ async function askModel(data, onText, retry) {
   if (!text) throw { code: "model_error" };
   return text;
 }
+// Safety net: any line with an emergency number (911, 988) is always shown in the red emergency box,
+// whatever the model chose for it.
+function markCrisis(doc) {
+  for (const p of doc.pages || []) for (const l of p.lines || []) if (/\b(911|988)\b/.test(String(l.text || ""))) l.kind = "crisis";
+}
 function problemList(check) {
   return [
     ...check.facts.filter((f) => f.status === "missing").map((f) => `Missing ${f.type}: "${f.value}"`),
@@ -631,7 +636,7 @@ async function run(getText, sourceName) {
       setStatus("Trying once more…");
       doc = parseModelJson(await ask("fix", data, { onText: progress }));
     }
-    doc.source ||= sourceName;
+    doc.source ||= sourceName; markCrisis(doc);
     state.doc = doc; state.original = text; state.example = false;
     setStatus("");
     render();
@@ -644,7 +649,7 @@ async function fixWithClaude(check) {
   try {
     setStatus(WEB ? "Writing it again…" : "Fixing the flagged facts…");
     const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check), source: state.doc.source, lang: $("lang").value });
-    const doc = parseModelJson(raw); doc.source ||= state.doc.source;
+    const doc = parseModelJson(raw); doc.source ||= state.doc.source; markCrisis(doc);
     state.doc = doc; setStatus(""); render();
   } catch (e) { fail(e); }
   finally { busy(false); }
