@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Turn a health document into an easy-to-read, aphasia-friendly handout with pictures, in English or Spanish.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4e89'/%3E%3Cpath d='M9 8h10l4 4v12H9z' fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round'/%3E%3Cpath d='M12.5 15h7M12.5 19h5' stroke='white' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>Aphasia Handout Maker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<style>
+/* Layout: one column. A drop zone at the top; below it the handout pages, drawn like the printed
+   UNC handouts (letter-size sheets, a title per page, a big picture beside each line, bold key words). */
+:root {
+  /* One deliberate light look: white page, navy accent, cool greys. */
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --panel: #f6f8fb;
+  --ink: #16202e;
+  --muted: #5a6577;
+  --line: #d6dde8;
+  --accent: #1d4e89;
+  --accent-ink: #ffffff;
+  --accent-soft: #e9f0f9;
+  --ok: #1b6e45;
+  --ok-soft: #eaf6ef;
+  --bad: #b42318;
+  --bad-soft: #fdeceb;
+  --sheet: #ffffff;
+  --sheet-ink: #111827;
+  --font: "Atkinson Hyperlegible", "Segoe UI", Verdana, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.45; }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 24px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 16px; }
+/* Upload */
+.drop { background: var(--panel); border: 2px dashed var(--line); border-radius: 14px; padding: 28px 20px; text-align: center; display: grid; gap: 10px; justify-items: center; }
+.drop.over { border-color: var(--accent); }
+.drop h1 { margin: 0; font-size: 22px; }
+.drop p { margin: 0; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+button, .filebtn { font: inherit; font-weight: 700; border-radius: 10px; padding: 11px 18px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:disabled { opacity: .55; cursor: not-allowed; }
+.linkbtn { background: none; border: 0; padding: 2px; color: var(--accent); font-weight: 400; text-decoration: underline; }
+select { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.disclaimer { margin: 0; font-size: 14px; color: var(--muted); text-align: center; max-width: 64ch; justify-self: center; }
+input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 50%, transparent); outline-offset: 2px; }
+.status { min-height: 1.4em; color: var(--muted); }
+.status.err { color: var(--bad); font-weight: 700; }
+/* Result bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.bar.pass { background: var(--ok-soft); } .bar.fail { background: var(--bad-soft); }
+.verdict { font-weight: 700; }
+.bar.pass .verdict { color: var(--ok); } .bar.fail .verdict { color: var(--bad); }
+.problems { margin: 0; padding: 10px 14px 10px 30px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; color: var(--ink); }
+.problems li { margin: 2px 0; }
+/* Handout sheets — the printed look */
+.sheets { display: grid; gap: 20px; }
+.sheet { background: var(--sheet); color: var(--sheet-ink); border-radius: 4px; border: 1px solid var(--line); box-shadow: 0 1px 4px rgba(16,24,40,.06);
+  aspect-ratio: 8.5 / 11; max-width: 100%; padding: clamp(18px, 5%, 44px); display: flex; flex-direction: column; gap: clamp(10px, 2.4vw, 22px); overflow: hidden; }
+.sheet .doc-title { font-size: clamp(22px, 4.2vw, 36px); font-weight: 700; margin: 0; line-height: 1.15; }
+.sheet h2 { font-size: clamp(20px, 3.8vw, 32px); margin: 0; line-height: 1.2; padding-bottom: 8px; border-bottom: 4px solid var(--sheet-ink); }
+.ln { display: grid; grid-template-columns: clamp(56px, 13vw, 110px) minmax(0, 1fr); gap: clamp(12px, 3vw, 26px); align-items: center;
+  font-size: clamp(17px, 3.3vw, 28px); line-height: 1.3; }
+.pic { aspect-ratio: 1; width: 100%; display: grid; place-items: center; border-radius: 14px; background: #e9f0f9; color: #1d4e89; padding: 14%; }
+.pic svg { width: 100%; height: 100%; }
+.ln.crisis .pic { background: #fbe3e1; color: #9d1d16; }
+.pic.none { background: none; }
+.tx { min-width: 0; overflow-wrap: anywhere; }
+.tx strong { font-weight: 700; }
+.num { font-weight: 700; margin-right: .35em; }
+.box { display: inline-block; width: .9em; height: .9em; border: .14em solid var(--sheet-ink); border-radius: 3px; margin-right: .4em; vertical-align: -.08em; }
+.ln.phone .tx { font-weight: 700; }
+.ln.crisis .tx { font-weight: 700; color: #8f1d17; border: .16em solid #b3261e; border-radius: 10px; padding: .3em .45em; }
+.foot { margin-top: auto; font-size: clamp(9px, 1.5vw, 12px); color: #555; border-top: 1px solid #bbb; padding-top: 6px; }
+[contenteditable="true"]:hover { background: rgba(29,78,137,.08); border-radius: 4px; }
+.example { font-size: 13px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <section class="drop" id="drop" aria-labelledby="up-h">
+    <h1 id="up-h">Upload a Document</h1>
+    <p>PDF, Word (.docx), a photo of a letter, or a text file</p>
+    <div class="controls">
+      <label class="filebtn primary" for="file">Choose a file</label>
+      <input id="file" type="file" accept=".pdf,.docx,.txt,.md,image/png,image/jpeg,image/webp,application/pdf,text/plain">
+      <select id="lang" aria-label="Handout language">
+        <option value="">Choose language</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+      <button id="stop" type="button" hidden>Stop</button>
+    </div>
+    <button id="pastebtn" class="linkbtn" type="button">or paste text</button>
+    <div id="pastebox" hidden style="width:100%">
+      <textarea id="src" aria-label="Document text" placeholder="Paste the document text here"></textarea>
+      <div class="controls" style="margin-top:8px"><button id="go" class="primary" type="button">Make handout</button></div>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+  <p class="disclaimer"><strong>Do not upload real patient information.</strong> Remove names, dates of birth, record numbers and other personal details first. Check every handout before giving it to someone.</p>
+
+  <div id="out"></div>
+</div>
+
+<script>
+const RULES = "You rewrite health documents into aphasia-friendly versions.\n\nAphasia is a language disorder, usually after a stroke or brain injury. It makes reading hard. It does NOT affect intelligence. Write for an adult. Never sound childish.\n\nYour output is printed as a multi-page handout. Plan the pages first, then write each page.\n\n# Hard safety rules (never break these)\n\n1. Add nothing. Do not add medical advice, facts, numbers, names or instructions that are not in the original.\n2. Copy facts exactly. Names, dates, times, doses, addresses, phone numbers, emails and websites are copied character for character from the original. Do not reformat them (keep \"(919) 555-0142\" as \"(919) 555-0142\").\n3. Crisis and emergency information stays word for word and prominent. Numbers such as 911 and 988 get their own line with kind \"crisis\". Never shorten or soften crisis instructions.\n4. Do not convert validated screening questionnaires (for example PHQ-9, GAD-7). If the document contains one, leave it out and say so in \"notes_for_reviewer\", and suggest an aphasia-friendly tool made for that purpose (for example the SADQ-10 for depression).\n5. You may leave out details the reader does not need (record numbers, dates of birth, billing codes, legal fine print). List every fact you leave out in \"omitted\" with a short reason. Never leave out an action, a dose, a date or time the reader must keep, a phone number they need, or crisis information.\n6. If something in the original is unclear, keep it closer to the original wording and explain in \"notes_for_reviewer\". Never guess.\n7. Keep every action the reader must take (who, what, when). Shorter is good, but losing an action is a failure.\n\n# Writing rules\n\n- One topic per page. One to four short lines per page. A checklist page (kind \"checkbox\") may have up to six lines. Split longer lists across pages.\n- One idea per line. Short sentences: aim for 5 to 10 words, never more than 15.\n- Plain everyday words. Replace medical terms with simple words (\"speech therapy\" not \"outpatient speech-language pathology\"). If the medical word matters (for example a medicine name), keep it and explain it simply.\n- Bold one or two key words in each sentence using **double asterisks**. Do not bold whole sentences.\n- Talk to the reader directly: \"You have...\", \"Call...\", \"Take...\".\n- Use numbered steps (kind \"step\") for anything done in order. Two to four steps per page; numbering continues onto the next page. Do not type the numbers yourself.\n- Phone numbers go on their own line (kind \"phone\" or \"crisis\"), with only the number and at most a short label, e.g. \"Phone: (919) 555-0142\".\n- If the original is a form where the clinician picks options (results, diet levels, strategies), keep EVERY option as its own checkbox line so the clinician can tick the ones that apply. Use checkboxes (kind \"checkbox\") when a clinician should tick what applies, and blanks (kind \"blank\", written as \"________\") for names or details to fill in.\n- Suggest a picture for every line that matters: a short, concrete noun phrase that a symbol library can find (\"calendar\", \"pill\", \"phone\", \"doctor\", \"speech therapist\"). Use \"\" only for lines that need no picture.\n- Repeat the main message. The last page says what to do and who can help.\n- Write in the same language as the original unless told otherwise. Spanish output uses the same rules (\"usted\" form, plain words).\n\n# Output format\n\nReturn ONLY a JSON object, no other text, in this shape:\n\n{\n  \"title\": \"short plain title\",\n  \"language\": \"en\" or \"es\",\n  \"source\": \"name of the original document as given\",\n  \"pages\": [\n    {\n      \"topic\": \"one topic\",\n      \"lines\": [\n        {\"kind\": \"text\", \"text\": \"**Speech therapy** can help you **talk**.\", \"picture\": \"speech therapist\"},\n        {\"kind\": \"phone\", \"text\": \"Phone: (919) 555-0142\", \"picture\": \"phone\"}\n      ]\n    }\n  ],\n  \"omitted\": [\"MRN 00482913: record number, not needed by the reader\"],\n  \"notes_for_reviewer\": [\"anything unclear, or that the SLP should check\"]\n}\n\nAllowed \"kind\" values: \"text\", \"step\", \"phone\", \"crisis\", \"checkbox\", \"blank\".\n";
+const EXAMPLES = [{"source": "Medication instructions (made-up example)", "original": "Atorvastatin 40 mg tablet. Take 1 tablet by mouth every evening. This medication lowers cholesterol to reduce your risk of another stroke. Avoid grapefruit and grapefruit juice while taking this medication. Contact your pharmacist at (919) 555-0119 if you experience unexplained muscle pain or weakness.", "target": {"title": "Your medicine: atorvastatin", "language": "en", "source": "Medication instructions (made-up example)", "pages": [{"topic": "Your medicine", "lines": [{"kind": "text", "text": "Your medicine is **atorvastatin 40 mg**.", "picture": "pill"}, {"kind": "text", "text": "It **lowers cholesterol**.", "picture": "heart"}, {"kind": "text", "text": "It helps **stop another stroke**.", "picture": "brain"}]}, {"topic": "How to take it", "lines": [{"kind": "text", "text": "Take **1 tablet**.", "picture": "pill"}, {"kind": "text", "text": "Swallow it **by mouth**.", "picture": "mouth"}, {"kind": "text", "text": "Take it every **evening**.", "picture": "evening"}]}, {"topic": "No grapefruit", "lines": [{"kind": "text", "text": "**Do not** eat **grapefruit**.", "picture": "grapefruit"}, {"kind": "text", "text": "**Do not** drink **grapefruit juice**.", "picture": "juice"}]}, {"topic": "Muscle pain?", "lines": [{"kind": "text", "text": "Muscles **hurt** or feel **weak**? You do not know why?", "picture": "muscle pain"}, {"kind": "text", "text": "**Call** your **pharmacist**.", "picture": "pharmacist"}, {"kind": "phone", "text": "Pharmacist: (919) 555-0119", "picture": "phone"}]}], "notes_for_reviewer": []}}, {"source": "Carta de cita (ejemplo inventado)", "original": "Estimado paciente: Le recordamos que tiene una cita de seguimiento en la Clínica de Rehabilitación Central el jueves 14 de enero de 2027 a las 2:15 p.m. con la Dra. Ana Morales. Por favor, llegue 15 minutos antes para completar los formularios de registro. Si necesita cancelar o cambiar su cita, llame al (919) 555-0163 con al menos 24 horas de anticipación.", "target": {"title": "Su cita", "language": "es", "source": "Carta de cita (ejemplo inventado)", "pages": [{"topic": "Usted tiene una cita", "lines": [{"kind": "text", "text": "Usted tiene una **cita**.", "picture": "cita médica"}, {"kind": "text", "text": "Con la **Dra. Ana Morales**.", "picture": "doctora"}, {"kind": "text", "text": "En la **Clínica de Rehabilitación Central**.", "picture": "hospital"}]}, {"topic": "Cuándo", "lines": [{"kind": "text", "text": "**jueves 14 de enero de 2027**", "picture": "calendario"}, {"kind": "text", "text": "**2:15 p.m.**", "picture": "reloj"}]}, {"topic": "Llegue temprano", "lines": [{"kind": "text", "text": "Llegue **15 minutos antes**.", "picture": "reloj"}, {"kind": "text", "text": "Va a **llenar** unos **papeles**.", "picture": "formulario"}]}, {"topic": "¿No puede ir?", "lines": [{"kind": "text", "text": "¿Necesita **cancelar** o **cambiar** la cita?", "picture": "cancelar"}, {"kind": "text", "text": "**Llame** por lo menos **24 horas** antes.", "picture": "teléfono"}, {"kind": "phone", "text": "Teléfono: (919) 555-0163", "picture": "teléfono"}]}], "notes_for_reviewer": []}}];
+const SAMPLE = {"source": "New seizure medicine instructions (made-up example)", "original": "NEW MEDICATION: LEVETIRACETAM (KEPPRA) 500 MG TABLET\nPatient: Curtis Langley | Prescriber: Dr. Ravi Patel\nYou had a seizure after your stroke. Levetiracetam helps prevent more seizures.\nHow to take: 1 tablet by mouth twice a day, about 12 hours apart (for example, 8 a.m. and 8 p.m.). Do not stop suddenly; stopping can cause seizures.\nSide effects: sleepiness, dizziness, and mood changes such as irritability or feeling down. Tell your doctor about mood changes. If you have thoughts of hurting yourself, call or text 988.\nSafety: Do not drive until your doctor says it is safe. Do not swim or bathe alone.\nCall 911 if a seizure lasts longer than 5 minutes, or if you have a second seizure without waking up in between.\nQuestions: (919) 555-0125.", "output": {"title": "Your new medicine: levetiracetam", "language": "en", "source": "New seizure medicine instructions (made-up example)", "pages": [{"topic": "Your new medicine", "lines": [{"kind": "text", "text": "For: **Curtis Langley**", "picture": "person", "icon": "user"}, {"kind": "text", "text": "**Levetiracetam** (**Keppra**) **500 mg**", "picture": "pill", "icon": "pill"}, {"kind": "text", "text": "From **Dr. Ravi Patel**.", "picture": "doctor", "icon": "stethoscope"}]}, {"topic": "Why you take it", "lines": [{"kind": "text", "text": "You had a **seizure** after your stroke.", "picture": "seizure", "icon": "brain"}, {"kind": "text", "text": "This medicine helps stop **more seizures**.", "picture": "shield", "icon": "shield-check"}]}, {"topic": "How to take it", "lines": [{"kind": "text", "text": "Take **1 tablet** by mouth.", "picture": "pill", "icon": "pill"}, {"kind": "text", "text": "**Twice** a day, about **12 hours** apart.", "picture": "clock", "icon": "clock"}, {"kind": "text", "text": "For example, **8 a.m.** and **8 p.m.**", "picture": "clock", "icon": "clock"}]}, {"topic": "Do not stop suddenly", "lines": [{"kind": "text", "text": "**Do not stop** this medicine **suddenly**.", "picture": "stop", "icon": "hand-stop"}, {"kind": "text", "text": "Stopping can cause **seizures**.", "picture": "seizure", "icon": "brain"}]}, {"topic": "Side effects", "lines": [{"kind": "text", "text": "You may feel **sleepy** or **dizzy**.", "picture": "sleepy", "icon": "zzz"}, {"kind": "text", "text": "Your **mood** may change: **irritable** or **down**.", "picture": "sad", "icon": "mood-sad"}, {"kind": "text", "text": "**Tell** your **doctor** about mood changes.", "picture": "doctor", "icon": "stethoscope"}]}, {"topic": "Thoughts of hurting yourself?", "lines": [{"kind": "crisis", "text": "Call or text 988", "picture": "phone", "icon": "phone"}]}, {"topic": "Stay safe", "lines": [{"kind": "text", "text": "**No driving** until your doctor says it is **safe**.", "picture": "no driving", "icon": "car-off"}, {"kind": "text", "text": "Do **not swim** or **bathe alone**.", "picture": "bath", "icon": "bath"}]}, {"topic": "Call 911", "lines": [{"kind": "text", "text": "Seizure **longer** than **5 minutes**?", "picture": "clock", "icon": "clock"}, {"kind": "text", "text": "A **second** seizure **without waking up** in between?", "picture": "seizure", "icon": "brain"}, {"kind": "crisis", "text": "Call 911", "picture": "ambulance", "icon": "ambulance"}]}, {"topic": "Questions?", "lines": [{"kind": "phone", "text": "Phone: (919) 555-0125", "picture": "phone", "icon": "phone"}]}], "omitted": [], "notes_for_reviewer": []}};
+const ICONS = {"user": {"label": "person", "svg": "<path d=\"M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0\" /> <path d=\"M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2\" />"}, "users": {"label": "people, group", "svg": "<path d=\"M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0\" /> <path d=\"M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2\" /> <path d=\"M16 3.13a4 4 0 0 1 0 7.75\" /> <path d=\"M21 21v-2a4 4 0 0 0 -3 -3.85\" />"}, "friends": {"label": "family, friends", "svg": "<path d=\"M7 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M5 22v-5l-1 -1v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4l-1 1v5\" /> <path d=\"M17 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M15 22v-4h-2l2 -6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1l2 6h-2v4\" />"}, "user-heart": {"label": "caregiver, care partner", "svg": "<path d=\"M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0\" /> <path d=\"M6 21v-2a4 4 0 0 1 4 -4h.5\" /> <path d=\"M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z\" />"}, "old": {"label": "older adult", "svg": "<path d=\"M11 21l-1 -4l-2 -3v-6\" /> <path d=\"M5 14l-1 -3l4 -3l3 2l3 .5\" /> <path d=\"M8 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M7 17l-2 4\" /> <path d=\"M16 21v-8.5a1.5 1.5 0 0 1 3 0v.5\" />"}, "baby-carriage": {"label": "baby", "svg": "<path d=\"M8 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M18 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M2 5h2.5l1.632 4.897a6 6 0 0 0 5.693 4.103h2.675a5.5 5.5 0 0 0 0 -11h-.5v6\" /> <path d=\"M6 9h14\" /> <path d=\"M9 17l1 -3\" /> <path d=\"M16 14l1 3\" />"}, "stethoscope": {"label": "doctor, check-up", "svg": "<path d=\"M6 4h-1a2 2 0 0 0 -2 2v3.5h0a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1\" /> <path d=\"M8 15a6 6 0 1 0 12 0v-3\" /> <path d=\"M11 3v2\" /> <path d=\"M6 3v2\" /> <path d=\"M20 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" />"}, "nurse": {"label": "nurse", "svg": "<path d=\"M12 6c2.941 0 5.685 .847 8 2.31l-2 9.69h-12l-2 -9.691a14.93 14.93 0 0 1 8 -2.309z\" /> <path d=\"M10 12h4\" /> <path d=\"M12 10v4\" />"}, "first-aid-kit": {"label": "first aid, health care", "svg": "<path d=\"M8 8v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2\" /> <path d=\"M4 8m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z\" /> <path d=\"M10 14h4\" /> <path d=\"M12 12v4\" />"}, "building-hospital": {"label": "hospital, clinic", "svg": "<path d=\"M3 21l18 0\" /> <path d=\"M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16\" /> <path d=\"M9 21v-4a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v4\" /> <path d=\"M10 9l4 0\" /> <path d=\"M12 7l0 4\" />"}, "emergency-bed": {"label": "hospital bed, emergency room", "svg": "<path d=\"M16 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M8 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 8l2.1 2.8a3 3 0 0 0 2.4 1.2h11.5\" /> <path d=\"M10 6h4\" /> <path d=\"M12 4v4\" /> <path d=\"M12 12v2l-2.5 2.5\" /> <path d=\"M14.5 16.5l-2.5 -2.5\" />"}, "ambulance": {"label": "ambulance, emergency", "svg": "<path d=\"M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M5 17h-2v-11a1 1 0 0 1 1 -1h9v12m-4 0h6m4 0h2v-6h-8m0 -5h5l3 5\" /> <path d=\"M6 10h4m-2 -2v4\" />"}, "urgent": {"label": "urgent, emergency light", "svg": "<path d=\"M8 16v-4a4 4 0 0 1 8 0v4\" /> <path d=\"M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7\" /> <path d=\"M6 16m0 1a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z\" />"}, "sos": {"label": "SOS, help now", "svg": "<path d=\"M7 8h-3a1 1 0 0 0 -1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-3\" /> <path d=\"M10 8h4v8h-4z\" /> <path d=\"M17 16h3a1 1 0 0 0 1 -1v-2a1 1 0 0 0 -1 -1h-2a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1h3\" />"}, "phone": {"label": "phone, call", "svg": "<path d=\"M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2\" />"}, "phone-call": {"label": "phone call", "svg": "<path d=\"M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2\" /> <path d=\"M15 7a2 2 0 0 1 2 2\" /> <path d=\"M15 3a6 6 0 0 1 6 6\" />"}, "device-mobile": {"label": "cell phone, text message", "svg": "<path d=\"M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14z\" /> <path d=\"M11 4h2\" /> <path d=\"M12 17v.01\" />"}, "message": {"label": "text message, message", "svg": "<path d=\"M8 9h8\" /> <path d=\"M8 13h6\" /> <path d=\"M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z\" />"}, "messages": {"label": "conversation, chat", "svg": "<path d=\"M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10\" /> <path d=\"M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2\" />"}, "mail": {"label": "email, letter", "svg": "<path d=\"M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z\" /> <path d=\"M3 7l9 6l9 -6\" />"}, "mailbox": {"label": "mail, envelope", "svg": "<path d=\"M10 21v-6.5a3.5 3.5 0 0 0 -7 0v6.5h18v-6a4 4 0 0 0 -4 -4h-10.5\" /> <path d=\"M12 11v-8h4l2 2l-2 2h-4\" /> <path d=\"M6 15h1\" />"}, "video": {"label": "video visit, video call", "svg": "<path d=\"M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z\" /> <path d=\"M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z\" />"}, "device-laptop": {"label": "computer, laptop", "svg": "<path d=\"M3 19l18 0\" /> <path d=\"M5 6m0 1a1 1 0 0 1 1 -1h12a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1 -1z\" />"}, "device-tablet": {"label": "tablet", "svg": "<path d=\"M5 4a1 1 0 0 1 1 -1h12a1 1 0 0 1 1 1v16a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1 -1v-16z\" /> <path d=\"M11 17a1 1 0 1 0 2 0a1 1 0 0 0 -2 0\" />"}, "world-www": {"label": "website", "svg": "<path d=\"M19.5 7a9 9 0 0 0 -7.5 -4a8.991 8.991 0 0 0 -7.484 4\" /> <path d=\"M11.5 3a16.989 16.989 0 0 0 -1.826 4\" /> <path d=\"M12.5 3a16.989 16.989 0 0 1 1.828 4\" /> <path d=\"M19.5 17a9 9 0 0 1 -7.5 4a8.991 8.991 0 0 1 -7.484 -4\" /> <path d=\"M11.5 21a16.989 16.989 0 0 1 -1.826 -4\" /> <path d=\"M12.5 21a16.989 16.989 0 0 0 1.828 -4\" /> <path d=\"M2 10l1 4l1.5 -4l1.5 4l1 -4\" /> <path d=\"M17 10l1 4l1.5 -4l1.5 4l1 -4\" /> <path d=\"M9.5 10l1 4l1.5 -4l1.5 4l1 -4\" />"}, "link": {"label": "link", "svg": "<path d=\"M9 15l6 -6\" /> <path d=\"M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464\" /> <path d=\"M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463\" />"}, "calendar": {"label": "calendar, date", "svg": "<path d=\"M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z\" /> <path d=\"M16 3v4\" /> <path d=\"M8 3v4\" /> <path d=\"M4 11h16\" /> <path d=\"M11 15h1\" /> <path d=\"M12 15v3\" />"}, "calendar-event": {"label": "appointment", "svg": "<path d=\"M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z\" /> <path d=\"M16 3l0 4\" /> <path d=\"M8 3l0 4\" /> <path d=\"M4 11l16 0\" /> <path d=\"M8 15h2v2h-2z\" />"}, "calendar-check": {"label": "confirmed appointment", "svg": "<path d=\"M11.5 21h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v6\" /> <path d=\"M16 3v4\" /> <path d=\"M8 3v4\" /> <path d=\"M4 11h16\" /> <path d=\"M15 19l2 2l4 -4\" />"}, "calendar-x": {"label": "cancelled appointment", "svg": "<path d=\"M13 21h-7a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v6.5\" /> <path d=\"M16 3v4\" /> <path d=\"M8 3v4\" /> <path d=\"M4 11h16\" /> <path d=\"M22 22l-5 -5\" /> <path d=\"M17 22l5 -5\" />"}, "clock": {"label": "time, clock", "svg": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 7v5l3 3\" />"}, "alarm": {"label": "alarm, reminder", "svg": "<path d=\"M12 13m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0\" /> <path d=\"M12 10l0 3l2 0\" /> <path d=\"M7 4l-2.75 2\" /> <path d=\"M17 4l2.75 2\" />"}, "hourglass": {"label": "wait, how long", "svg": "<path d=\"M6.5 7h11\" /> <path d=\"M6.5 17h11\" /> <path d=\"M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z\" /> <path d=\"M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z\" />"}, "sun": {"label": "morning, day", "svg": "<path d=\"M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0\" /> <path d=\"M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7\" />"}, "sunset": {"label": "evening", "svg": "<path d=\"M3 17h1m16 0h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7m-9.7 5.7a4 4 0 0 1 8 0\" /> <path d=\"M3 21l18 0\" /> <path d=\"M12 3v6l3 -3m-6 0l3 3\" />"}, "moon": {"label": "night, bedtime", "svg": "<path d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\" />"}, "pill": {"label": "pill, tablet, medicine", "svg": "<path d=\"M4.5 12.5l8 -8a4.94 4.94 0 0 1 7 7l-8 8a4.94 4.94 0 0 1 -7 -7\" /> <path d=\"M8.5 8.5l7 7\" />"}, "pills": {"label": "pills, medicines", "svg": "<path d=\"M8 8m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0\" /> <path d=\"M17 17m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0\" /> <path d=\"M4.5 4.5l7 7\" /> <path d=\"M19.5 14.5l-5 5\" />"}, "prescription": {"label": "prescription", "svg": "<path d=\"M6 19v-16h4.5a4.5 4.5 0 1 1 0 9h-4.5\" /> <path d=\"M19 21l-9 -9\" /> <path d=\"M13 21l6 -6\" />"}, "medicine-syrup": {"label": "liquid medicine", "svg": "<path d=\"M8 21h8a1 1 0 0 0 1 -1v-10a3 3 0 0 0 -3 -3h-4a3 3 0 0 0 -3 3v10a1 1 0 0 0 1 1z\" /> <path d=\"M10 14h4\" /> <path d=\"M12 12v4\" /> <path d=\"M10 7v-3a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v3\" />"}, "vaccine": {"label": "shot, injection, vaccine", "svg": "<path d=\"M17 3l4 4\" /> <path d=\"M19 5l-4.5 4.5\" /> <path d=\"M11.5 6.5l6 6\" /> <path d=\"M16.5 11.5l-6.5 6.5h-4v-4l6.5 -6.5\" /> <path d=\"M7.5 12.5l1.5 1.5\" /> <path d=\"M10.5 9.5l1.5 1.5\" /> <path d=\"M3 21l3 -3\" />"}, "needle": {"label": "needle, IV", "svg": "<path d=\"M3 21c-.667 -.667 3.262 -6.236 11.785 -16.709a3.5 3.5 0 1 1 5.078 4.791c-10.575 8.612 -16.196 12.585 -16.863 11.918z\" /> <path d=\"M17.5 6.5l-1 1\" />"}, "bandage": {"label": "bandage, wound", "svg": "<path d=\"M14 12l0 .01\" /> <path d=\"M10 12l0 .01\" /> <path d=\"M12 10l0 .01\" /> <path d=\"M12 14l0 .01\" /> <path d=\"M4.5 12.5l8 -8a4.94 4.94 0 0 1 7 7l-8 8a4.94 4.94 0 0 1 -7 -7\" />"}, "thermometer": {"label": "fever, temperature", "svg": "<path d=\"M19 5a2.828 2.828 0 0 1 0 4l-8 8h-4v-4l8 -8a2.828 2.828 0 0 1 4 0z\" /> <path d=\"M16 7l-1.5 -1.5\" /> <path d=\"M13 10l-1.5 -1.5\" /> <path d=\"M10 13l-1.5 -1.5\" /> <path d=\"M7 17l-3 3\" />"}, "heartbeat": {"label": "heart rate, heart monitor", "svg": "<path d=\"M19.5 13.572l-7.5 7.428l-2.896 -2.868m-6.117 -8.104a5 5 0 0 1 9.013 -3.022a5 5 0 1 1 7.5 6.572\" /> <path d=\"M3 13h2l2 3l2 -6l1 3h3\" />"}, "heart": {"label": "heart, love", "svg": "<path d=\"M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572\" />"}, "brain": {"label": "brain, stroke, thinking", "svg": "<path d=\"M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8\" /> <path d=\"M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8\" /> <path d=\"M17.5 16a3.5 3.5 0 0 0 0 -7h-.5\" /> <path d=\"M19 9.3v-2.8a3.5 3.5 0 0 0 -7 0\" /> <path d=\"M6.5 16a3.5 3.5 0 0 1 0 -7h.5\" /> <path d=\"M5 9.3v-2.8a3.5 3.5 0 0 1 7 0v10\" />"}, "dental": {"label": "teeth, tooth, brush teeth", "svg": "<path d=\"M12 5.5c-1.074 -.586 -2.583 -1.5 -4 -1.5c-2.1 0 -4 1.247 -4 5c0 4.899 1.056 8.41 2.671 10.537c.573 .756 1.97 .521 2.567 -.236c.398 -.505 .819 -1.439 1.262 -2.801c.292 -.771 .892 -1.504 1.5 -1.5c.602 0 1.21 .737 1.5 1.5c.443 1.362 .864 2.295 1.262 2.8c.597 .759 2 .993 2.567 .237c1.615 -2.127 2.671 -5.637 2.671 -10.537c0 -3.74 -1.908 -5 -4 -5c-1.423 0 -2.92 .911 -4 1.5z\" /> <path d=\"M12 5.5l3 1.5\" />"}, "eye": {"label": "eyes, vision", "svg": "<path d=\"M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0\" /> <path d=\"M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6\" />"}, "eyeglass": {"label": "glasses", "svg": "<path d=\"M8 4h-2l-3 10\" /> <path d=\"M16 4h2l3 10\" /> <path d=\"M10 16l4 0\" /> <path d=\"M21 16.5a3.5 3.5 0 0 1 -7 0v-2.5h7v2.5\" /> <path d=\"M10 16.5a3.5 3.5 0 0 1 -7 0v-2.5h7v2.5\" />"}, "ear": {"label": "hearing, ear, hearing aid", "svg": "<path d=\"M6 10a7 7 0 1 1 13 3.6a10 10 0 0 1 -2 2a8 8 0 0 0 -2 3a4.5 4.5 0 0 1 -6.8 1.4\" /> <path d=\"M10 10a3 3 0 1 1 5 2.2\" />"}, "lungs": {"label": "lungs, breathing", "svg": "<path d=\"M6.081 20c1.612 0 2.919 -1.335 2.919 -2.98v-9.763c0 -.694 -.552 -1.257 -1.232 -1.257c-.205 0 -.405 .052 -.584 .15l-.13 .083c-1.46 1.059 -2.432 2.647 -3.404 5.824c-.42 1.37 -.636 2.962 -.648 4.775c-.012 1.675 1.261 3.054 2.877 3.161l.203 .007z\" /> <path d=\"M17.92 20c-1.613 0 -2.92 -1.335 -2.92 -2.98v-9.763c0 -.694 .552 -1.257 1.233 -1.257c.204 0 .405 .052 .584 .15l.13 .083c1.46 1.059 2.432 2.647 3.405 5.824c.42 1.37 .636 2.962 .648 4.775c.012 1.675 -1.261 3.054 -2.878 3.161l-.202 .007z\" /> <path d=\"M9 12a3 3 0 0 0 3 -3a3 3 0 0 0 3 3\" /> <path d=\"M12 4v5\" />"}, "droplet": {"label": "blood, liquid", "svg": "<path d=\"M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602 -2.105 3.262 -5.708 1.566 -8.546l-4.89 -7.26c-.42 -.625 -1.287 -.803 -1.936 -.397a1.376 1.376 0 0 0 -.41 .397l-4.893 7.26c-1.695 2.838 -1.035 6.441 1.567 8.546z\" />"}, "droplet-half": {"label": "thick liquid", "svg": "<path d=\"M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602 -2.105 3.262 -5.708 1.566 -8.546l-4.89 -7.26c-.42 -.625 -1.287 -.803 -1.936 -.397a1.376 1.376 0 0 0 -.41 .397l-4.893 7.26c-1.695 2.838 -1.035 6.441 1.567 8.546z\" /> <path d=\"M12 3v18\" />"}, "bone": {"label": "bone, fracture", "svg": "<path d=\"M15 3a3 3 0 0 1 3 3a3 3 0 1 1 -2.12 5.122l-4.758 4.758a3 3 0 1 1 -5.117 2.297l0 -.177l-.176 0a3 3 0 1 1 2.298 -5.115l4.758 -4.758a3 3 0 0 1 2.12 -5.122z\" />"}, "hand-stop": {"label": "stop, do not", "svg": "<path d=\"M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5\" /> <path d=\"M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5\" /> <path d=\"M14 5.5a1.5 1.5 0 0 1 3 0v6.5\" /> <path d=\"M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47\" />"}, "hand-finger": {"label": "pointing, point", "svg": "<path d=\"M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5\" /> <path d=\"M11 11.5v-2a1.5 1.5 0 1 1 3 0v2.5\" /> <path d=\"M14 10.5a1.5 1.5 0 0 1 3 0v1.5\" /> <path d=\"M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47\" />"}, "hand-click": {"label": "tap, click", "svg": "<path d=\"M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5\" /> <path d=\"M11 11.5v-2a1.5 1.5 0 0 1 3 0v2.5\" /> <path d=\"M14 10.5a1.5 1.5 0 0 1 3 0v1.5\" /> <path d=\"M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47\" /> <path d=\"M5 3l-1 -1\" /> <path d=\"M4 7h-1\" /> <path d=\"M14 3l1 -1\" /> <path d=\"M15 6h1\" />"}, "thumb-up": {"label": "good, okay", "svg": "<path d=\"M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3\" />"}, "thumb-down": {"label": "bad, no", "svg": "<path d=\"M7 13v-8a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v7a1 1 0 0 0 1 1h3a4 4 0 0 1 4 4v1a2 2 0 0 0 4 0v-5h3a2 2 0 0 0 2 -2l-1 -5a2 3 0 0 0 -2 -2h-7a3 3 0 0 0 -3 3\" />"}, "check": {"label": "yes, done, correct", "svg": "<path d=\"M5 12l5 5l10 -10\" />"}, "x": {"label": "no, wrong", "svg": "<path d=\"M18 6l-12 12\" /> <path d=\"M6 6l12 12\" />"}, "ban": {"label": "do not, not allowed", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M5.7 5.7l12.6 12.6\" />"}, "alert-triangle": {"label": "warning, careful", "svg": "<path d=\"M12 9v4\" /> <path d=\"M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z\" /> <path d=\"M12 16h.01\" />"}, "alert-circle": {"label": "important", "svg": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 8v4\" /> <path d=\"M12 16h.01\" />"}, "info-circle": {"label": "information", "svg": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 9h.01\" /> <path d=\"M11 12h1v4h1\" />"}, "help": {"label": "question, help", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M12 17l0 .01\" /> <path d=\"M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4\" />"}, "mood-smile": {"label": "happy, good mood", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M9 10l.01 0\" /> <path d=\"M15 10l.01 0\" /> <path d=\"M9.5 15a3.5 3.5 0 0 0 5 0\" />"}, "mood-sad": {"label": "sad", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M9 10l.01 0\" /> <path d=\"M15 10l.01 0\" /> <path d=\"M9.5 15.25a3.5 3.5 0 0 1 5 0\" />"}, "mood-cry": {"label": "crying, very sad", "svg": "<path d=\"M9 10l.01 0\" /> <path d=\"M15 10l.01 0\" /> <path d=\"M9.5 15.25a3.5 3.5 0 0 1 5 0\" /> <path d=\"M17.566 17.606a2 2 0 1 0 2.897 .03l-1.463 -1.636l-1.434 1.606z\" /> <path d=\"M20.865 13.517a8.937 8.937 0 0 0 .135 -1.517a9 9 0 1 0 -9 9c.69 0 1.36 -.076 2 -.222\" />"}, "mood-angry": {"label": "angry", "svg": "<path d=\"M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z\" /> <path d=\"M8 9l2 1\" /> <path d=\"M16 9l-2 1\" /> <path d=\"M14.5 16.05a3.5 3.5 0 0 0 -5 0\" />"}, "mood-confuzed": {"label": "confused", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M9 10l.01 0\" /> <path d=\"M15 10l.01 0\" /> <path d=\"M9.5 16a10 10 0 0 1 6 -1.5\" />"}, "mood-nervous": {"label": "nervous, worried", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M9 10h.01\" /> <path d=\"M15 10h.01\" /> <path d=\"M8 16l2 -2l2 2l2 -2l2 2\" />"}, "zzz": {"label": "sleep, sleepy, tired", "svg": "<path d=\"M4 12h6l-6 8h6\" /> <path d=\"M14 4h6l-6 8h6\" />"}, "bed": {"label": "bed, rest", "svg": "<path d=\"M7 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M22 17v-3h-20\" /> <path d=\"M2 8v9\" /> <path d=\"M12 14h10v-2a3 3 0 0 0 -3 -3h-7v5z\" />"}, "walk": {"label": "walk, walking", "svg": "<path d=\"M13 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M7 21l3 -4\" /> <path d=\"M16 21l-2 -4l-3 -3l1 -6\" /> <path d=\"M6 12l2 -3l4 -1l3 3l3 1\" />"}, "run": {"label": "exercise, run", "svg": "<path d=\"M13 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M4 17l5 1l.75 -1.5\" /> <path d=\"M15 21l0 -4l-4 -3l1 -6\" /> <path d=\"M7 12l0 -3l5 -1l3 3l3 1\" />"}, "stretching": {"label": "stretching, exercise", "svg": "<path d=\"M16 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M5 20l5 -.5l1 -2\" /> <path d=\"M18 20v-5h-5.5l2.5 -6.5l-5.5 1l1.5 2\" />"}, "wheelchair": {"label": "wheelchair", "svg": "<path d=\"M8 16m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0\" /> <path d=\"M19 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M19 17a3 3 0 0 0 -3 -3h-3.4\" /> <path d=\"M3 3h1a2 2 0 0 1 2 2v6\" /> <path d=\"M6 8h11\" /> <path d=\"M15 8v6\" />"}, "stairs": {"label": "stairs, steps", "svg": "<path d=\"M22 5h-5v5h-5v5h-5v5h-5\" />"}, "armchair": {"label": "chair, sit", "svg": "<path d=\"M5 11a2 2 0 0 1 2 2v2h10v-2a2 2 0 1 1 4 0v4a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-4a2 2 0 0 1 2 -2z\" /> <path d=\"M5 11v-5a3 3 0 0 1 3 -3h8a3 3 0 0 1 3 3v5\" /> <path d=\"M6 19v2\" /> <path d=\"M18 19v2\" />"}, "bath": {"label": "bath, bathe", "svg": "<path d=\"M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-3a1 1 0 0 1 1 -1z\" /> <path d=\"M6 12v-7a2 2 0 0 1 2 -2h3v2.25\" /> <path d=\"M4 21l1 -1.5\" /> <path d=\"M20 21l-1 -1.5\" />"}, "toilet-paper": {"label": "toilet, bathroom", "svg": "<path d=\"M6 10m-3 0a3 7 0 1 0 6 0a3 7 0 1 0 -6 0\" /> <path d=\"M21 10c0 -3.866 -1.343 -7 -3 -7\" /> <path d=\"M6 3h12\" /> <path d=\"M21 10v10l-3 -1l-3 2l-3 -3l-3 2v-10\" /> <path d=\"M6 10h.01\" />"}, "hand-sanitizer": {"label": "wash hands, clean hands", "svg": "<path d=\"M7 21h10v-10a3 3 0 0 0 -3 -3h-4a3 3 0 0 0 -3 3v10z\" /> <path d=\"M15 3h-6a2 2 0 0 0 -2 2\" /> <path d=\"M12 3v5\" /> <path d=\"M12 11v4\" /> <path d=\"M10 13h4\" />"}, "home": {"label": "home, house", "svg": "<path d=\"M5 12l-2 0l9 -9l9 9l-2 0\" /> <path d=\"M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7\" /> <path d=\"M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6\" />"}, "building": {"label": "building, office", "svg": "<path d=\"M3 21l18 0\" /> <path d=\"M9 8l1 0\" /> <path d=\"M9 12l1 0\" /> <path d=\"M9 16l1 0\" /> <path d=\"M14 8l1 0\" /> <path d=\"M14 12l1 0\" /> <path d=\"M14 16l1 0\" /> <path d=\"M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16\" />"}, "building-community": {"label": "community", "svg": "<path d=\"M8 9l5 5v7h-5v-4m0 4h-5v-7l5 -5m1 1v-6a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v17h-8\" /> <path d=\"M13 7l0 .01\" /> <path d=\"M17 7l0 .01\" /> <path d=\"M17 11l0 .01\" /> <path d=\"M17 15l0 .01\" />"}, "map-pin": {"label": "place, address", "svg": "<path d=\"M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0\" /> <path d=\"M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z\" />"}, "map": {"label": "map, directions", "svg": "<path d=\"M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13\" /> <path d=\"M9 4v13\" /> <path d=\"M15 7v13\" />"}, "car": {"label": "car, drive, ride", "svg": "<path d=\"M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5\" />"}, "car-off": {"label": "no driving", "svg": "<path d=\"M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M15.584 15.588a2 2 0 0 0 2.828 2.83\" /> <path d=\"M5 17h-2v-6l2 -5h1m4 0h4l4 5h1a2 2 0 0 1 2 2v4m-6 0h-6m-6 -6h8m4 0h3m-6 -3v-2\" /> <path d=\"M3 3l18 18\" />"}, "bus": {"label": "bus, transportation", "svg": "<path d=\"M6 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M18 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 17h-2v-11a1 1 0 0 1 1 -1h14a5 7 0 0 1 5 7v5h-2m-4 0h-8\" /> <path d=\"M16 5l1.5 7l4.5 0\" /> <path d=\"M2 10l15 0\" /> <path d=\"M7 5l0 5\" /> <path d=\"M12 5l0 5\" />"}, "parking": {"label": "parking", "svg": "<path d=\"M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z\" /> <path d=\"M10 16v-8h2.667c.736 0 1.333 .895 1.333 2s-.597 2 -1.333 2h-2.667\" />"}, "id": {"label": "ID card", "svg": "<path d=\"M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z\" /> <path d=\"M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M15 8l2 0\" /> <path d=\"M15 12l2 0\" /> <path d=\"M7 16l10 0\" />"}, "id-badge-2": {"label": "badge, name tag", "svg": "<path d=\"M7 12h3v4h-3z\" /> <path d=\"M10 6h-6a1 1 0 0 0 -1 1v12a1 1 0 0 0 1 1h16a1 1 0 0 0 1 -1v-12a1 1 0 0 0 -1 -1h-6\" /> <path d=\"M10 3m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v3a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z\" /> <path d=\"M14 16h2\" /> <path d=\"M14 12h4\" />"}, "credit-card": {"label": "card, insurance card, payment", "svg": "<path d=\"M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z\" /> <path d=\"M3 10l18 0\" /> <path d=\"M7 15l.01 0\" /> <path d=\"M11 15l2 0\" />"}, "cash": {"label": "money, cash", "svg": "<path d=\"M7 9m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z\" /> <path d=\"M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2\" />"}, "coin": {"label": "cost, coins", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M14.8 9a2 2 0 0 0 -1.8 -1h-2a2 2 0 1 0 0 4h2a2 2 0 1 1 0 4h-2a2 2 0 0 1 -1.8 -1\" /> <path d=\"M12 7v10\" />"}, "receipt": {"label": "bill", "svg": "<path d=\"M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2m4 -14h6m-6 4h6m-2 4h2\" />"}, "file-text": {"label": "document, form, paper", "svg": "<path d=\"M14 3v4a1 1 0 0 0 1 1h4\" /> <path d=\"M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z\" /> <path d=\"M9 9l1 0\" /> <path d=\"M9 13l6 0\" /> <path d=\"M9 17l6 0\" />"}, "clipboard-list": {"label": "list, checklist", "svg": "<path d=\"M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2\" /> <path d=\"M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 12l.01 0\" /> <path d=\"M13 12l2 0\" /> <path d=\"M9 16l.01 0\" /> <path d=\"M13 16l2 0\" />"}, "clipboard-check": {"label": "checklist done", "svg": "<path d=\"M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2\" /> <path d=\"M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 14l2 2l4 -4\" />"}, "notes": {"label": "notes", "svg": "<path d=\"M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 7l6 0\" /> <path d=\"M9 11l6 0\" /> <path d=\"M9 15l4 0\" />"}, "writing": {"label": "write", "svg": "<path d=\"M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z\" /> <path d=\"M16 7h4\" /> <path d=\"M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3\" />"}, "pencil": {"label": "write, edit", "svg": "<path d=\"M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4\" /> <path d=\"M13.5 6.5l4 4\" />"}, "signature": {"label": "sign, signature", "svg": "<path d=\"M3 17c3.333 -3.333 5 -6 5 -8c0 -3 -1 -3 -2 -3s-2.032 1.085 -2 3c.034 2.048 1.658 4.877 2.5 6c1.5 2 2.5 2.5 3.5 1l2 -3c.333 2.667 1.333 4 3 4c.53 0 2.639 -2 3 -2c.517 0 1.517 .667 3 2\" />"}, "book": {"label": "book, read", "svg": "<path d=\"M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0\" /> <path d=\"M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0\" /> <path d=\"M3 6l0 13\" /> <path d=\"M12 6l0 13\" /> <path d=\"M21 6l0 13\" />"}, "books": {"label": "reading", "svg": "<path d=\"M5 4m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z\" /> <path d=\"M9 4m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z\" /> <path d=\"M5 8h4\" /> <path d=\"M9 16h4\" /> <path d=\"M13.803 4.56l2.184 -.53c.562 -.135 1.133 .19 1.282 .732l3.695 13.418a1.02 1.02 0 0 1 -.634 1.219l-.133 .041l-2.184 .53c-.562 .135 -1.133 -.19 -1.282 -.732l-3.695 -13.418a1.02 1.02 0 0 1 .634 -1.219l.133 -.041z\" /> <path d=\"M14 9l4 -1\" /> <path d=\"M16 16l3.923 -.98\" />"}, "news": {"label": "news, newspaper", "svg": "<path d=\"M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11\" /> <path d=\"M8 8l4 0\" /> <path d=\"M8 12l4 0\" /> <path d=\"M8 16l4 0\" />"}, "headphones": {"label": "listen, audio", "svg": "<path d=\"M4 13m0 2a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2z\" /> <path d=\"M15 13m0 2a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2z\" /> <path d=\"M4 15v-3a8 8 0 0 1 16 0v3\" />"}, "microphone": {"label": "speak, voice", "svg": "<path d=\"M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z\" /> <path d=\"M5 10a7 7 0 0 0 14 0\" /> <path d=\"M8 21l8 0\" /> <path d=\"M12 17l0 4\" />"}, "speakerphone": {"label": "loud, speak up", "svg": "<path d=\"M18 8a3 3 0 0 1 0 6\" /> <path d=\"M10 8v11a1 1 0 0 1 -1 1h-1a1 1 0 0 1 -1 -1v-5\" /> <path d=\"M12 8h0l4.524 -3.77a.9 .9 0 0 1 1.476 .692v12.156a.9 .9 0 0 1 -1.476 .692l-4.524 -3.77h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h8\" />"}, "volume": {"label": "sound, volume", "svg": "<path d=\"M15 8a5 5 0 0 1 0 8\" /> <path d=\"M17.7 5a9 9 0 0 1 0 14\" /> <path d=\"M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5\" />"}, "message-language": {"label": "language, interpreter", "svg": "<path d=\"M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4\" /> <path d=\"M10 14v-4a2 2 0 1 1 4 0v4\" /> <path d=\"M14 12h-4\" />"}, "language": {"label": "language", "svg": "<path d=\"M4 5h7\" /> <path d=\"M9 3v2c0 4.418 -2.239 8 -5 8\" /> <path d=\"M5 9c0 2.144 2.952 3.908 6.7 4\" /> <path d=\"M12 20l4 -9l4 9\" /> <path d=\"M19.1 18h-6.2\" />"}, "school": {"label": "class, learning", "svg": "<path d=\"M22 9l-10 -4l-10 4l10 4l10 -4v6\" /> <path d=\"M6 10.6v5.4a6 3 0 0 0 12 0v-5.4\" />"}, "lock": {"label": "private, safe", "svg": "<path d=\"M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z\" /> <path d=\"M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0\" /> <path d=\"M8 11v-4a4 4 0 1 1 8 0v4\" />"}, "shield-check": {"label": "safe, protected", "svg": "<path d=\"M11.46 20.846a12 12 0 0 1 -7.96 -14.846a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3a12 12 0 0 1 -.09 7.06\" /> <path d=\"M15 19l2 2l4 -4\" />"}, "apple": {"label": "fruit, healthy food", "svg": "<path d=\"M4 11.319c0 3.102 .444 5.319 2.222 7.978c1.351 1.797 3.156 2.247 5.08 .988c.426 -.268 .97 -.268 1.397 0c1.923 1.26 3.728 .809 5.079 -.988c1.778 -2.66 2.222 -4.876 2.222 -7.977c0 -2.661 -1.99 -5.32 -4.444 -5.32c-1.267 0 -2.41 .693 -3.22 1.44a.5 .5 0 0 1 -.672 0c-.809 -.746 -1.953 -1.44 -3.22 -1.44c-2.454 0 -4.444 2.66 -4.444 5.319\" /> <path d=\"M7 12c0 -1.47 .454 -2.34 1.5 -3\" /> <path d=\"M12 7c0 -1.2 .867 -4 3 -4\" />"}, "salad": {"label": "vegetables, salad", "svg": "<path d=\"M4 11h16a1 1 0 0 1 1 1v.5c0 1.5 -2.517 5.573 -4 6.5v1a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-1c-1.687 -1.054 -4 -5 -4 -6.5v-.5a1 1 0 0 1 1 -1z\" /> <path d=\"M18.5 11c.351 -1.017 .426 -2.236 .5 -3.714v-1.286h-2.256c-2.83 0 -4.616 .804 -5.64 2.076\" /> <path d=\"M5.255 11.008a12.204 12.204 0 0 1 -.255 -2.008v-1h1.755c.98 0 1.801 .124 2.479 .35\" /> <path d=\"M8 8l1 -4l4 2.5\" /> <path d=\"M13 11v-.5a2.5 2.5 0 1 0 -5 0v.5\" />"}, "soup": {"label": "soup", "svg": "<path d=\"M4 11h16a1 1 0 0 1 1 1v.5c0 1.5 -2.517 5.573 -4 6.5v1a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-1c-1.687 -1.054 -4 -5 -4 -6.5v-.5a1 1 0 0 1 1 -1z\" /> <path d=\"M12 4a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2\" /> <path d=\"M16 4a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2\" /> <path d=\"M8 4a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2\" />"}, "bowl-spoon": {"label": "meal, food", "svg": "<path d=\"M4 11h16a1 1 0 0 1 1 1v.5c0 1.5 -2.517 5.573 -4 6.5v1a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-1c-1.687 -1.054 -4 -5 -4 -6.5v-.5a1 1 0 0 1 1 -1z\" /> <path d=\"M8 7c1.657 0 3 -.895 3 -2s-1.343 -2 -3 -2s-3 .895 -3 2s1.343 2 3 2\" /> <path d=\"M11 5h9\" />"}, "cup": {"label": "drink, coffee, cup", "svg": "<path d=\"M5 11h14v-3h-14z\" /> <path d=\"M17.5 11l-1.5 10h-8l-1.5 -10\" /> <path d=\"M6 8v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1\" /> <path d=\"M15 5v-2\" />"}, "glass-full": {"label": "glass of water, drink", "svg": "<path d=\"M8 21l8 0\" /> <path d=\"M12 15l0 6\" /> <path d=\"M17 3l1 7c0 3.012 -2.686 5 -6 5s-6 -1.988 -6 -5l1 -7h10z\" /> <path d=\"M6 10a5 5 0 0 1 6 0a5 5 0 0 0 6 0\" />"}, "bottle": {"label": "bottle", "svg": "<path d=\"M10 5h4v-2a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v2z\" /> <path d=\"M14 3.5c0 1.626 .507 3.212 1.45 4.537l.05 .07a8.093 8.093 0 0 1 1.5 4.694v6.199a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2v-6.2c0 -1.682 .524 -3.322 1.5 -4.693l.05 -.07a7.823 7.823 0 0 0 1.45 -4.537\" /> <path d=\"M7 14.803a2.4 2.4 0 0 0 1 -.803a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 1 -.805\" />"}, "tools-kitchen-2": {"label": "eat, meal", "svg": "<path d=\"M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3\" />"}, "cookie": {"label": "snack", "svg": "<path stroke=\"none\" d=\"M0 0h24v24H0z\" /> <path d=\"M8 13v.01\" /> <path d=\"M12 17v.01\" /> <path d=\"M12 12v.01\" /> <path d=\"M16 14v.01\" /> <path d=\"M11 8v.01\" /> <path d=\"M13.148 3.476l2.667 1.104a4 4 0 0 0 4.656 6.14l.053 .132a3 3 0 0 1 0 2.296q -.745 1.18 -1.024 1.852q -.283 .684 -.66 2.216a3 3 0 0 1 -1.624 1.623q -1.572 .394 -2.216 .661q -.712 .295 -1.852 1.024a3 3 0 0 1 -2.296 0q -1.203 -.754 -1.852 -1.024q -.707 -.292 -2.216 -.66a3 3 0 0 1 -1.623 -1.624q -.397 -1.577 -.661 -2.216q -.298 -.718 -1.024 -1.852a3 3 0 0 1 0 -2.296q .719 -1.116 1.024 -1.852q .257 -.62 .66 -2.216a3 3 0 0 1 1.624 -1.623q 1.547 -.384 2.216 -.661q .687 -.285 1.852 -1.024a3 3 0 0 1 2.296 0\" />"}, "candy": {"label": "candy, sweets", "svg": "<path d=\"M7.05 11.293l4.243 -4.243a2 2 0 0 1 2.828 0l2.829 2.83a2 2 0 0 1 0 2.828l-4.243 4.243a2 2 0 0 1 -2.828 0l-2.829 -2.831a2 2 0 0 1 0 -2.828z\" /> <path d=\"M16.243 9.172l3.086 -.772a1.5 1.5 0 0 0 .697 -2.516l-2.216 -2.217a1.5 1.5 0 0 0 -2.44 .47l-1.248 2.913\" /> <path d=\"M9.172 16.243l-.772 3.086a1.5 1.5 0 0 1 -2.516 .697l-2.217 -2.216a1.5 1.5 0 0 1 .47 -2.44l2.913 -1.248\" />"}, "no-copyright": {"label": "free", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M14 9.75a3.016 3.016 0 0 0 -4.163 .173a2.993 2.993 0 0 0 0 4.154a3.016 3.016 0 0 0 4.163 .173\" /> <path d=\"M6 6l1.5 1.5\" /> <path d=\"M16.5 16.5l1.5 1.5\" />"}, "salt": {"label": "salt", "svg": "<path d=\"M12 13v.01\" /> <path d=\"M10 16v.01\" /> <path d=\"M14 16v.01\" /> <path d=\"M7.5 8h9l-.281 -2.248a2 2 0 0 0 -1.985 -1.752h-4.468a2 2 0 0 0 -1.986 1.752l-.28 2.248z\" /> <path d=\"M7.5 8l-1.612 9.671a2 2 0 0 0 1.973 2.329h8.278a2 2 0 0 0 1.973 -2.329l-1.612 -9.671\" />"}, "scale": {"label": "weight, scale", "svg": "<path d=\"M7 20l10 0\" /> <path d=\"M6 6l6 -1l6 1\" /> <path d=\"M12 3l0 17\" /> <path d=\"M9 12l-3 -6l-3 6a3 3 0 0 0 6 0\" /> <path d=\"M21 12l-3 -6l-3 6a3 3 0 0 0 6 0\" />"}, "activity": {"label": "activity, heart tracing", "svg": "<path d=\"M3 12h4l3 8l4 -16l3 8h4\" />"}, "report-medical": {"label": "medical report, results", "svg": "<path d=\"M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2\" /> <path d=\"M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z\" /> <path d=\"M10 14l4 0\" /> <path d=\"M12 12l0 4\" />"}, "microscope": {"label": "lab, test", "svg": "<path d=\"M5 21h14\" /> <path d=\"M6 18h2\" /> <path d=\"M7 18v3\" /> <path d=\"M9 11l3 3l6 -6l-3 -3z\" /> <path d=\"M10.5 12.5l-1.5 1.5\" /> <path d=\"M17 3l3 3\" /> <path d=\"M12 21a6 6 0 0 0 3.715 -10.712\" />"}, "test-pipe": {"label": "lab test, blood test", "svg": "<path d=\"M20 8.04l-12.122 12.124a2.857 2.857 0 1 1 -4.041 -4.04l12.122 -12.124\" /> <path d=\"M7 13h8\" /> <path d=\"M19 15l1.5 1.6a2 2 0 1 1 -3 0l1.5 -1.6z\" /> <path d=\"M15 3l6 6\" />"}, "gauge": {"label": "blood pressure gauge", "svg": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M13.41 10.59l2.59 -2.59\" /> <path d=\"M7 12a5 5 0 0 1 5 -5\" />"}, "scan": {"label": "scan, x-ray", "svg": "<path d=\"M4 7v-1a2 2 0 0 1 2 -2h2\" /> <path d=\"M4 17v1a2 2 0 0 0 2 2h2\" /> <path d=\"M16 4h2a2 2 0 0 1 2 2v1\" /> <path d=\"M16 20h2a2 2 0 0 0 2 -2v-1\" /> <path d=\"M5 12l14 0\" />"}, "camera": {"label": "camera, photo", "svg": "<path d=\"M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2\" /> <path d=\"M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0\" />"}, "photo": {"label": "photo, picture", "svg": "<path d=\"M15 8h.01\" /> <path d=\"M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z\" /> <path d=\"M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5\" /> <path d=\"M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3\" />"}, "target": {"label": "goal", "svg": "<path d=\"M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0\" /> <path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" />"}, "trophy": {"label": "success", "svg": "<path d=\"M8 21l8 0\" /> <path d=\"M12 17l0 4\" /> <path d=\"M7 4l10 0\" /> <path d=\"M17 4v8a5 5 0 0 1 -10 0v-8\" /> <path d=\"M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" />"}, "plant": {"label": "growing, getting better", "svg": "<path d=\"M7 15h10v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2v-4z\" /> <path d=\"M12 9a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3\" /> <path d=\"M12 11a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3\" /> <path d=\"M12 15l0 -6\" />"}, "trending-up": {"label": "improve, more", "svg": "<path d=\"M3 17l6 -6l4 4l8 -8\" /> <path d=\"M14 7l7 0l0 7\" />"}, "trending-down": {"label": "less, lower", "svg": "<path d=\"M3 7l6 6l4 -4l8 8\" /> <path d=\"M21 10l0 7l-7 0\" />"}, "arrows-left-right": {"label": "change, swap", "svg": "<path d=\"M21 17l-18 0\" /> <path d=\"M6 10l-3 -3l3 -3\" /> <path d=\"M3 7l18 0\" /> <path d=\"M18 20l3 -3l-3 -3\" />"}, "refresh": {"label": "repeat, again", "svg": "<path d=\"M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4\" /> <path d=\"M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4\" />"}, "player-play": {"label": "start", "svg": "<path d=\"M7 4v16l13 -8z\" />"}, "player-stop": {"label": "stop", "svg": "<path d=\"M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z\" />"}, "square-check": {"label": "checkbox", "svg": "<path d=\"M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 12l2 2l4 -4\" />"}, "list-numbers": {"label": "steps, list", "svg": "<path d=\"M11 6h9\" /> <path d=\"M11 12h9\" /> <path d=\"M12 18h8\" /> <path d=\"M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4\" /> <path d=\"M6 10v-6l-2 2\" />"}, "puzzle": {"label": "puzzle, problem solving", "svg": "<path d=\"M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1\" />"}, "cards": {"label": "cards, game", "svg": "<path d=\"M3.604 7.197l7.138 -3.109a.96 .96 0 0 1 1.27 .527l4.924 11.902a1 1 0 0 1 -.514 1.304l-7.137 3.109a.96 .96 0 0 1 -1.271 -.527l-4.924 -11.903a1 1 0 0 1 .514 -1.304z\" /> <path d=\"M15 4h1a1 1 0 0 1 1 1v3.5\" /> <path d=\"M20 6c.264 .112 .52 .217 .768 .315a1 1 0 0 1 .53 1.311l-2.298 5.374\" />"}, "device-gamepad-2": {"label": "game", "svg": "<path d=\"M12 5h3.5a5 5 0 0 1 0 10h-5.5l-4.015 4.227a2.3 2.3 0 0 1 -3.923 -2.035l1.634 -8.173a5 5 0 0 1 4.904 -4.019h3.4z\" /> <path d=\"M14 15l4.07 4.284a2.3 2.3 0 0 0 3.925 -2.023l-1.6 -8.232\" /> <path d=\"M8 9v2\" /> <path d=\"M7 10h2\" /> <path d=\"M14 10h2\" />"}, "music": {"label": "music, song", "svg": "<path d=\"M3 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0\" /> <path d=\"M13 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0\" /> <path d=\"M9 17v-13h10v13\" /> <path d=\"M9 8h10\" />"}, "device-tv": {"label": "TV, television", "svg": "<path d=\"M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z\" /> <path d=\"M16 3l-4 4l-4 -4\" />"}, "gift": {"label": "gift", "svg": "<path d=\"M3 8m0 1a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z\" /> <path d=\"M12 8l0 13\" /> <path d=\"M19 12v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-7\" /> <path d=\"M7.5 8a2.5 2.5 0 0 1 0 -5a4.8 8 0 0 1 4.5 5a4.8 8 0 0 1 4.5 -5a2.5 2.5 0 0 1 0 5\" />"}, "dog": {"label": "dog", "svg": "<path d=\"M11 5h2\" /> <path d=\"M19 12c-.667 5.333 -2.333 8 -5 8h-4c-2.667 0 -4.333 -2.667 -5 -8\" /> <path d=\"M11 16c0 .667 .333 1 1 1s1 -.333 1 -1h-2z\" /> <path d=\"M12 18v2\" /> <path d=\"M10 11v.01\" /> <path d=\"M14 11v.01\" /> <path d=\"M5 4l6 .97l-6.238 6.688a1.021 1.021 0 0 1 -1.41 .111a.953 .953 0 0 1 -.327 -.954l1.975 -6.815z\" /> <path d=\"M19 4l-6 .97l6.238 6.688c.358 .408 .989 .458 1.41 .111a.953 .953 0 0 0 .327 -.954l-1.975 -6.815z\" />"}, "smoking": {"label": "smoking", "svg": "<path d=\"M3 13m0 1a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z\" /> <path d=\"M8 13l0 4\" /> <path d=\"M16 5v.5a2 2 0 0 0 2 2a2 2 0 0 1 2 2v.5\" />"}, "smoking-no": {"label": "no smoking", "svg": "<path d=\"M8 13l0 4\" /> <path d=\"M16 5v.5a2 2 0 0 0 2 2a2 2 0 0 1 2 2v.5\" /> <path d=\"M3 3l18 18\" /> <path d=\"M17 13h3a1 1 0 0 1 1 1v2c0 .28 -.115 .533 -.3 .714m-3.7 .286h-13a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1h9\" />"}, "glass-off": {"label": "no alcohol", "svg": "<path d=\"M8 21h8\" /> <path d=\"M12 16v5\" /> <path d=\"M17 5l1 6c0 .887 -.233 1.685 -.646 2.37m-2.083 1.886c-.941 .48 -2.064 .744 -3.271 .744c-3.314 0 -6 -1.988 -6 -5l.711 -4.268\" /> <path d=\"M10.983 6.959c.329 .027 .669 .041 1.017 .041c2.761 0 5 -.895 5 -2s-2.239 -2 -5 -2c-1.716 0 -3.23 .346 -4.13 .872\" /> <path d=\"M3 3l18 18\" />"}, "beer": {"label": "alcohol", "svg": "<path d=\"M9 21h6a1 1 0 0 0 1 -1v-3.625c0 -1.397 .29 -2.775 .845 -4.025l.31 -.7c.556 -1.25 .845 -2.253 .845 -3.65v-4a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v4c0 1.397 .29 2.4 .845 3.65l.31 .7a9.931 9.931 0 0 1 .845 4.025v3.625a1 1 0 0 0 1 1z\" /> <path d=\"M6 8h12\" />"}};
+const WEB = true;   // true on the public website (Claude is reached through /api/convert), false inside Claude
+// Shared by the Handout Maker page. Ports of factcheck.py and score.py, verified identical on all 150 pairs.
+// ───────────────────────────── Fact check (port of factcheck.py) ─────────────────────────────
+const MONTHS_EN = "(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)\\.?";
+const MONTHS_ES = "(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)";
+const DAYS = "(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|lunes|martes|miércoles|jueves|viernes|sábado|domingo)";
+const UNITS = "(?:mg|mcg|µg|g|mL|ml|L|units?|unidades|IU|tablets?|tabletas?|pills?|pastillas?|capsules?|cápsulas?|puffs?|inhalaciones|drops?|gotas|teaspoons?|tsp|cucharaditas?|tablespoons?|tbsp|cucharadas?|patch(?:es)?|parches?)";
+const STREET = "(?:Street|St\\.?|Avenue|Ave\\.?|Road|Rd\\.?|Boulevard|Blvd\\.?|Drive|Dr\\.?|Lane|Ln\\.?|Way|Court|Ct\\.?|Parkway|Pkwy\\.?|Place|Pl\\.?|Highway|Hwy\\.?)";
+const W = "[\\p{L}\\p{N}_'’-]";
+const PATTERNS = [
+  ["phone", new RegExp("(?:\\+?1[\\s.-]?)?\\(?\\b\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\\b|\\b(?:911|988|711|211)\\b", "g")],
+  ["email", /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g],
+  ["website", /\b(?:https?:\/\/|www\.)[^\s)<>]+|(?<![@\w.-])[\w-]+\.(?:org|gov|com|net|edu)(?:\/[^\s)<>]*)?/g],
+  ["date", new RegExp(`\\b${DAYS},?\\s+${MONTHS_EN}\\s+\\d{1,2}(?:,\\s*\\d{4})?|\\b${MONTHS_EN}\\s+\\d{1,2}(?:st|nd|rd|th)?(?:,\\s*\\d{4})?|\\b\\d{1,2}\\s+de\\s+${MONTHS_ES}(?:\\s+de\\s+\\d{4})?|\\b\\d{1,2}/\\d{1,2}(?:/\\d{2,4})?\\b`, "gi")],
+  ["time", /\b\d{1,2}(?::\d{2})?\s*(?:a\.?\s?m\.?|p\.?\s?m\.?|AM|PM)(?=\W|$)|\b\d{1,2}:\d{2}\b/gi],
+  ["dose", new RegExp(`\\b\\d+(?:[.,]\\d+)?[ \\t]?${UNITS}\\b`, "gi")],
+  ["name", new RegExp(`\\b(?:Dr|Dra|Mr|Mrs|Ms|Sr|Sra|Srta)\\.\\s+[A-ZÁÉÍÓÚÑ]${W}+(?:\\s+[A-ZÁÉÍÓÚÑ]${W}+)?`, "gu")],
+  ["address", new RegExp(`\\b\\d{1,6}\\s+(?:[A-Z0-9][\\w.'-]*\\s+){1,4}${STREET}(?:,?\\s+(?:Suite|Ste\\.?|Room|Rm\\.?)\\s*\\w+)?|\\b(?:Calle|Avenida|Av\\.)\\s+[\\wÁÉÍÓÚÑáéíóúñ ]+?\\s+\\d+`, "g")],
+];
+const CRISIS = ["911", "988"];
+const stripMd = (t) => String(t || "").replaceAll("**", "");
+const norm = (s) => String(s).toLowerCase().replaceAll("’", "'").replace(/\b([ap])\.?\s?m\.?/g, "$1m").replace(/\s+/g, " ").trim();
+const digits = (s) => String(s).replace(/\D/g, "");
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function allLines(doc) { const out = []; for (const p of doc.pages || []) for (const l of p.lines || []) out.push([p, l]); return out; }
+function outputText(doc) {
+  const parts = [doc.title || ""];
+  for (const [p, l] of allLines(doc)) { parts.push(p.topic || ""); parts.push(stripMd(l.text)); }
+  return parts.join("\n");
+}
+function extractFacts(text) {
+  const facts = [], seen = new Set();
+  for (const [type, re] of PATTERNS) {
+    re.lastIndex = 0;
+    for (const m of text.matchAll(re)) {
+      const v = m[0].trim().replace(/[.,;]+$/, "");
+      const key = type + "|" + norm(v);
+      if (!seen.has(key)) { seen.add(key); facts.push({ type, value: v }); }
+    }
+  }
+  return facts;
+}
+function numberTokens(text) {
+  const t = text.replace(/^\s*(?:step|paso)?\s*\d{1,2}[.)]\s/gim, " ");
+  return t.match(/\d[\d,.:/-]*\d|\d/g) || [];
+}
+function factCheck(original, doc) {
+  const out = outputText(doc), outN = norm(out), outD = digits(out);
+  const omittedN = norm((doc.omitted || []).join(" "));
+  const facts = extractFacts(original).map((f) => {
+    const v = f.value, words = v.split(/\s+/);
+    let status;
+    if (outN.includes(norm(v))) status = "ok";
+    else if (["phone", "date", "time", "dose"].includes(f.type) && digits(v) && outD.includes(digits(v))) status = "reformatted";
+    else if (f.type === "name" && words.length === 2 && new RegExp(`(?<![\\p{L}])${esc(norm(words[1]))}(?![\\p{L}])`, "u").test(outN)) status = "ok";
+    else if (f.type === "name" && new RegExp(`(?<![\\p{L}])${esc(norm(words[0]))}\\s.*(?<![\\p{L}])${esc(norm(words.at(-1)))}(?![\\p{L}])`, "u").test(outN)) status = "ok";
+    else if (omittedN.includes(norm(v)) && !CRISIS.includes(v)) status = "omitted";
+    else status = "missing";
+    return { ...f, status };
+  });
+  const origRuns = new Set(original.match(/\d+/g) || []);
+  const added = [...new Set(numberTokens(out).filter((tok) => !(tok.match(/\d+/g) || []).every((r) => origRuns.has(r))))].sort();
+  const crisis = [];
+  for (const num of CRISIS) {
+    if (new RegExp(`\\b${num}\\b`).test(original) &&
+        !allLines(doc).some(([, l]) => l.kind === "crisis" && String(l.text || "").includes(num)))
+      crisis.push(`${num} is in the original but not in an emergency box`);
+  }
+  const passed = facts.every((f) => f.status === "ok" || f.status === "omitted") && !added.length && !crisis.length;
+  return { passed, facts, added, crisis };
+}
+
+// ───────────────────────────── Reading level + format (port of score.py) ─────────────────────────────
+const READ_KINDS = new Set(["text", "step", "checkbox"]);
+const CONNECTORS = new Set(["de", "del", "la", "las", "el", "los", "en", "y", "para", "of", "the", "and", "for", "in"]);
+const PHONE_RE = /\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b|\b(?:911|988)\b/;
+const sentences = (t) => t.split(/(?<=[.!?])\s+|\n/).filter((s) => s.trim());
+const words = (t) => t.match(/[\p{L}\p{N}_'’-]+/gu) || [];
+function syllables(w, lang) {
+  w = w.toLowerCase();
+  let n = (w.match(lang === "es" ? /[aeiouáéíóúü]+/g : /[aeiouyáéíóúü]+/g) || []).length;
+  if (lang !== "es" && w.endsWith("e") && !w.endsWith("le") && !w.endsWith("ee") && n > 1) n -= 1;
+  return Math.max(n, 1);
+}
+function gradeLevel(text, lang) {
+  const ss = sentences(text), ws = words(text).filter((w) => !/^\d+$/.test(w));
+  if (!ss.length || !ws.length) return 0;
+  const syl = ws.reduce((a, w) => a + syllables(w, lang), 0);
+  const g = lang === "es"
+    ? -0.205 * (100 * ss.length / ws.length) + 0.049 * (100 * syl / ws.length) - 3.407
+    : 0.39 * (ws.length / ss.length) + 11.8 * (syl / ws.length) - 15.59;
+  return Math.round(Math.max(g, 0) * 10) / 10;
+}
+function scoreDoc(doc) {
+  const lang = doc.language || "en";
+  const prose = allLines(doc).filter(([, l]) => READ_KINDS.has(l.kind))
+    .map(([, l]) => stripMd(String(l.text || "").replace(/\*\*([^*]*[A-Z0-9ÁÉÍÓÚÑ][^*]*)\*\*/g, "")));
+  const issues = [];
+  (doc.pages || []).forEach((page, i) => {
+    const lines = page.lines || [];
+    const limit = lines.length && lines.every((l) => l.kind === "checkbox" || l.kind === "blank") ? 6 : 4;
+    if (lines.length > limit) issues.push(`Page ${i + 1}: ${lines.length} lines (max ${limit})`);
+    lines.forEach((l, j) => {
+      const t = String(l.text || ""), n = words(stripMd(t)).length;
+      if (READ_KINDS.has(l.kind) && n > 15) issues.push(`Page ${i + 1}, line ${j + 1}: ${n} words (max 15)`);
+      if ((l.kind === "text" || l.kind === "step") && !t.includes("**")) issues.push(`Page ${i + 1}, line ${j + 1}: no bold key word`);
+      if (READ_KINDS.has(l.kind) && PHONE_RE.test(t)) issues.push(`Page ${i + 1}, line ${j + 1}: phone number should be on its own line`);
+      if (READ_KINDS.has(l.kind) && !l.picture) issues.push(`Page ${i + 1}, line ${j + 1}: no picture`);
+      const factLine = /^\*\*[^*]+\*\*\.?$/.test(t.trim());
+      const bolds = [...t.matchAll(/\*\*(.+?)\*\*/g)].map((m) => m[1])
+        .filter((b) => !/[\d@]/.test(b) && !words(b).filter((w) => !CONNECTORS.has(w.toLowerCase())).every((w) => /^\p{Lu}/u.test(w)));
+      if (bolds.length && !factLine && bolds.reduce((a, b) => a + words(b).length, 0) > Math.max(4, Math.floor(n / 2)))
+        issues.push(`Page ${i + 1}, line ${j + 1}: too much bold`);
+    });
+  });
+  const pages = doc.pages || [];
+  if (pages.length && allLines(doc).some(([, l]) => l.kind === "phone" || l.kind === "crisis")) {
+    const last = new Set((pages.at(-1).lines || []).map((l) => l.kind));
+    if (!last.has("phone") && !last.has("crisis")) issues.push("Last page has no phone line (end with who can help)");
+  }
+  return { grade: gradeLevel(prose.join("\n"), lang), issues, pages: pages.length };
+}
+
+// ───────────────────────────── Reading the model's JSON (port of common.parse_model_json)
+function closeBrackets(s) {
+  const stack = []; let inStr = false, escp = false;
+  for (const ch of s) {
+    if (inStr) { escp = ch === "\\" && !escp; if (ch === '"' && !escp) inStr = false; continue; }
+    if (ch === '"') inStr = true;
+    else if (ch === "[" || ch === "{") stack.push(ch === "[" ? "]" : "}");
+    else if ((ch === "]" || ch === "}") && stack.length) stack.pop();
+  }
+  if (inStr) throw new Error("cut off inside text");
+  return s + stack.reverse().join("");
+}
+function parseModelJson(raw) {
+  raw = raw.trim().replace(/^```(?:json)?\s*|\s*```$/g, "");
+  const a = raw.indexOf("{"), b = raw.lastIndexOf("}");
+  if (a < 0 || b < 0) throw new Error("no JSON found");
+  try { return JSON.parse(raw.slice(a, b + 1)); }
+  catch {
+    const doc = JSON.parse(closeBrackets(raw.slice(a, b + 1)));
+    (doc.notes_for_reviewer ||= []).push("The answer was cut off at the very end and closing brackets were added. Check the last page.");
+    return doc;
+  }
+}
+
+// The instructions sent to Claude. The Claude page (inside claude.ai) and the
+// website's server (web/api/convert.js) both use this file, so they always ask
+// Claude the same way. Needs RULES, EXAMPLES and ICONS to be defined first.
+
+const ICON_RULE = "\n\n# Pictures\nEvery line has \"picture\" (a short word) AND \"icon\": the NAME of the drawing below that best shows that line's meaning. Use only names from this list, exactly as written. Use \"\" for both when a line needs no picture.\n\nDrawings (name: what it shows):\n" +
+  Object.entries(ICONS).map(([n, v]) => `${n}: ${v.label}`).join("\n");
+
+const TRANSCRIBE = "These images are pages of a health document. Copy ALL of its text exactly, word for word, keeping every name, date, time, dose, address and phone number unchanged. Keep the reading order. Reply with only the text.";
+
+function userMessage(text, source, lang) {
+  const target = lang ? `Write the output in ${lang === "es" ? "Spanish" : "English"}.\n` : "";
+  return `${target}Source name: ${source}\n\nOriginal document:\n<<<\n${String(text).trim()}\n>>>`;
+}
+
+// The part that never changes: rules, drawings and two worked examples.
+function systemText() {
+  let p = RULES + ICON_RULE + "\n\n# Examples\n";
+  EXAMPLES.forEach((ex, i) => { p += `\n## Example ${i + 1}: input\n${userMessage(ex.original, ex.source, "")}\n\n## Example ${i + 1}: output\n${JSON.stringify(ex.target)}\n`; });
+  return p;
+}
+
+// The part for this one document. task: "convert" | "fix" | "transcribe".
+function taskText(task, d) {
+  if (task === "transcribe") return TRANSCRIBE;
+  if (task === "fix") {
+    const problems = (d.problems || []).map((p) => "- " + p).join("\n");
+    return `# Your task\nA handout was made from the original below and the safety check found problems. Fix ONLY these and keep everything else the same. A missing fact must be copied exactly, or listed in "omitted" with a reason if the reader does not need it.\n\nProblems:\n${problems}\n\nOriginal document:\n<<<\n${String(d.text).trim()}\n>>>\n\nCurrent handout JSON:\n${JSON.stringify(d.doc)}\n\nReply with only the corrected JSON object.`;
+  }
+  return `# Your task\n${userMessage(d.text, d.source, d.lang)}\n\nReply with only the JSON object.`;
+}
+
+// The drawing for a line: the icon Claude chose, else the first drawing whose words match the picture word.
+function drawingFor(line) {
+  if (ICONS[line.icon]) return line.icon;
+  const w = String(line.picture || line.icon || "").toLowerCase().trim();
+  if (!w) return "";
+  for (const [n, v] of Object.entries(ICONS)) if (v.label.toLowerCase().split(/,\s*/).includes(w) || n === w) return n;
+  for (const [n, v] of Object.entries(ICONS)) if (w.split(/\s+/).some((x) => x.length > 3 && v.label.toLowerCase().includes(x))) return n;
+  return "";
+}
+const svgFor = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n].svg}</svg>`;
+
+// ───────────────────────────── Reading the uploaded file ─────────────────────────────
+const $ = (id) => document.getElementById(id);
+let sample = null, downloads = null, ctl = null;
+const state = { doc: null, original: "", example: false };
+
+async function pdfPages(file) {
+  if (!window.pdfjsLib) throw new Error("The PDF reader didn't load. Reload the page, or paste the text instead.");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  return pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+}
+async function pdfText(pdf) {
+  const out = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const tc = await (await pdf.getPage(i)).getTextContent();
+    let line = "", lastY = null;
+    for (const it of tc.items) {
+      const y = it.transform?.[5];
+      if (lastY !== null && Math.abs(y - lastY) > 2) { out.push(line); line = ""; }
+      line += it.str + (it.hasEOL ? "\n" : ""); lastY = y;
+    }
+    out.push(line, "");
+  }
+  return out.join("\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+async function pdfImages(pdf, max) {
+  const blobs = [];
+  for (let i = 1; i <= Math.min(pdf.numPages, max); i++) {
+    const page = await pdf.getPage(i), vp = page.getViewport({ scale: 1.6 });
+    const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+    await page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
+    blobs.push(await new Promise((r) => c.toBlob(r, "image/png")));
+  }
+  return blobs;
+}
+async function transcribe(images) {
+  setStatus("Reading the picture of the document…");
+  return (await ask("transcribe", {}, { images })).trim();
+}
+async function readFile(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".pdf") || file.type === "application/pdf") {
+    const pdf = await pdfPages(file);
+    const text = await pdfText(pdf);
+    if (text.replace(/\s/g, "").length > 80) return text;
+    const max = WEB ? 5 : (await sample.limits().catch(() => null))?.images?.maxCount || 5;
+    return transcribe(await pdfImages(pdf, max));               // a scanned PDF has no text layer
+  }
+  if (name.endsWith(".docx")) {
+    if (!window.mammoth) throw new Error("The Word reader didn't load. Reload the page, or paste the text instead.");
+    return (await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value.trim();
+  }
+  if (file.type.startsWith("image/")) return transcribe([file]);
+  return (await file.text()).trim();
+}
+
+// ───────────────────────────── Making the handout ─────────────────────────────
+// Ask Claude. Inside claude.ai this uses the viewer's own Claude; on the website it goes
+// through the site's server, which holds the API key and adds the same instructions.
+async function ask(task, data, { images, onText } = {}) {
+  if (WEB) return askServer(task, data, images, onText);
+  await ensureClaude();
+  const opts = { signal: ctl.signal };
+  if (images) opts.images = images;
+  if (onText) opts.onText = onText;
+  if (task === "fix") opts.cache = false;
+  const prompt = task === "transcribe" ? taskText(task, data) : systemText() + "\n" + taskText(task, data);
+  return (await sample(prompt, opts)).text;
+}
+// Shrink a picture to a JPEG of at most 1568 px on its long side (what Claude reads best; keeps uploads small).
+async function toJpeg(blob) {
+  const bmp = await createImageBitmap(blob);
+  const k = Math.min(1, 1568 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.85).split(",")[1];
+}
+async function askServer(task, data, images, onText) {
+  const body = { task, ...data };
+  if (images) body.images = await Promise.all(images.map(toJpeg));
+  let r;
+  try { r = await fetch("/api/convert", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal }); }
+  catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "offline" }; }
+  if (!r.ok) { const j = await r.json().catch(() => ({})); throw { code: j.code || (r.status === 413 ? "prompt_too_large" : "upstream_error") }; }
+  const reader = r.body.getReader(), dec = new TextDecoder();
+  let text = "";
+  try {
+    for (;;) { const { done, value } = await reader.read(); if (done) break; text += dec.decode(value, { stream: true }); onText?.({ text }); }
+  } catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "upstream_error" }; }
+  const cut = text.indexOf("\u0000ERR:");            // the server reports a failure that happened mid-answer this way
+  if (cut >= 0) throw { code: text.slice(cut + 5).trim() || "upstream_error" };
+  return text;
+}
+function problemList(check) {
+  return [
+    ...check.facts.filter((f) => f.status === "missing").map((f) => `Missing ${f.type}: "${f.value}"`),
+    ...check.facts.filter((f) => f.status === "reformatted").map((f) => `Changed ${f.type}: "${f.value}" is not copied exactly`),
+    ...check.added.map((a) => `The number "${a}" is not in the original`),
+    ...check.crisis.map((c) => c.replace("emergency box", "emergency (red) box")),
+  ];
+}
+const ERR = {
+  not_granted: "Claude isn't allowed on this page yet. Click the file button again and choose Allow when Claude asks.",
+  sampling_disabled: "Claude isn't available for this account.",
+  rate_limited: "Too many requests, or your Claude usage limit is reached. Wait a minute and try again.",
+  session_expired: "Your Claude sign-in expired. Sign in again and try again.",
+  refused: "Claude declined this document. Check it's a health document and try again.",
+  prompt_too_large: "The document is too long. Upload one section at a time.",
+  empty_completion: "Claude returned nothing. Try again.",
+  invalid_json: "Claude's answer wasn't a complete handout. Try again.",
+  image_rejected: "That image couldn't be read. Try a clearer photo (JPG or PNG).",
+  images_unavailable: "Photos can't be read here. Upload a PDF or Word file, or paste the text.",
+  upstream_error: "Claude couldn't be reached just now. Try again.",
+  cancelled: "Stopped.",
+  offline: "Couldn't reach the server. Check your internet connection and try again.",
+  too_many: "Too many handouts from this connection for now. Please wait a while and try again.",
+  bad_request: "That file couldn't be sent. Try a smaller file, or paste the text.",
+  not_configured: "The site isn't set up yet (no API key). Tell the site owner.",
+  busy: "The service is busy right now. Wait a minute and try again.",
+};
+function setStatus(msg, err) { const s = $("status"); s.textContent = msg || ""; s.className = "status" + (err ? " err" : ""); }
+function fail(e) { setStatus(ERR[e?.code] || e?.message || String(e), e?.code !== "cancelled"); }
+function busy(on) { $("stop").hidden = !on; $("file").disabled = on; $("go").disabled = on; const f = $("fix"); if (f) f.disabled = on; }
+
+async function ensureClaude() {
+  if (!sample) { try { sample = await window.claude?.use?.("sample"); } catch { sample = null; } }
+  if (!sample) throw new Error("This page needs to be opened inside Claude (claude.ai or the Claude app) to make handouts.");
+}
+async function run(getText, sourceName) {
+  ctl = new AbortController(); busy(true);
+  try {
+    if (!WEB) await ensureClaude();
+    setStatus("Reading the document…");
+    const text = await getText();
+    if (!text || text.replace(/\s/g, "").length < 20) throw new Error("No text was found in that file. Try another file, or paste the text.");
+    setStatus("Writing the handout… (usually under a minute)");
+    const raw = await ask("convert", { text, source: sourceName, lang: $("lang").value }, {
+      onText: ({ text: t }) => { const n = (t.match(/"topic"\s*:/g) || []).length; setStatus(n ? `Writing page ${n}…` : "Planning the pages…"); },
+    });
+    const doc = parseModelJson(raw);
+    doc.source ||= sourceName;
+    state.doc = doc; state.original = text; state.example = false;
+    setStatus("");
+    render();
+    $("out").scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  } catch (e) { fail(e); }
+  finally { busy(false); }
+}
+async function fixWithClaude(check) {
+  ctl = new AbortController(); busy(true);
+  try {
+    setStatus("Fixing the flagged facts…");
+    const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check) });
+    const doc = parseModelJson(raw); doc.source ||= state.doc.source;
+    state.doc = doc; setStatus(""); render();
+  } catch (e) { fail(e); }
+  finally { busy(false); }
+}
+
+// ───────────────────────────── Showing the handout ─────────────────────────────
+const mdToHtml = (t) => { const d = document.createElement("div"); d.textContent = String(t ?? ""); return d.innerHTML.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); };
+function htmlToMd(el) {
+  let s = "";
+  for (const n of el.childNodes) s += n.nodeType === 3 ? n.textContent : (n.nodeName === "STRONG" || n.nodeName === "B") ? `**${n.textContent}**` : n.nodeName === "BR" ? " " : htmlToMd(n);
+  return s.replace(/\*\*\*\*/g, "").replace(/\s+/g, " ").trim();
+}
+function sheetsHtml(doc, editable) {
+  const ce = editable ? ' contenteditable="true" spellcheck="true"' : "";
+  let step = 0, prevLast = null;
+  return (doc.pages || []).map((p, pi) => {
+    const lines = p.lines || [];
+    if (!(lines[0]?.kind === "step" && prevLast === "step")) step = 0;
+    prevLast = lines.at(-1)?.kind ?? null;
+    const body = lines.map((l, li) => {
+      const kind = l.kind || "text", name = drawingFor(l);
+      const pic = name ? `<div class="pic" title="${mdToHtml(ICONS[name].label)}">${svgFor(name)}</div>` : `<div class="pic none"></div>`;
+      const lead = kind === "step" ? `<span class="num">${++step}.</span>` : kind === "checkbox" ? `<span class="box"></span>` : "";
+      return `<div class="ln ${kind}">${pic}<div class="tx">${lead}<span${ce} data-p="${pi}" data-l="${li}">${mdToHtml(l.text)}</span></div></div>`;
+    }).join("");
+    return `<article class="sheet">${pi === 0 ? `<p class="doc-title"${ce} data-title="1">${mdToHtml(doc.title)}</p>` : ""}
+      <h2${ce} data-p="${pi}" data-topic="1">${mdToHtml(p.topic)}</h2>${body}
+      <div class="foot">${doc.language === "es" ? "Basado en" : "Based on"}: ${mdToHtml(doc.source || "")} · Drawings: Tabler Icons (MIT)</div></article>`;
+  }).join("");
+}
+function render() {
+  const out = $("out"), doc = state.doc;
+  if (!doc) { out.innerHTML = ""; return; }
+  const check = factCheck(state.original, doc);
+  const probs = problemList(check);
+  out.innerHTML = `
+    <div class="bar ${check.passed ? "pass" : "fail"}">
+      <span class="verdict">${check.passed ? "✓ Every fact matches the original" : `✗ ${probs.length} fact problem${probs.length === 1 ? "" : "s"}`}${state.example ? " · example" : ""}</span>
+      <span class="controls">
+        ${check.passed ? "" : `<button id="fix" type="button">Fix with Claude</button>`}
+        <button id="dl" type="button" class="primary">Download to print</button>
+      </span>
+    </div>
+    ${check.passed ? "" : `<ul class="problems">${probs.map((p) => `<li>${mdToHtml(p)}</li>`).join("")}</ul>`}
+    <div class="sheets" style="margin-top:16px">${sheetsHtml(doc, true)}</div>`;
+  $("dl").onclick = download;
+  if ($("fix")) $("fix").onclick = () => fixWithClaude(check);
+  out.querySelectorAll("[contenteditable]").forEach((el) => el.addEventListener("blur", () => {
+    if (el.dataset.title) state.doc.title = htmlToMd(el);
+    else if (el.dataset.topic) state.doc.pages[+el.dataset.p].topic = htmlToMd(el);
+    else state.doc.pages[+el.dataset.p].lines[+el.dataset.l].text = htmlToMd(el);
+    render();
+  }));
+}
+
+// ───────────────────────────── Download (a page that prints like the preview) ─────────────────────────────
+function printable(doc) {
+  const css = [...document.querySelectorAll("style")].map((s) => s.textContent).join("\n");
+  const js = "";
+  return `<!doctype html><html lang="${doc.language || "en"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${mdToHtml(doc.title)}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"><style>${css}
+:root{color-scheme:light}body{background:#e9e9e9}.wrap{max-width:8.5in}.tip{font:14px system-ui;background:#fff8e1;border:1px solid #f0b400;border-radius:8px;padding:8px 12px}
+@page{size:letter;margin:0}@media print{body{background:#fff}.wrap{padding:0;max-width:none;display:block}.tip{display:none}.sheet{box-shadow:none;border-radius:0;width:8.5in;height:11in;aspect-ratio:auto;padding:.6in;gap:22px;page-break-after:always}
+.sheet .doc-title{font-size:36px}.sheet h2{font-size:32px}.ln{grid-template-columns:110px 1fr;gap:26px;font-size:28px}.pic{padding:16px}.foot{font-size:11px}}</style></head>
+<body><div class="wrap"><p class="tip">${doc.language === "es" ? "Para imprimir: Archivo → Imprimir." : "To print: File → Print."}</p><div class="sheets">${sheetsHtml(doc, false)}</div></div><script>${js}<\/script></body></html>`;
+}
+async function download() {
+  const name = (String(state.doc.title || "handout").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "handout").slice(0, 60) + ".html";
+  if (WEB) {   // an ordinary browser download
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([printable(state.doc)], { type: "text/html" })); a.download = name;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    setStatus("Saved. Open the file in your browser, then File → Print."); return;
+  }
+  try { downloads ||= await window.claude?.use?.("downloads"); } catch {}
+  if (!downloads) { setStatus("Downloads only work when the page is open inside Claude.", true); return; }
+  try { await downloads.save({ filename: name, data: printable(state.doc) }); setStatus("Saved. Open the file in your browser, then File → Print."); }
+  catch (e) { if (e?.code !== "declined") setStatus("Couldn't save the file (" + (e?.code || "error") + ").", true); }
+}
+
+// ───────────────────────────── Wire up ─────────────────────────────
+const drop = $("drop");
+function takeFile(f) { if (f) run(() => readFile(f), f.name.replace(/\.[^.]+$/, "")); }
+$("file").addEventListener("change", (e) => { takeFile(e.target.files?.[0]); e.target.value = ""; });
+["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => takeFile(e.dataTransfer?.files?.[0]));
+$("pastebtn").onclick = () => { $("pastebox").hidden = !$("pastebox").hidden; if (!$("pastebox").hidden) $("src").focus(); };
+$("go").onclick = () => run(async () => $("src").value, "Pasted document");
+$("stop").onclick = () => ctl?.abort();
+render();   // nothing to show until a file is uploaded
+</script>
+
+</body>
+</html>

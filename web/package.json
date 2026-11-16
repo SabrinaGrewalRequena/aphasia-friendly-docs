@@ -1,0 +1,6 @@
+{
+  "name": "aphasia-handout-maker",
+  "private": true,
+  "description": "Public website for the Aphasia Handout Maker. Vercel serves index.html and runs api/convert.js.",
+  "engines": { "node": "22.x" }
+}

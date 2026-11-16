@@ -111,10 +111,9 @@ const RULES = __RULES__;
 const EXAMPLES = __EXAMPLES__;
 const SAMPLE = __SAMPLE__;
 const ICONS = __ICONS__;
+const WEB = __WEB__;   // true on the public website (Claude is reached through /api/convert), false inside Claude
 __CHECKS__
-
-const ICON_RULE = "\n\n# Pictures\nEvery line has \"picture\" (a short word) AND \"icon\": the NAME of the drawing below that best shows that line's meaning. Use only names from this list, exactly as written. Use \"\" for both when a line needs no picture.\n\nDrawings (name: what it shows):\n" +
-  Object.entries(ICONS).map(([n, v]) => `${n}: ${v.label}`).join("\n");
+__PROMPTS__
 // The drawing for a line: the icon Claude chose, else the first drawing whose words match the picture word.
 function drawingFor(line) {
   if (ICONS[line.icon]) return line.icon;
@@ -162,9 +161,7 @@ async function pdfImages(pdf, max) {
 }
 async function transcribe(images) {
   setStatus("Reading the picture of the document…");
-  const { text } = await sample("These images are pages of a health document. Copy ALL of its text exactly, word for word, keeping every name, date, time, dose, address and phone number unchanged. Keep the reading order. Reply with only the text.",
-    { images, signal: ctl.signal });
-  return text.trim();
+  return (await ask("transcribe", {}, { images })).trim();
 }
 async function readFile(file) {
   const name = file.name.toLowerCase();
@@ -172,7 +169,7 @@ async function readFile(file) {
     const pdf = await pdfPages(file);
     const text = await pdfText(pdf);
     if (text.replace(/\s/g, "").length > 80) return text;
-    const max = (await sample.limits().catch(() => null))?.images?.maxCount || 5;
+    const max = WEB ? 5 : (await sample.limits().catch(() => null))?.images?.maxCount || 5;
     return transcribe(await pdfImages(pdf, max));               // a scanned PDF has no text layer
   }
   if (name.endsWith(".docx")) {
@@ -184,18 +181,41 @@ async function readFile(file) {
 }
 
 // ───────────────────────────── Making the handout ─────────────────────────────
-function userMessage(text, source, lang) {
-  const target = lang ? `Write the output in ${lang === "es" ? "Spanish" : "English"}.\n` : "";
-  return `${target}Source name: ${source}\n\nOriginal document:\n<<<\n${text.trim()}\n>>>`;
+// Ask Claude. Inside claude.ai this uses the viewer's own Claude; on the website it goes
+// through the site's server, which holds the API key and adds the same instructions.
+async function ask(task, data, { images, onText } = {}) {
+  if (WEB) return askServer(task, data, images, onText);
+  await ensureClaude();
+  const opts = { signal: ctl.signal };
+  if (images) opts.images = images;
+  if (onText) opts.onText = onText;
+  if (task === "fix") opts.cache = false;
+  const prompt = task === "transcribe" ? taskText(task, data) : systemText() + "\n" + taskText(task, data);
+  return (await sample(prompt, opts)).text;
 }
-function buildPrompt(text, source, lang) {
-  let p = RULES + ICON_RULE + "\n\n# Examples\n";
-  EXAMPLES.forEach((ex, i) => { p += `\n## Example ${i + 1}: input\n${userMessage(ex.original, ex.source, "")}\n\n## Example ${i + 1}: output\n${JSON.stringify(ex.target)}\n`; });
-  return p + `\n# Your task\n${userMessage(text, source, lang)}\n\nReply with only the JSON object.`;
+// Shrink a picture to a JPEG of at most 1568 px on its long side (what Claude reads best; keeps uploads small).
+async function toJpeg(blob) {
+  const bmp = await createImageBitmap(blob);
+  const k = Math.min(1, 1568 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.85).split(",")[1];
 }
-function buildFixPrompt(text, doc, check) {
-  const problems = problemList(check).map((p) => "- " + p).join("\n");
-  return RULES + ICON_RULE + `\n\n# Your task\nA handout was made from the original below and the safety check found problems. Fix ONLY these and keep everything else the same. A missing fact must be copied exactly, or listed in "omitted" with a reason if the reader does not need it.\n\nProblems:\n${problems}\n\nOriginal document:\n<<<\n${text.trim()}\n>>>\n\nCurrent handout JSON:\n${JSON.stringify(doc)}\n\nReply with only the corrected JSON object.`;
+async function askServer(task, data, images, onText) {
+  const body = { task, ...data };
+  if (images) body.images = await Promise.all(images.map(toJpeg));
+  let r;
+  try { r = await fetch("/api/convert", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal }); }
+  catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "offline" }; }
+  if (!r.ok) { const j = await r.json().catch(() => ({})); throw { code: j.code || (r.status === 413 ? "prompt_too_large" : "upstream_error") }; }
+  const reader = r.body.getReader(), dec = new TextDecoder();
+  let text = "";
+  try {
+    for (;;) { const { done, value } = await reader.read(); if (done) break; text += dec.decode(value, { stream: true }); onText?.({ text }); }
+  } catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "upstream_error" }; }
+  const cut = text.indexOf("\u0000ERR:");            // the server reports a failure that happened mid-answer this way
+  if (cut >= 0) throw { code: text.slice(cut + 5).trim() || "upstream_error" };
+  return text;
 }
 function problemList(check) {
   return [
@@ -218,6 +238,11 @@ const ERR = {
   images_unavailable: "Photos can't be read here. Upload a PDF or Word file, or paste the text.",
   upstream_error: "Claude couldn't be reached just now. Try again.",
   cancelled: "Stopped.",
+  offline: "Couldn't reach the server. Check your internet connection and try again.",
+  too_many: "Too many handouts from this connection for now. Please wait a while and try again.",
+  bad_request: "That file couldn't be sent. Try a smaller file, or paste the text.",
+  not_configured: "The site isn't set up yet (no API key). Tell the site owner.",
+  busy: "The service is busy right now. Wait a minute and try again.",
 };
 function setStatus(msg, err) { const s = $("status"); s.textContent = msg || ""; s.className = "status" + (err ? " err" : ""); }
 function fail(e) { setStatus(ERR[e?.code] || e?.message || String(e), e?.code !== "cancelled"); }
@@ -230,13 +255,12 @@ async function ensureClaude() {
 async function run(getText, sourceName) {
   ctl = new AbortController(); busy(true);
   try {
-    await ensureClaude();
+    if (!WEB) await ensureClaude();
     setStatus("Reading the document…");
     const text = await getText();
     if (!text || text.replace(/\s/g, "").length < 20) throw new Error("No text was found in that file. Try another file, or paste the text.");
     setStatus("Writing the handout… (usually under a minute)");
-    const { text: raw } = await sample(buildPrompt(text, sourceName, $("lang").value), {
-      signal: ctl.signal,
+    const raw = await ask("convert", { text, source: sourceName, lang: $("lang").value }, {
       onText: ({ text: t }) => { const n = (t.match(/"topic"\s*:/g) || []).length; setStatus(n ? `Writing page ${n}…` : "Planning the pages…"); },
     });
     const doc = parseModelJson(raw);
@@ -251,9 +275,8 @@ async function run(getText, sourceName) {
 async function fixWithClaude(check) {
   ctl = new AbortController(); busy(true);
   try {
-    await ensureClaude();
     setStatus("Fixing the flagged facts…");
-    const { text: raw } = await sample(buildFixPrompt(state.original, state.doc, check), { signal: ctl.signal, cache: false });
+    const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check) });
     const doc = parseModelJson(raw); doc.source ||= state.doc.source;
     state.doc = doc; setStatus(""); render();
   } catch (e) { fail(e); }
@@ -322,9 +345,15 @@ function printable(doc) {
 <body><div class="wrap"><p class="tip">${doc.language === "es" ? "Para imprimir: Archivo → Imprimir." : "To print: File → Print."}</p><div class="sheets">${sheetsHtml(doc, false)}</div></div><script>${js}<\/script></body></html>`;
 }
 async function download() {
+  const name = (String(state.doc.title || "handout").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "handout").slice(0, 60) + ".html";
+  if (WEB) {   // an ordinary browser download
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([printable(state.doc)], { type: "text/html" })); a.download = name;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    setStatus("Saved. Open the file in your browser, then File → Print."); return;
+  }
   try { downloads ||= await window.claude?.use?.("downloads"); } catch {}
   if (!downloads) { setStatus("Downloads only work when the page is open inside Claude.", true); return; }
-  const name = (String(state.doc.title || "handout").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "handout").slice(0, 60) + ".html";
   try { await downloads.save({ filename: name, data: printable(state.doc) }); setStatus("Saved. Open the file in your browser, then File → Print."); }
   catch (e) { if (e?.code !== "declined") setStatus("Couldn't save the file (" + (e?.code || "error") + ").", true); }
 }
