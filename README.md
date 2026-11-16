@@ -1,131 +1,99 @@
-# Aphasia-Friendly Health Documents — starter kit
+# Aphasia Friendly Docs
 
-**Try it:** https://aphasia-friendly-docs.vercel.app/ — upload a health document and get an aphasia-friendly handout (English or Spanish). How the website works: [web/README.md](web/README.md).
+**Turn any document into one people with aphasia can read.**
 
-Code for the 5 steps in the proposal. It is all working and tested on made-up documents.
-What it still needs is **your data, an SLP, and a model run**.
+🌸 **Try it: [aphasia-friendly-docs.vercel.app](https://aphasia-friendly-docs.vercel.app/)** · free · English & Spanish · no account needed
 
-```
-prompts/system.md            Step 1  the writing rules, as the model's instructions (confirm with your SLP)
-prompts/system_short.md              short version used for fine-tuning
-data/pairs/                  Step 2  example pairs, one .jsonl file per batch (25 so far)
-data/sources/                        the scripts that write each batch (edit these, then re-run)
-check_pairs.py                       fact check + score every pair
-review_pairs.py                      review book for you and your SLP (review/review_book.html)
-data/make_seed_pairs.py              recreates the 5 seed pairs
-convert.py                   Step 3  baseline: document in -> checked, printable handout out
-factcheck.py                         every name/date/time/dose/address/phone kept? any number invented?
-score.py                             reading grade level + format rules (lines per page, bold, pictures...)
-render.py                            JSON -> printable HTML, one topic per page, ARASAAC pictures
-build_dataset.py             Step 4  data/pairs/ -> train.jsonl / test.jsonl
-notebooks/finetune_colab.ipynb       LoRA fine-tune of Qwen3-4B on free Colab GPU
-evaluate.py                  Step 5  run + compare systems, make a blinded SLP review sheet
-examples/                            sample inputs and finished outputs (open the .html files)
-```
+Upload a PDF, a Word file, or a photo of a letter. The site turns it into an aphasia-friendly handout with short sentences, one idea per line, key words in bold, and a picture beside every line. Every name, date, dose and phone number is then checked against the original.
 
-## Data so far
+---
 
-| Batch | Pairs | What | SLP |
-|---|---|---|---|
-| `seed` | 5 | made up, short | ✅ approved |
-| `unc_batch1` | 8 | targets adapted from UNC School of Medicine aphasia-friendly handouts | ✅ approved |
-| `madeup_batch1` | 12 | made up, short | ✅ approved |
-| `batch2_en`, `batch2_es` | 25 | made up: consent, insurance, home programs, schedules, education | ✅ approved |
-| `batch3_en`, `batch3_es` | 25 | **long, realistic** hospital paperwork (headers, record numbers, codes, fine print) | ✅ approved |
-| `batch4_en`, `batch4_es` | 25 | under-represented types: consent, insurance, how-to, procedures, referrals, letters | ✅ approved |
-| `batch5_en`, `batch5_es` | 25 | **messy formats**: portal messages, pharmacy labels, texts, voicemail, faxes, scans, tables, email | ✅ approved |
-| `batch6_test` | 25 | **TEST SET** (`split: test`): never used for training; covers every type, 15 English / 10 Spanish | ✅ approved |
+## How it works
 
-**150 pairs**: English 81, Spanish 69. **All 150 approved by a CCC-SLP (anonymous)**: batches 1–2 on 2026-11-11, batches 3–6 on 2026-11-12, with no changes. 125 for training, 25 for testing. All pass the fact check, the weekday check
-and the format rules. Review books for each batch are in `review/<batch>/`.
+1. **Read.** The page pulls the text out of the uploaded file. Photos and scanned PDFs are read by Claude.
+2. **Rewrite.** Claude rewrites the document using the project's writing rules ([`prompts/system.md`](prompts/system.md)) and two worked examples.
+3. **Fact check.** The handout is compared with the original. Any fact that is missing or changed, or any number that was invented, is shown on screen, and **Fix with Claude** repairs it.
+4. **Print.** Every line can be edited before downloading a print-ready, letter-size handout.
 
-All names, clinics, IDs and phone numbers in made-up documents are invented (phones use the fictional 555-01xx
-range). Real hospital papers contain details the reader does not need (record numbers, birth dates, billing codes);
-targets may leave these out only by listing them in `"omitted"` with a reason, which reviewers see. Crisis numbers can
-never be omitted.
+## Results
 
-Never put real patient documents in this repo; keep them in a `private/` folder (it is never uploaded).
+The project tested two systems on 25 documents that were never used for training (15 English, 10 Spanish):
 
-## Setup (once)
+| | Claude + rules (the website) | Fine-tuned Qwen3-4B |
+|---|---|---|
+| Valid handout | 25 / 25 | 24 / 25 |
+| Every fact copied exactly | 24 / 25* | 14 / 25 |
+| Reading grade ≤ 5 | 25 / 25 (avg 1.6) | 24 / 24 (avg 1.7) |
+| Format issues per handout | 0.4 | 2.5 |
 
-1. Install Python 3.10+.
-2. In this folder: `pip install -r requirements.txt`
-3. For the Claude API: make an account at console.anthropic.com, add a little credit, create a key, then
-   `export ANTHROPIC_API_KEY=sk-...` (Windows: `set ANTHROPIC_API_KEY=sk-...`).
-   No budget? Use `--backend manual` (below) and paste the prompt into the Claude app instead.
+\*The one flag was a false alarm: "1 time a day" for "once daily."
 
-## Try it
+A certified speech-language pathologist reviewed all 49 handouts blind and found no errors. The Claude version powers the website. The fine-tuned model remains a free, offline option. Details are in [`docs/results_round1.md`](docs/results_round1.md).
 
-```bash
-python convert.py examples/sample_documents/aphasia_group_flyer_en.txt --keep "Jordan Ellis"
-# -> out/aphasia_group_flyer_en.html   open in a browser, then Print / Save as PDF
-```
+## Training data
 
-The HTML shows the fact-check and score report on screen (not printed). Pictures come from ARASAAC when
-you're online; **click a picture to swap it** for the next match. `--keep "text"` adds names the
-fact check can't spot by itself (clinic names, people without "Dr.").
+- **150 example pairs:** 81 English and 69 Spanish. Each pair is an original document plus its aphasia-friendly version.
+- **Review:** all 150 were approved by a certified speech-language pathologist.
+- **Split:** 125 for training, 25 held back for testing.
+- **Document types:** referrals, appointments, discharge papers, medications, mental health, consent, insurance, home programs, and messy real-world formats such as pharmacy labels, portal messages and faxes.
+- **Made-up details:** all names, clinics and phone numbers in the made-up documents are invented. Phone numbers use the fictional 555-01xx range.
+- **UNC handouts:** 8 targets are adapted from public aphasia-friendly handouts by the UNC School of Medicine.
 
-Free route without an API key:
+## What's in this repo
+
+| Folder / file | What it is |
+|---|---|
+| [`web/`](web/) | **The website.** `index.html` is the page, and `api/convert.js` is the server that calls Claude. See [`web/README.md`](web/README.md). |
+| [`frontend/`](frontend/) | Source for the page: `template.html` (design and logic), `checks.js` (fact check), `prompts.js`, drawings, and `build_artifact.py`, which builds `web/index.html`. |
+| [`prompts/`](prompts/) | The writing rules the model follows. |
+| [`data/pairs/`](data/pairs/) | The 150 example pairs, one `.jsonl` file per batch. [`data/sources/`](data/sources/) holds the scripts that wrote them. |
+| [`review/`](review/) | Review books used for the expert check of each batch. |
+| [`notebooks/`](notebooks/) | Google Colab notebook for fine-tuning Qwen3-4B with LoRA. |
+| `convert.py`, `factcheck.py`, `score.py`, `render.py` | Command-line version: convert a document, run the fact check, score reading level and format, and make printable HTML. |
+| `build_dataset.py`, `check_pairs.py`, `review_pairs.py`, `evaluate.py` | Build train/test files, check every pair, make review books, and compare systems. |
+| [`examples/`](examples/) | Sample documents and finished handouts. |
+| [`docs/`](docs/) | Results write-ups. |
+
+## Run it yourself
+
+**Update the website:** edit `frontend/template.html`, then run:
 
 ```bash
-python convert.py my_letter.txt --backend manual > prompt.txt   # paste prompt.txt into a chat
-# save the JSON reply as reply.json, then:
-python convert.py my_letter.txt --from-json reply.json
+python frontend/build_artifact.py   # rebuilds web/index.html
+git push                            # Vercel redeploys the site automatically
 ```
 
-## The 5 steps
-
-**1. Rules.** `prompts/system.md` holds every rule from the proposal. Go through it with your SLP and edit
-it in plain English — the model reads it as written. Keep `prompts/system_short.md` in step with it.
-
-**2. Example pairs.** Each line of a file in `data/pairs/` is one original + its aphasia-friendly version.
-Run `python check_pairs.py` to fact-check them all and `python review_pairs.py` to make a review book. Fastest way to grow the set:
+**Command line:** this needs Python 3.10+ and an Anthropic API key.
 
 ```bash
-python convert.py new_original.txt --save-pair data/drafts.jsonl
+pip install -r requirements.txt
+export ANTHROPIC_API_KEY=...        # never commit your key
+python convert.py examples/sample_documents/aphasia_group_flyer_en.txt
+# -> out/aphasia_group_flyer_en.html  (open it, then Print)
 ```
 
-Then **correct each draft by hand** (and with your SLP), set `"slp_reviewed": true`, fill in `provenance`
-and `license`, and move it into a file in `data/pairs/`. Never train on uncorrected drafts — the fine-tuned model
-would just copy the baseline's mistakes. Aim for a spread of all 5 document types in both languages.
+**Check the data and compare systems:**
 
-**3. Baseline.** `convert.py` (above). Score a batch with `evaluate.py run`.
-
-**4. Fine-tune.**
 ```bash
-python build_dataset.py --reviewed-only     # makes data/train.jsonl + data/test.jsonl
-```
-Open `notebooks/finetune_colab.ipynb` in Google Colab (File → Upload notebook), pick a T4 GPU,
-upload the two files, run the cells. It downloads `finetuned.zip` with outputs for the test documents.
-
-**5. Compare.**
-```bash
+python check_pairs.py                         # fact-check every pair
+python build_dataset.py --reviewed-only       # make data/train.jsonl and data/test.jsonl
 python evaluate.py run data/test.jsonl results/baseline
-# unzip finetuned.zip into results/finetuned/
 python evaluate.py compare data/test.jsonl results/baseline results/finetuned
 ```
-You get a table against the proposal's targets (facts 100%, grade ≤ 5), `results/summary.csv`,
-and a **blinded** review pack for the SLP: `results/review/*.html` + `results/slp_review_sheet.csv`
-(the SLP doesn't see which system made which; `slp_key.csv` tells you).
 
-## Running the fine-tuned model privately (optional)
+## Privacy and limits
 
-Uncomment the GGUF cell in the notebook, download the file, install Ollama, and create a `Modelfile`:
-```
-FROM ./aphasia-gguf/<the .gguf file in that folder>
-```
-then `ollama create aphasia-qwen -f Modelfile` and
-`python convert.py letter.txt --backend openai --model aphasia-qwen --examples 0`.
-Nothing leaves your computer this way — use this route for any real patient document.
+- **Do not upload real patient information** to the website. Remove names, birth dates and record numbers first. For real documents, use the fine-tuned model offline (see the notebook), so nothing leaves your computer.
+- The fact check is a safety net, not a guarantee. It is strong on numbers, such as phones, times, doses, dates and addresses, but it can't judge meaning. **Always read a handout before giving it to someone.**
+- This tool does not give medical advice.
 
-## Limits to know
+## Credits
 
-- The fact check is a safety net, not a guarantee. It's strong on numbers (phones, times, doses, dates,
-  addresses, emails) and flags any number the model invented. It only finds names with a title
-  (Dr., Sra.) — add others with `--keep`. It can't judge meaning; that's the SLP's job.
-- The reading grade uses Flesch-Kincaid (English) and Crawford (Spanish) with a simple syllable
-  count. It leaves out copied names and facts (bold text with a capital letter or a digit, such as drug and clinic
-  names), because the writer cannot simplify those. It's rough on very short text and long proper names; use it to compare systems, not as the final word.
-- ARASAAC pictograms are licensed **CC BY-NC-SA 4.0**. Documents that use them must credit ARASAAC
-  (the footer does this) and be shared non-commercially under the same license — so the library should
-  be CC BY-NC-SA, and listings (e.g. Teachers Pay Teachers) must be free.
+- **Writing engine:** Claude by Anthropic.
+- **Drawings on the website:** [Tabler Icons](https://tabler.io/icons) (MIT License; see [`frontend/TABLER_ICONS_LICENSE.txt`](frontend/TABLER_ICONS_LICENSE.txt)).
+- **Pictures in the command-line version (`render.py`):** [ARASAAC](https://arasaac.org) pictograms by Sergio Palao, licensed CC BY-NC-SA 4.0.
+- **Handout style:** inspired by the UNC School of Medicine's aphasia-friendly handouts.
+
+## About
+
+Made by **Sabrina Grewal Requena**, an incoming medical student who wants to serve her community and make healthcare accessible to all people.
