@@ -18,13 +18,13 @@ from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 
 BASE = "Qwen/Qwen3-4B-Instruct-2507"
-ADAPTER = os.environ.get("ADAPTER", "")          # set this in the Space settings
+ADAPTER = os.environ.get("ADAPTER", "Sabrinaaaa/aphasia-qwen3-4b-lora")   # the fine-tuned model on Hugging Face
 MAX_CHARS = 30000                                # longest document accepted (~10 pages)
 SYSTEM = (Path(__file__).parent / "system_short.md").read_text(encoding="utf-8").strip()
 LANG_NAMES = {"en": "English", "es": "Spanish"}
 
 tokenizer = AutoTokenizer.from_pretrained(BASE)
-model = AutoModelForCausalLM.from_pretrained(BASE, torch_dtype=torch.bfloat16)
+model = AutoModelForCausalLM.from_pretrained(BASE, dtype=torch.bfloat16)
 if ADAPTER:
     model = PeftModel.from_pretrained(model, ADAPTER).merge_and_unload()   # your training, built in
 else:
