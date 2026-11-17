@@ -65,7 +65,7 @@ def main():
         else:
             train.append({"messages": [
                 {"role": "system", "content": system},
-                {"role": "user", "content": user_message(p["original"], p.get("source", ""), None)},
+                {"role": "user", "content": user_message(p["original"], p.get("source", ""), p.get("target_language"))},
                 {"role": "assistant", "content": json.dumps(p["target"], ensure_ascii=False)}]})
 
     for name, rows in (("train", train), ("test", test)):

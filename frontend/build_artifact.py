@@ -61,11 +61,13 @@ def page(web):
                     .replace("__SPACE__", space_url)
                     .replace("__CHECKS__", checks)
                     .replace("__PROMPTS__", prompts)
-                    .replace("__RULES__", dump(rules))
-                    .replace("__EXAMPLES__", dump(examples))
+                    # The website's model has its rules built in; only the Claude page needs them.
+                    .replace("__RULES__", dump("" if web else rules))
+                    .replace("__EXAMPLES__", dump([] if web else examples))
                     .replace("__SAMPLE__", dump(sample))
                     .replace("__ICONS__", icons_json)
-                    .replace("__PHOTO__", photo)
+                    # The website serves the photo as its own file (loads only when About Me is opened).
+                    .replace("__PHOTO__", "sabrina.jpg" if web else photo)
                     .replace("__HERO__", dump(hero))
                     .replace("__DECO_HERO__", deco.hero()).replace("__DECO_ABOUT__", deco.about()).replace("__DECO_DEFS__", deco.DEFS))
 
@@ -89,6 +91,7 @@ body = page(web=True).replace('<meta name="claude:viewport-fit-sides" content="c
 title_end = body.index("</style>") + len("</style>")        # title, fonts, libraries and styles go in <head>
 site = head + body[:title_end] + "\n</head>\n<body>\n" + body[title_end:] + "\n</body>\n</html>\n"
 (WEB / "index.html").write_text(site, encoding="utf-8")
+__import__("shutil").copy(HERE / "sabrina.jpg", WEB / "sabrina.jpg")
 print(f"Wrote {WEB / 'index.html'} ({len(site):,} bytes)")
 
 print(f"Website model: {space_url or '(not set: add frontend/space_url.txt)'}")

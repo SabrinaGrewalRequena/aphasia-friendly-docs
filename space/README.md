@@ -18,7 +18,17 @@ This Space runs a fine-tuned **Qwen3-4B-Instruct-2507 + LoRA** model. It turns h
 The website [aphasia-friendly-docs.vercel.app](https://aphasia-friendly-docs.vercel.app/) calls this Space's `convert` API.
 
 - **Hardware:** ZeroGPU. A GPU is used only while a handout is being written.
-- **Setting:** `ADAPTER` must name the model repo that holds the LoRA adapter.
+
+**Settings** (Space → Settings → Variables and secrets):
+
+| Name | Type | What it is |
+|---|---|---|
+| `ADAPTER` | variable | The model repo with the LoRA adapter. Default: `Sabrinaaaa/aphasia-qwen3-4b-lora`. |
+| `FEEDBACK_REPO` | variable | Private dataset where SLP reviews are saved, e.g. `Sabrinaaaa/aphasia-feedback`. It's created automatically. |
+| `REVIEWER_CODE` | secret | Access code SLPs type on the website to turn on review mode. |
+| `HF_TOKEN` | secret | A Hugging Face token with write access, so the Space can save reviews. |
+
+Review saving stays off until `FEEDBACK_REPO`, `REVIEWER_CODE` and `HF_TOKEN` are all set.
 
 The project's code is on [GitHub](https://github.com/SabrinaGrewalRequena/aphasia-friendly-docs).
 

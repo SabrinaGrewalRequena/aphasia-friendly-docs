@@ -8,17 +8,38 @@ md("""# Step 4 — Fine-tune a small open model (LoRA on Google Colab)
 
 **Before you start**
 1. In Colab: **Runtime → Change runtime type → T4 GPU** (free tier works).
-2. On your computer run `python build_dataset.py` to make `data/train.jsonl` and `data/test.jsonl`.
-3. Run the cells below in order. Training on ~150–500 pairs takes roughly 15–60 minutes on a T4.
+2. Run the cells below in order. Training on ~150–500 pairs takes roughly 15–60 minutes on a T4.
+   Step 1 gets the training data straight from GitHub, plus any SLP reviews from the website.
 
 The model learns from your example pairs. If a pair has a mistake, the model learns the mistake —
 only train on pairs that pass the fact check and that your SLP has approved."""),
 code("""%%capture
 !pip install unsloth"""),
-md("## 1. Upload `train.jsonl` and `test.jsonl`"),
-code("""from google.colab import files
-uploaded = files.upload()   # choose data/train.jsonl and data/test.jsonl
-print(list(uploaded))"""),
+md("""## 1. Get the training data (and the SLP reviews from the website)
+
+This copies the project from GitHub and builds `train.jsonl` and `test.jsonl`.
+
+**SLP reviews:** when SLPs use review mode on the website, their reviews are saved to your private Hugging Face
+dataset. With `USE_SLP_REVIEWS = True`, the cell downloads them and adds every good review as a training example
+(the version the SLP chose, with their edits). A box will ask for a Hugging Face **token**: paste your token
+(huggingface.co → Settings → Access Tokens). Set it to `False` to train without reviews."""),
+code("""USE_SLP_REVIEWS = True
+FEEDBACK_REPO = "Sabrinaaaa/aphasia-feedback"
+
+import os, shutil, subprocess
+if not os.path.exists("repo"):
+    subprocess.run(["git", "clone", "-q", "https://github.com/SabrinaGrewalRequena/aphasia-friendly-docs", "repo"], check=True)
+if USE_SLP_REVIEWS:
+    from huggingface_hub import login, snapshot_download
+    login()
+    try:
+        snapshot_download(FEEDBACK_REPO, repo_type="dataset", local_dir="feedback")
+        print(subprocess.run(["python", "feedback_to_pairs.py", "../feedback"], cwd="repo", capture_output=True, text=True).stdout)
+    except Exception as e:
+        print("No SLP reviews yet (or no access):", e)
+print(subprocess.run(["python", "build_dataset.py", "--reviewed-only"], cwd="repo", capture_output=True, text=True).stdout[-1500:])
+for f in ("train.jsonl", "test.jsonl"):
+    shutil.copy(f"repo/data/{f}", f)"""),
 md("""## 2. Load the base model
 
 `Qwen3-4B-Instruct-2507` is small, handles English and Spanish well, and has an Apache 2.0 license
@@ -118,7 +139,7 @@ def convert(original, source):
             {"role": "user", "content": f"Source name: {source}\\n\\nOriginal document:\\n<<<\\n{original.strip()}\\n>>>"}]
     inputs = tokenizer.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True,
                                            return_dict=True, return_tensors="pt").to("cuda")
-    out = model.generate(**inputs, max_new_tokens=3000, temperature=0.2, top_p=0.9, do_sample=True)
+    out = model.generate(**inputs, max_new_tokens=3000, do_sample=False)   # same as the website: most likely words
     return tokenizer.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
 
 tests = [json.loads(l) for l in open("test.jsonl")]
@@ -136,7 +157,20 @@ files.download("/content/finetuned.zip")"""),
 md("""`finetuned.zip` downloads to your computer, and the handouts are also in Google Drive under
 `aphasia-model/finetuned`. Unzip it into `results/finetuned/`, then run
 `python evaluate.py compare data/test.jsonl results/baseline results/finetuned`."""),
-md("## 7. Optional extras"),
+md("""## 7. Put the new model on the website (only if it's better)
+
+Compare the new handouts with the old ones first (the fact-check score on the 25 test documents). If the new
+model is better, this cell uploads it to your Hugging Face model page, replacing the old version (the old one
+stays in the page's **History**, so you can go back). Then open your Space and click **⋮ → Restart Space**.
+It needs a token with **write** access."""),
+code("""UPLOAD = False   # change to True when you are happy with the new model
+if UPLOAD:
+    from huggingface_hub import login
+    login()
+    model.push_to_hub("Sabrinaaaa/aphasia-qwen3-4b-lora")
+    tokenizer.push_to_hub("Sabrinaaaa/aphasia-qwen3-4b-lora")
+    print("Uploaded. Now restart your Space so the website uses the new model.")"""),
+md("## 8. Optional extras"),
 code("""# OPTIONAL: export a GGUF file to run privately on a laptop with Ollama (takes ~10 min)
 # model.save_pretrained_gguf("/content/drive/MyDrive/aphasia-gguf", tokenizer, quantization_method="q4_k_m")
 # Then on your computer:  ollama create aphasia-qwen -f Modelfile   (see README)"""),

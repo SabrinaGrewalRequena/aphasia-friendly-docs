@@ -15,6 +15,17 @@ Upload a PDF, a Word file, or a photo of a letter. The site turns it into an aph
 3. **Fact check.** The handout is compared with the original. Any fact that is missing or changed, or any number that was invented, is shown on screen, and **Try again** asks the model for a new version. Emergency numbers (911, 988) are always shown in a red box.
 4. **Print.** Every line can be edited before downloading a print-ready, letter-size handout.
 
+## Review mode: learning from SLPs
+
+The website has an optional review mode for speech-language pathologists, unlocked with an access code. A reviewer can:
+
+- compare several versions of a handout and choose the best
+- correct any line
+- rate the result
+- leave a comment
+
+Reviews are saved to a private Hugging Face dataset. When the model is retrained, the Colab notebook downloads them and adds every good review as a new training example: the version the SLP chose, with their edits. Reviews that fail the fact check, or are rated "not usable," are not used as examples. Every review is also kept as a "chosen vs. rejected" pair for preference training later. See [`feedback_to_pairs.py`](feedback_to_pairs.py).
+
 ## Results
 
 The project tested two systems on 25 documents that were never used for training (15 English, 10 Spanish):

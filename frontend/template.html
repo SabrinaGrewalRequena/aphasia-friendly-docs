@@ -2,9 +2,6 @@
 <!-- Drawings: Tabler Icons (https://tabler.io/icons), MIT License, Copyright (c) 2020-2024 Paweł Kuna -->
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <style>
 /* Layout: one column. A drop zone at the top; below it the handout pages, drawn like the printed
    UNC handouts (letter-size sheets, a title per page, a big picture beside each line, bold key words). */
@@ -298,6 +295,26 @@ body { font-size: 18px; }
 @media (max-width: 760px) { .hero h1, .hero-pic .sheet h2 { font-size: 22px; } .page p.lede, .hero-pic .ln { font-size: 18px; } }
 .bar.plain { background: var(--surface); border-color: var(--line); }
 .bar.plain .verdict { color: var(--ink); font-weight: 600; }
+/* Review mode (for SLPs) */
+.review { text-align: center; margin-top: 4px; }
+.revbox { max-width: 560px; margin: 10px auto 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; text-align: left; }
+.revbox p { margin: 0 0 12px; font-size: 16px; color: var(--muted); }
+.revbox .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.revbox input { flex: 1 1 200px; font: inherit; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); }
+.revon { font-size: 16px; color: var(--accent); margin: 6px 0 0; }
+.versions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.versions button { padding: 7px 16px; font-size: 15px; }
+.versions button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.revpanel { margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: grid; gap: 14px; }
+.revpanel h3 { margin: 0; font-size: 20px; }
+.revpanel .hint { margin: 0; color: var(--muted); font-size: 16px; }
+.revpanel fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+.revpanel legend { font-weight: 600; margin-bottom: 6px; padding: 0; }
+.revpanel label { display: flex; gap: 10px; align-items: flex-start; font-size: 17px; cursor: pointer; }
+.revpanel input[type=radio], .revpanel input[type=checkbox] { margin-top: 5px; accent-color: var(--accent); }
+.revpanel textarea { font: inherit; font-size: 16px; width: 100%; box-sizing: border-box; min-height: 80px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
+.revpanel .send { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.sheets.live { opacity: .92; }
 </style>
 
 __DECO_DEFS__
@@ -371,7 +388,7 @@ __DECO_DEFS__
   <div class="page">
     <div class="about">
       __DECO_ABOUT__
-      <figure class="photo"><img src="__PHOTO__" alt="Sabrina Grewal Requena smiling and holding up a green graduation cap"></figure>
+      <figure class="photo"><img src="__PHOTO__" loading="lazy" decoding="async" width="720" height="900" alt="Sabrina Grewal Requena smiling and holding up a green graduation cap"></figure>
       <div class="about-body">
         <h1 class="sr-only">About me</h1>
         <p>My name is <strong>Sabrina Grewal Requena</strong>. I am an incoming medical student, and I wanted to build this tool to serve my community and help make healthcare accessible to all people. I am passionate about the connection between physical and mental health, and I want to use my knowledge of medicine, science, and engineering to help people all over the world. :)</p>
@@ -405,6 +422,19 @@ __DECO_DEFS__
   </section>
   <p class="disclaimer"><strong>Do not upload real patient information.</strong> Remove names, dates of birth, record numbers and other personal details first. Check every handout before giving it to someone.</p>
 
+  <div id="review" class="review" hidden>
+    <button id="revtoggle" class="linkbtn" type="button" aria-expanded="false">For speech-language pathologists: review mode</button>
+    <div id="revsetup" class="revbox" hidden>
+      <p>Review mode lets you compare versions, choose the best one, and correct any line. Your reviews are saved privately and used to train the model. Use it only with made-up or fully de-identified documents.</p>
+      <div class="controls">
+        <input id="revcode" type="password" placeholder="Access code" autocomplete="off" aria-label="Review mode access code">
+        <button id="revon" type="button" class="primary">Turn on</button>
+      </div>
+      <p id="revmsg" class="status" role="status"></p>
+    </div>
+    <p id="revstate" class="revon" hidden>✓ Review mode is on · <button id="revoff" class="linkbtn" type="button">Turn off</button></p>
+  </div>
+
   <div id="out"></div>
 </div>
 </section>
@@ -433,11 +463,38 @@ const svgFor = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 // ───────────────────────────── Reading the uploaded file ─────────────────────────────
 const $ = (id) => document.getElementById(id);
 let sample = null, downloads = null, ctl = null;
-const state = { doc: null, original: "", example: false };
+const state = { doc: null, original: "", source: "", example: false, versions: [], vi: 0, sent: false };
+const clone = (o) => JSON.parse(JSON.stringify(o));
+// Every version the model writes is kept (for review mode). "model" is exactly what the model wrote;
+// "doc" is what is on screen, including any edits.
+function addVersion(doc) {
+  state.versions.push({ model: clone(doc), doc });
+  state.vi = state.versions.length - 1; state.doc = doc; state.sent = false;
+}
 
+// The PDF and Word readers are big (about 2 MB), so they load only when someone uploads one of those
+// files. After the page has finished loading, the browser fetches them quietly in the background, so
+// they are usually ready by the time a file is chosen.
+const LIBS = {
+  pdf: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js",
+  pdfWorker: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js",
+  word: "https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js",
+};
+const loaded = {};
+function loadScript(src) {
+  return loaded[src] ||= new Promise((ok, bad) => {
+    const el = document.createElement("script"); el.src = src; el.onload = ok;
+    el.onerror = () => { delete loaded[src]; bad(new Error("A file reader didn't load. Check your internet and try again, or paste the text instead.")); };
+    document.head.append(el);
+  });
+}
+addEventListener("load", () => setTimeout(() => {
+  for (const src of Object.values(LIBS)) { const l = document.createElement("link"); l.rel = "prefetch"; l.as = "script"; l.href = src; document.head.append(l); }
+}, 1500));
 async function pdfPages(file) {
-  if (!window.pdfjsLib) throw new Error("The PDF reader didn't load. Reload the page, or paste the text instead.");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  setStatus("Opening the PDF…");
+  await loadScript(LIBS.pdf); await loadScript(LIBS.pdfWorker);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWorker;
   return pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
 }
 async function pdfText(pdf) {
@@ -501,7 +558,8 @@ async function readFile(file) {
     return transcribe(await pdfImages(pdf, max));               // a scanned PDF has no text layer
   }
   if (name.endsWith(".docx")) {
-    if (!window.mammoth) throw new Error("The Word reader didn't load. Reload the page, or paste the text instead.");
+    setStatus("Opening the Word file…");
+    await loadScript(LIBS.word);
     return (await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value.trim();
   }
   if (file.type.startsWith("image/")) return transcribe([file]);
@@ -525,22 +583,30 @@ async function ask(task, data, { images, onText } = {}) {
 // The visitor's browser asks the Space directly (Gradio's API), so each visitor uses their own free
 // GPU time. "retry" asks for a slightly different wording when the first try had problems.
 const SPACE = "__SPACE__";
-const wait = (ms) => new Promise((r, x) => { const t = setTimeout(r, ms); ctl.signal.addEventListener("abort", () => { clearTimeout(t); x({ code: "cancelled" }); }, { once: true }); });
-async function askModel(data, onText, retry) {
+const wait = (ms, signal) => new Promise((r, x) => { const t = setTimeout(r, ms); signal?.addEventListener("abort", () => { clearTimeout(t); x({ code: "cancelled" }); }, { once: true }); });
+// Wake the model as soon as someone opens the page, so it is usually ready by the time they upload.
+// (A Space that nobody used for a while goes to sleep and takes a minute or two to start again.)
+let woke = false;
+function wakeModel() {
+  if (!WEB || !SPACE || woke) return;
+  woke = true;
+  fetch(`${SPACE}/gradio_api/info`, { cache: "no-store" }).catch(() => { woke = false; });
+}
+async function spaceCall(api, data, { signal, onText, waking, tries: maxTries = 30 } = {}) {
   if (!SPACE) throw { code: "not_configured" };
-  const body = JSON.stringify({ data: [data.text, data.source || "Uploaded document", data.lang || "", !!retry] });
+  const body = JSON.stringify({ data });
   let id, tries = 0;
   for (;;) {                                         // a sleeping Space can take a few minutes to wake up
     let r;
-    try { r = await fetch(`${SPACE}/gradio_api/call/convert`, { method: "POST", headers: { "content-type": "application/json" }, body, signal: ctl.signal }); }
+    try { r = await fetch(`${SPACE}/gradio_api/call/${api}`, { method: "POST", headers: { "content-type": "application/json" }, body, signal }); }
     catch (e) { if (e?.name === "AbortError") throw { code: "cancelled" }; r = null; }
     if (r?.ok) { id = (await r.json()).event_id; if (id) break; }
-    if (++tries > 30) throw { code: "offline" };
-    setStatus("The model is waking up. This can take a few minutes the first time…");
-    await wait(10000);
+    if (++tries > maxTries) throw { code: api === "convert" ? "offline" : "feedback_off" };
+    waking?.();
+    await wait(10000, signal);
   }
   let res;
-  try { res = await fetch(`${SPACE}/gradio_api/call/convert/${id}`, { signal: ctl.signal }); }
+  try { res = await fetch(`${SPACE}/gradio_api/call/${api}/${id}`, { signal }); }
   catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "offline" }; }
   const reader = res.body.getReader(), dec = new TextDecoder();
   let buf = "", event = "", text = "";
@@ -563,7 +629,7 @@ async function askModel(data, onText, retry) {
           const v = JSON.parse(raw || "null");
           if (Array.isArray(v) && typeof v[0] === "string") {
             text = v[0];
-            if (text.startsWith("\u0000ERR:")) throw { code: text.slice(5).trim() };   // see convert() in space/app.py
+            if (text.startsWith("\u0000ERR:")) throw { code: text.slice(5).trim() };   // see space/app.py
             onText?.({ text });
           }
           if (event === "complete") return text;
@@ -576,6 +642,11 @@ async function askModel(data, onText, retry) {
   }
   if (!text) throw { code: "model_error" };
   return text;
+}
+// "retry" asks for a slightly different wording (the first try always picks the most likely words).
+function askModel(data, onText, retry) {
+  return spaceCall("convert", [data.text, data.source || "Uploaded document", data.lang || "", !!retry], {
+    signal: ctl.signal, onText, waking: () => setStatus("The model is waking up. This can take a minute or two the first time…") });
 }
 // Safety net: any line with an emergency number (911, 988) is always shown in the red emergency box,
 // whatever the model chose for it.
@@ -611,6 +682,8 @@ const ERR = {
   quota: "Today's free model time for your connection is used up. Please try again later (it resets every 24 hours).",
   model_error: "The model couldn't finish this handout. Try again, or try a shorter document.",
   no_text: "No text was found in that file. Try another file, or paste the text.",
+  bad_code: "That access code isn't right.",
+  feedback_off: "Saving reviews isn't turned on yet. Please tell the site owner.",
 };
 if (WEB) { ERR.not_configured = "The handout model isn't connected yet. Please try again later."; ERR.invalid_json = "The model's answer wasn't a complete handout. Try again."; }
 function setStatus(msg, err) { const s = $("status"); s.textContent = msg || ""; s.className = "status" + (err ? " err" : ""); }
@@ -629,7 +702,7 @@ async function run(getText, sourceName) {
     const text = await getText();
     if (!text || text.replace(/\s/g, "").length < 20) throw new Error("No text was found in that file. Try another file, or paste the text.");
     setStatus("Writing the handout… (usually about a minute)");
-    const progress = ({ text: t }) => { const n = (t.match(/"topic"\s*:/g) || []).length; setStatus(n ? `Writing page ${n}…` : "Planning the pages…"); };
+    const progress = liveProgress();
     const data = { text, source: sourceName, lang: $("lang").value };
     let doc;
     try { doc = parseModelJson(await ask("convert", data, { onText: progress })); }
@@ -639,22 +712,121 @@ async function run(getText, sourceName) {
       doc = parseModelJson(await ask("fix", data, { onText: progress }));
     }
     doc.source ||= sourceName; markCrisis(doc);
-    state.doc = doc; state.original = text; state.example = false;
+    state.original = text; state.source = sourceName; state.example = false; state.versions = [];
+    addVersion(doc);
     setStatus("");
     render();
     $("out").scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-  } catch (e) { fail(e); }
+  } catch (e) { fail(e); if (state.doc) render(); else $("out").innerHTML = ""; }
   finally { busy(false); }
+}
+// While the model writes, show each finished line right away instead of a blank wait.
+function liveProgress() {
+  let last = 0;
+  return ({ text: t }) => {
+    const n = (t.match(/"topic"\s*:/g) || []).length;
+    setStatus(n ? `Writing page ${n}…` : "Planning the pages…");
+    if (!WEB || Date.now() - last < 300) return;
+    last = Date.now();
+    try {
+      const d = parseModelJson(t);
+      if (!d?.pages?.length) return;
+      markCrisis(d);
+      $("out").innerHTML = `<div class="bar plain"><span class="verdict">Writing your handout…</span></div>
+        <div class="sheets live" style="margin-top:16px">${sheetsHtml(d, false)}</div>`;
+    } catch { /* not enough text yet to show a page */ }
+  };
 }
 async function fixWithClaude(check) {
   ctl = new AbortController(); busy(true);
   try {
-    setStatus(WEB ? "Writing it again…" : "Fixing the flagged facts…");
-    const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check), source: state.doc.source, lang: $("lang").value });
+    setStatus(WEB ? "Writing a new version…" : "Fixing the flagged facts…");
+    const raw = await ask("fix", { text: state.original, doc: state.doc, problems: problemList(check), source: state.doc.source, lang: $("lang").value },
+                          { onText: liveProgress() });
     const doc = parseModelJson(raw); doc.source ||= state.doc.source; markCrisis(doc);
-    state.doc = doc; setStatus(""); render();
-  } catch (e) { fail(e); }
+    addVersion(doc); setStatus(""); render();
+  } catch (e) { fail(e); if (state.doc) render(); }
   finally { busy(false); }
+}
+
+// ───────────────────────────── Review mode (website only) ─────────────────────────────
+// An SLP with the access code can compare versions, choose the best, edit lines, rate the result and
+// leave a comment. The review goes to the Space, which saves it to a private Hugging Face dataset.
+const REVIEW_KEY = "afd-review-code";
+const review = { code: "", choice: null, rating: "", comment: "", consent: false };
+try { review.code = localStorage.getItem(REVIEW_KEY) || ""; } catch {}
+function reviewUi() {
+  if (!WEB || !SPACE) return;
+  $("review").hidden = false;
+  $("revstate").hidden = !review.code;
+  $("revtoggle").hidden = !!review.code;
+  if (review.code) $("revsetup").hidden = true;
+}
+$("revtoggle").onclick = () => {
+  const open = $("revsetup").hidden; $("revsetup").hidden = !open; $("revtoggle").setAttribute("aria-expanded", open);
+  if (open) { wakeModel(); $("revcode").focus(); }
+};
+$("revon").onclick = async () => {
+  const code = $("revcode").value.trim();
+  if (!code) { $("revmsg").textContent = "Type the access code first."; return; }
+  $("revon").disabled = true; $("revmsg").className = "status"; $("revmsg").textContent = "Checking the code…";
+  try {
+    await spaceCall("check_code", [code], { tries: 12, waking: () => { $("revmsg").textContent = "Waking up the model to check the code. This can take a minute…"; } });
+    review.code = code; try { localStorage.setItem(REVIEW_KEY, code); } catch {}
+    $("revmsg").textContent = ""; $("revcode").value = ""; reviewUi(); render();
+  } catch (e) { $("revmsg").className = "status err"; $("revmsg").textContent = ERR[e?.code] || "Couldn't check the code. Try again."; }
+  finally { $("revon").disabled = false; }
+};
+$("revcode").addEventListener("keydown", (e) => { if (e.key === "Enter") $("revon").click(); });
+$("revoff").onclick = () => { review.code = ""; try { localStorage.removeItem(REVIEW_KEY); } catch {} reviewUi(); render(); };
+
+const RATINGS = [["ready", "Ready to give to a patient as is"], ["ready_after_edits", "Ready after my edits"],
+                 ["needs_changes", "Needs bigger changes"], ["not_usable", "Not usable"]];
+const edited = (v) => JSON.stringify(v.doc) !== JSON.stringify(v.model);
+function reviewPanel() {
+  const n = state.versions.length, chosen = review.choice ?? state.vi;
+  const tabs = n > 1 ? `<div class="versions" role="group" aria-label="Versions">${state.versions.map((v, i) =>
+    `<button type="button" data-v="${i}" aria-pressed="${i === state.vi}">Version ${i + 1}${edited(v) ? " (edited)" : ""}</button>`).join("")}</div>` : "";
+  const pick = n > 1 ? `<fieldset><legend>Which version is best?</legend>${state.versions.map((v, i) =>
+    `<label><input type="radio" name="revchoice" value="${i}" ${i === chosen ? "checked" : ""}> Version ${i + 1}${edited(v) ? " (with your edits)" : ""}</label>`).join("")}</fieldset>` : "";
+  return { tabs, panel: `<section class="revpanel" aria-label="Your review">
+      <h3>Your review</h3>
+      <p class="hint">Click any line to correct it. Use “Write another version” to compare versions.</p>
+      ${pick}
+      <fieldset><legend>Is ${n > 1 ? "the version you chose" : "this handout"} ready to use?</legend>${RATINGS.map(([v, t]) =>
+        `<label><input type="radio" name="revrating" value="${v}" ${review.rating === v ? "checked" : ""}> ${t}</label>`).join("")}</fieldset>
+      <label style="display:grid;gap:6px;cursor:auto">Comments (optional)<textarea id="revcomment" placeholder="What would you change, and why?">${mdToHtml(review.comment).replace(/<\/?strong>/g, "**")}</textarea></label>
+      <label><input type="checkbox" id="revconsent" ${review.consent ? "checked" : ""}> This document is made up or has no real patient information.</label>
+      <div class="send"><button id="revsend" type="button" class="primary" ${state.sent ? "disabled" : ""}>${state.sent ? "Review sent" : "Send review"}</button>
+        <span id="revsent" class="status" role="status">${state.sent ? "Thank you! Your review was saved." : ""}</span></div>
+    </section>` };
+}
+function wireReview() {
+  const out = $("out");
+  out.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => { state.vi = +b.dataset.v; state.doc = state.versions[state.vi].doc; render(); });
+  out.querySelectorAll("input[name=revchoice]").forEach((r) => r.onchange = () => { review.choice = +r.value; });
+  out.querySelectorAll("input[name=revrating]").forEach((r) => r.onchange = () => { review.rating = r.value; });
+  $("revcomment").oninput = (e) => { review.comment = e.target.value; };
+  $("revconsent").onchange = (e) => { review.consent = e.target.checked; };
+  $("revsend").onclick = sendReview;
+}
+async function sendReview() {
+  const msg = $("revsent");
+  if (!review.consent) { msg.className = "status err"; msg.textContent = "Please confirm the document has no real patient information."; return; }
+  const chosen = state.versions.length > 1 ? (review.choice ?? state.vi) : 0;
+  const payload = {
+    original: state.original, source: state.source, lang: $("lang").value, chosen,
+    versions: state.versions.map((v) => ({ model: v.model, edited: edited(v) ? v.doc : null })),
+    rating: review.rating || null, comment: review.comment.trim() || null, app: "website",
+  };
+  $("revsend").disabled = true; msg.className = "status"; msg.textContent = "Sending…";
+  try {
+    await spaceCall("feedback", [review.code, JSON.stringify(payload)], { tries: 12, waking: () => { msg.textContent = "Waking up the model to save your review…"; } });
+    state.sent = true; review.choice = null; review.rating = ""; review.comment = ""; review.consent = false; render();
+  } catch (e) {
+    $("revsend").disabled = false; msg.className = "status err"; msg.textContent = ERR[e?.code] || "Couldn't save the review. Try again.";
+    if (e?.code === "bad_code") { review.code = ""; try { localStorage.removeItem(REVIEW_KEY); } catch {} reviewUi(); }
+  }
 }
 
 // ───────────────────────────── Showing the handout ─────────────────────────────
@@ -688,15 +860,20 @@ function render() {
   const check = factCheck(state.original, doc);
   const probs = problemList(check);
   // The fact-check result is not shown on screen (Sabrina's choice); "Try again" is always offered.
+  const reviewing = WEB && !!review.code && !state.example;
+  const rv = reviewing ? reviewPanel() : { tabs: "", panel: "" };
   out.innerHTML = `
     <div class="bar plain">
-      <span class="verdict">Your handout</span>
+      <span class="verdict">${reviewing && state.versions.length > 1 ? `Version ${state.vi + 1} of ${state.versions.length}` : "Your handout"}</span>
       <span class="controls">
-        <button id="fix" type="button">${WEB ? "Try again" : "Fix with Claude"}</button>
+        <button id="fix" type="button">${!WEB ? "Fix with Claude" : reviewing ? "Write another version" : "Try again"}</button>
         <button id="dl" type="button" class="primary">Download to print</button>
       </span>
     </div>
-    <div class="sheets" style="margin-top:16px">${sheetsHtml(doc, true)}</div>`;
+    ${rv.tabs}
+    <div class="sheets" style="margin-top:16px">${sheetsHtml(doc, true)}</div>
+    ${rv.panel}`;
+  if (reviewing) wireReview();
   $("dl").onclick = download;
   if ($("fix")) $("fix").onclick = () => fixWithClaude(check);
   out.querySelectorAll("[contenteditable]").forEach((el) => el.addEventListener("blur", () => {
@@ -743,6 +920,8 @@ $("pastebtn").onclick = () => { $("pastebox").hidden = !$("pastebox").hidden; if
 $("go").onclick = () => run(async () => $("src").value, "Pasted document");
 $("stop").onclick = () => ctl?.abort();
 render();   // nothing to show until a file is uploaded
+reviewUi();
+wakeModel();
 
 // ───────────────────────────── Tabs ─────────────────────────────
 const TABS = ["home", "make", "about"];
@@ -753,6 +932,7 @@ function show(name, push) {
     const b = $("t-" + t); b.setAttribute("aria-selected", t === name); b.tabIndex = t === name ? 0 : -1;
   });
   if (push && location.hash !== "#" + name) history.pushState(null, "", "#" + name);
+  if (name === "make") wakeModel();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll("[data-go]").forEach((el) => el.addEventListener("click", (e) => { e.preventDefault(); show(el.dataset.go, true); }));
