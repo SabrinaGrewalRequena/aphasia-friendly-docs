@@ -625,14 +625,138 @@ function taskText(task, d) {
   return `# Your task\n${userMessage(d.text, d.source, d.lang)}\n\nReply with only the JSON object.`;
 }
 
-// The drawing for a line: the icon Claude chose, else the first drawing whose words match the picture word.
+// The drawing for a line. Every line gets one: the model's picture word is matched to a drawing (English or
+// Spanish, with extra everyday words below); if that finds nothing, the line's own words are tried (bold words
+// first); and if still nothing, a drawing that fits the kind of line.
+const PIC_WORDS = {
+  stethoscope: "doctor doctora medico physician provider check-up checkup exam examen consulta visit visita specialist especialista surgeon cirujano neurologist neurologo cardiologist dentist dentista",
+  nurse: "enfermera enfermero",
+  "building-hospital": "hospital clinic clinica centro center imaging radiology urgent-care emergency-room",
+  "emergency-bed": "hospital-bed cama-de-hospital",
+  ambulance: "ambulancia 911 emergencia",
+  phone: "telefono llamar llamada tty phone-number numero",
+  calendar: "calendario fecha date day dia week semana month mes",
+  "calendar-event": "appointment cita cita-medica follow-up seguimiento",
+  "calendar-x": "cancel cancelar",
+  clock: "reloj hora time early temprano late tarde minutes minutos hours horas schedule horario",
+  pill: "pastilla tableta capsula capsule medicine medicina medicamento medication dose dosis aspirin aspirina",
+  pills: "pill-bottle frasco pastillas pastillero pill-organizer medicine-list lista-de-medicamentos medicines medicamentos",
+  prescription: "pharmacy farmacia pharmacist farmaceutico receta refill",
+  user: "persona patient paciente you usted name nombre weak-arm brazo arm brazo leg pierna face cara body cuerpo",
+  users: "grupo group people personas group-of-people",
+  friends: "family familia familiar amigos caregiver cuidador",
+  brain: "cerebro stroke derrame tia memory memoria thinking pensar headache dolor-de-cabeza seizure convulsion numbness entumecimiento weakness debilidad",
+  messages: "talk hablar speech habla conversation conversacion speech-therapist terapeuta-del-habla speak decir say counselor consejero therapy terapia talk-and-listen speech-bubble globo-de-dialogo mouth boca",
+  microphone: "voice voz",
+  "message-language": "interpreter interprete translate traducir",
+  heart: "corazon",
+  gauge: "blood-pressure presion-arterial presion pressure blood-pressure-cuff brazalete",
+  droplet: "blood sangre glucometro glucose-meter blood-sugar azucar sugar diabetes insulina insulin kidney rinon bleeding sangrado",
+  "test-pipe": "blood-test analisis-de-sangre lab laboratorio test prueba",
+  scan: "x-ray rayos mri resonancia ct scan ultrasound ultrasonido imaging",
+  pencil: "write escribir edit",
+  signature: "firma sign firmar",
+  "file-text": "document documento form formulario paper papel letter carta report informe",
+  "clipboard-list": "plan list lista checklist instructions instrucciones",
+  cash: "money dinero pay pagar cost costo price precio",
+  "credit-card": "insurance seguro tarjeta-de-seguro insurance-card tarjeta",
+  id: "identificacion identity-card license licencia photo-id",
+  car: "drive manejar conducir carro auto ride",
+  "car-off": "no-driving no-manejar",
+  map: "mapa directions direcciones",
+  "map-pin": "address direccion place lugar floor piso room sala location",
+  home: "casa house hogar",
+  building: "edificio office oficina",
+  "glass-full": "glass-of-water vaso-de-agua water agua drink beber swallow tragar sip",
+  "bowl-spoon": "food comida meal plate plato breakfast desayuno lunch dinner cena eat comer diet dieta",
+  salt: "sal sodium sodio low-sodium",
+  "device-laptop": "computer computadora laptop portal online",
+  "world-www": "website sitio-web internet web",
+  video: "video-call videollamada telehealth",
+  "device-mobile": "cell celular text-message mensaje-de-texto app",
+  mail: "email correo envelope sobre",
+  check: "yes si check-mark done listo okay bien correct",
+  "hand-stop": "stop parar alto",
+  ban: "no not don't never nunca prohibido avoid evitar",
+  help: "ayuda question pregunta ask preguntar",
+  "alert-triangle": "warning advertencia careful cuidado danger peligro risk riesgo fall caida side-effect",
+  "alert-circle": "important importante",
+  target: "meta goal objetivo",
+  bed: "cama rest descansar lie-down acostado nap",
+  zzz: "sleep dormir sleepy sueno tired cansado",
+  walk: "walker andador cane baston caminar walking activity actividad normal-activity move",
+  run: "exercise ejercicio active",
+  stretching: "physical-therapist physical-therapy terapeuta-fisico fisioterapia",
+  "trending-up": "improve mejorar increase aumentar more mas better",
+  "trending-down": "decrease reduce bajar lower less menos",
+  refresh: "practice practicar practica repeat repetir again",
+  book: "read leer reading",
+  headphones: "listen escuchar",
+  lock: "candado private privado password contrasena",
+  eye: "ojo vision vista see ver blurry borroso",
+  eyeglass: "glasses lentes",
+  ear: "hearing oido hearing-aid",
+  lungs: "breathe respirar breathing pulmones inhaler inhalador cough tos",
+  thermometer: "fever fiebre temperatura",
+  "mood-sad": "sad triste depressed",
+  "mood-nervous": "worried preocupado nervous nervioso anxious anxiety ansiedad",
+  "mood-confuzed": "confused confundido dizzy mareo",
+  "mood-smile": "happy feliz",
+  "toilet-paper": "toilet inodoro bathroom bano",
+  bath: "shower ducha banarse",
+  "hand-sanitizer": "wash lavar wash-hands lavarse-las-manos",
+  vaccine: "injection inyeccion vacuna shot",
+  bandage: "wound herida bruise moreton cut",
+  "smoking-no": "no-smoking no-fumar quit",
+  smoking: "cigarette cigarrillo fumar",
+  "glass-off": "no-alcohol",
+  bone: "fracture fractura",
+  "first-aid-kit": "care atencion-medica health salud",
+};
+const deaccent = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const PIC_INDEX = (() => {
+  const ix = {};
+  const add = (k, n) => { k = deaccent(k).trim(); if (k && !(k in ix)) ix[k] = n; };
+  for (const [n, words] of Object.entries(PIC_WORDS)) if (ICONS[n]) for (const w of words.split(" ")) add(w.replace(/-/g, " "), n);
+  for (const [n, v] of Object.entries(ICONS)) { add(n.replace(/-/g, " "), n); for (const part of v.label.split(/,\s*/)) add(part, n); }
+  return ix;
+})();
+const NOT_WORDS = new Set("no not don't dont never nunca sin".split(" "));
+const SKIP_WORDS = new Set("the a an and or of to for your you is are be it its at in on with this that will can may if do does go get have has from by as up out about into after before then than when what who how also all any some more each other them they their there here our we me my no not ni el la los las un una unos unas y o de del a al en con para por su sus tu que es son se lo le les mas muy este esta".split(" "));
+function picLookup(word) {
+  const w = deaccent(word).replace(/[^a-z0-9' -]/g, "").trim();
+  if (!w) return "";
+  return PIC_INDEX[w] || PIC_INDEX[w.replace(/(es|s)$/, "")] || "";
+}
+function picFromPhrase(phrase) {
+  const p = deaccent(phrase).replace(/[^a-z0-9' -]/g, " ").replace(/\s+/g, " ").trim();
+  if (!p) return "";
+  const direct = picLookup(p);
+  if (direct) return direct;
+  const words = p.split(" ");
+  if (NOT_WORDS.has(words[0]) && words.length > 1) {          // "no driving", "no coffee", "sin dolor"
+    const rest = picFromPhrase(words.slice(1).join(" "));
+    return { car: "car-off", smoking: "smoking-no", beer: "glass-off", "glass-full": "glass-off", cup: "glass-off" }[rest] || "ban";
+  }
+  for (const w of [...words].sort((a, b) => b.length - a.length)) { if (w.length > 2 && !SKIP_WORDS.has(w)) { const n = picLookup(w); if (n) return n; } }
+  return "";
+}
 function drawingFor(line) {
   if (ICONS[line.icon]) return line.icon;
-  const w = String(line.picture || line.icon || "").toLowerCase().trim();
-  if (!w) return "";
-  for (const [n, v] of Object.entries(ICONS)) if (v.label.toLowerCase().split(/,\s*/).includes(w) || n === w) return n;
-  for (const [n, v] of Object.entries(ICONS)) if (w.split(/\s+/).some((x) => x.length > 3 && v.label.toLowerCase().includes(x))) return n;
-  return "";
+  const plain = deaccent(line.text);
+  if (/\b(drive|driving|manejar|conducir)\b/.test(plain) && /\b(not|no|don't|never|nunca)\b/.test(plain)) return "car-off";
+  const fromPic = picFromPhrase(line.picture || line.icon || "");
+  if (fromPic) return fromPic;
+  const text = String(line.text || "");
+  const bold = [...text.matchAll(/\*\*(.+?)\*\*/g)].map((m) => m[1]);
+  const words = [...bold, ...deaccent(text.replace(/\*\*/g, "")).split(/[^a-z0-9'-]+/)];
+  for (const w of words) {
+    if (w.length < 3 || SKIP_WORDS.has(deaccent(w))) continue;
+    const n = picLookup(w);
+    if (n === "car" && /\b(not|no|don't|never|nunca)\b/i.test(text)) return "car-off";
+    if (n && n !== "ban") return n;
+  }
+  return { phone: "phone", crisis: "ambulance", step: "list-numbers", checkbox: "square-check", blank: "pencil" }[line.kind] || "info-circle";
 }
 const svgFor = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n].svg}</svg>`;
 
