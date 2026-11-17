@@ -1193,7 +1193,14 @@ function pictoSearch(lang, kw) {
 async function pictoIds(el) {
   const { kw = "", alt = "", lang } = el.dataset;
   const NEG = /^(no|not|sin|don't)\s+/i, plain = (t) => t.replace(NEG, "");
-  const tries = [[lang, kw, false], [lang, plain(kw), NEG.test(kw)], ["en", alt, false], ["en", plain(alt), NEG.test(alt)]];
+  // A "no ..." word is always shown as the plain thing with a red "no" sign over it: ARASAAC's own results for
+  // "no driving" can be a car with no cross at all (a driving school), which would tell the reader the opposite.
+  const negKw = NEG.test(kw), negAlt = NEG.test(alt);
+  // Likewise when the line itself says "no" (its line drawing is "no driving", "no smoking"...): the "no" sign wins
+  // over a plain picture word like "car".
+  const tries = negKw ? [[lang, plain(kw), true], ["en", plain(alt), negAlt]]
+    : negAlt ? [["en", plain(alt), true]]
+    : [[lang, kw, false], ["en", alt, false]];
   for (const [l, w, neg] of tries) {
     const ids = await pictoSearch(l, w);
     if (ids.length) return { ids, neg };
