@@ -17,7 +17,7 @@ This Space runs a fine-tuned **Qwen3-4B-Instruct-2507 + LoRA** model. It turns h
 
 The website [aphasia-friendly-docs.vercel.app](https://aphasia-friendly-docs.vercel.app/) calls this Space's `convert` API.
 
-- **Hardware:** ZeroGPU. A GPU is used only while a handout is being written.
+- **Hardware:** works on free ZeroGPU (a GPU only while a handout is being written, with a daily limit per visitor) or on a paid GPU such as 1x Nvidia L4 (no daily limits). On paid hardware, set a **sleep time** so billing stops when nobody is using it.
 
 **Settings** (Space → Settings → Variables and secrets):
 

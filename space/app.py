@@ -39,7 +39,12 @@ LANG_NAMES = {"en": "English", "es": "Spanish"}
 START = '{"title": "'
 
 tokenizer = AutoTokenizer.from_pretrained(BASE)
-model = AutoModelForCausalLM.from_pretrained(BASE, dtype=torch.bfloat16)
+# Newer GPUs (ZeroGPU, L4, A10G...) use bfloat16. An older T4 can't, so it gets float16.
+try:
+    DTYPE = torch.float16 if torch.cuda.get_device_capability()[0] < 8 else torch.bfloat16
+except Exception:   # ZeroGPU: no GPU at start-up, and its GPUs are new
+    DTYPE = torch.bfloat16
+model = AutoModelForCausalLM.from_pretrained(BASE, dtype=DTYPE)
 if ADAPTER:
     # torch_device="cpu": on ZeroGPU the GPU only exists while a handout is being written,
     # so the trained part is loaded into normal memory first and moved to the GPU below.
