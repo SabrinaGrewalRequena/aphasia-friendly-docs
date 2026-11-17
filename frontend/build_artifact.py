@@ -78,7 +78,7 @@ html = page(web=False)
 out.write_text(html, encoding="utf-8")
 print(f"Wrote {out} ({len(html):,} bytes)")
 
-# 2) The public website (web/ is what Vercel serves; Claude is reached through web/api/convert.js).
+# 2) The public website (web/ is what Vercel serves; the browser calls the Hugging Face Space directly).
 WEB = ROOT / "web"
 FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' "
            "fill='%231d4e89'/%3E%3Cpath d='M9 8h10l4 4v12H9z' fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round'/%3E"

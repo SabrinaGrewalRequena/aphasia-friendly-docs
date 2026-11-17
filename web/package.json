@@ -1,6 +1,6 @@
 {
   "name": "aphasia-handout-maker",
   "private": true,
-  "description": "Public website for the Aphasia Handout Maker. Vercel serves index.html and runs api/convert.js.",
+  "description": "Public website for Aphasia Friendly Docs. Vercel serves index.html; handouts come from the Hugging Face Space.",
   "engines": { "node": "22.x" }
 }

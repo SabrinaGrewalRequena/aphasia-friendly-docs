@@ -599,9 +599,9 @@ function parseModelJson(raw) {
   }
 }
 
-// The instructions sent to Claude. The Claude page (inside claude.ai) and the
-// website's server (web/api/convert.js) both use this file, so they always ask
-// Claude the same way. Needs RULES, EXAMPLES and ICONS to be defined first.
+// The instructions sent to Claude by the Claude page (inside claude.ai). The public
+// website doesn't use them: its fine-tuned model has the rules built in (see space/).
+// Needs RULES, EXAMPLES and ICONS to be defined first.
 
 const ICON_RULE = "\n\n# Pictures\nEvery line has \"picture\" (a short word) AND \"icon\": the NAME of the drawing below that best shows that line's meaning. Use only names from this list, exactly as written. Use \"\" for both when a line needs no picture.\n\nDrawings (name: what it shows):\n" +
   Object.entries(ICONS).map(([n, v]) => `${n}: ${v.label}`).join("\n");
