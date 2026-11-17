@@ -108,7 +108,7 @@ python evaluate.py compare data/test.jsonl results/baseline results/finetuned
 ## Credits
 
 - **Model:** Qwen3-4B-Instruct-2507 (Apache 2.0), fine-tuned with LoRA; Claude by Anthropic was used as the comparison baseline.
-- **Drawings on the website:** [Tabler Icons](https://tabler.io/icons) (MIT License; see [`frontend/TABLER_ICONS_LICENSE.txt`](frontend/TABLER_ICONS_LICENSE.txt)).
+- **Pictures on the website:** [ARASAAC](https://arasaac.org) pictograms by Sergio Palao, licensed CC BY-NC-SA 4.0, looked up for each line. If ARASAAC has no match or can't be reached, a [Tabler Icons](https://tabler.io/icons) line drawing is shown instead (MIT License; see [`frontend/TABLER_ICONS_LICENSE.txt`](frontend/TABLER_ICONS_LICENSE.txt)).
 - **Pictures in the command-line version (`render.py`):** [ARASAAC](https://arasaac.org) pictograms by Sergio Palao, licensed CC BY-NC-SA 4.0.
 - **Handout style:** inspired by the UNC School of Medicine's aphasia-friendly handouts.
 

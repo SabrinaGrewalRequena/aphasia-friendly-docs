@@ -76,6 +76,11 @@ textarea { width: 100%; min-height: 180px; font: inherit; font-size: 15px; paddi
 .pic svg { width: 100%; height: 100%; }
 .ln.crisis .pic { background: #fbe3e1; color: #9d1d16; }
 .pic.none { background: none; }
+.pic.picto { background: #fff; border: 1px solid #eadfd9; padding: 5%; }
+.pic.picto img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.pic.picto.neg { position: relative; }
+.pic.picto.neg::after { content: ""; position: absolute; inset: 8%; border: 6px solid #c8102e; border-radius: 50%;
+  background: linear-gradient(to top right, transparent calc(50% - 3px), #c8102e calc(50% - 3px), #c8102e calc(50% + 3px), transparent calc(50% + 3px)); }
 .tx { min-width: 0; overflow-wrap: anywhere; }
 .tx strong { font-weight: 700; }
 .num { font-weight: 700; margin-right: .35em; }
@@ -783,7 +788,7 @@ function splitLongPages(doc) {
 }
 function addVersion(doc) {
   splitLongPages(doc);
-  state.versions.push({ model: clone(doc), doc });
+  state.versions.push({ model: clone(doc), doc, pics: {} });
   state.vi = state.versions.length - 1; state.doc = doc; state.sent = false;
 }
 
@@ -1049,6 +1054,7 @@ function liveProgress() {
       markCrisis(d); splitLongPages(d);
       $("out").innerHTML = `<div class="bar plain"><span class="verdict">Writing your handout…</span></div>
         <div class="sheets live" style="margin-top:16px">${sheetsHtml(d, false)}</div>`;
+      addPictograms($("out"));
     } catch { /* not enough text yet to show a page */ }
   };
 }
@@ -1154,8 +1160,58 @@ function htmlToMd(el) {
   for (const n of el.childNodes) s += n.nodeType === 3 ? n.textContent : (n.nodeName === "STRONG" || n.nodeName === "B") ? `**${n.textContent}**` : n.nodeName === "BR" ? " " : htmlToMd(n);
   return s.replace(/\*\*\*\*/g, "").replace(/\s+/g, " ").trim();
 }
-function sheetsHtml(doc, editable) {
+// ───────────────────────────── Pictures from ARASAAC ─────────────────────────────
+// ARASAAC (arasaac.org) is a free library of detailed, colorful pictograms made for people with communication
+// disorders. Each line's picture word is looked up there (in the handout's language, then the English name of the
+// matching line drawing). Until a pictogram arrives, or if none is found or ARASAAC can't be reached, the line
+// drawing stays, so every line always has a picture. Click a picture to see another one.
+const PICTO_CREDIT = "Pictograms: Sergio Palao, ARASAAC (arasaac.org), CC BY-NC-SA";
+const pictoUrl = (id) => `https://static.arasaac.org/pictograms/${id}/${id}_300.png`;
+const pictoSearches = new Map();
+function pictoSearch(lang, kw) {
+  kw = String(kw || "").toLowerCase().trim();
+  if (!kw) return Promise.resolve([]);
+  const key = `${lang}:${kw}`;
+  if (!pictoSearches.has(key)) {
+    const get = (how) => fetch(`https://api.arasaac.org/v1/pictograms/${lang}/${how}/${encodeURIComponent(kw)}`)
+      .then((r) => (r.ok ? r.json() : [])).then((a) => (Array.isArray(a) ? a.map((x) => x._id).filter(Boolean) : [])).catch(() => []);
+    pictoSearches.set(key, get("bestsearch").then((ids) => (ids.length ? ids : get("search"))).then((ids) => ids.slice(0, 12)));
+  }
+  return pictoSearches.get(key);
+}
+// Returns { ids, neg }. neg = the picture word said "no ..." (no driving, sin dolor) but only the plain thing
+// (driving, pain) was found, so a red "no" sign is drawn over the pictogram.
+async function pictoIds(el) {
+  const { kw = "", alt = "", lang } = el.dataset;
+  const NEG = /^(no|not|sin|don't)\s+/i, plain = (t) => t.replace(NEG, "");
+  const tries = [[lang, kw, false], [lang, plain(kw), NEG.test(kw)], ["en", alt, false], ["en", plain(alt), NEG.test(alt)]];
+  for (const [l, w, neg] of tries) {
+    const ids = await pictoSearch(l, w);
+    if (ids.length) return { ids, neg };
+  }
+  return { ids: [], neg: false };
+}
+// Swap the line drawings in `root` for pictograms. `pics` (optional) remembers the choice, by "page:line".
+function addPictograms(root, pics) {
+  root.querySelectorAll(".pic[data-pl]").forEach(async (el) => {
+    const { ids, neg } = await pictoIds(el);
+    if (!ids.length || !el.isConnected) return;
+    el.classList.toggle("neg", neg);
+    const show = (id) => {
+      const img = new Image();
+      img.alt = el.dataset.kw || el.dataset.alt; img.src = pictoUrl(id);
+      img.onload = () => { if (!el.isConnected) return; el.replaceChildren(img); el.classList.add("picto"); el.dataset.id = id; if (pics) pics[el.dataset.pl] = neg ? `${id}n` : id; };
+    };
+    if (!el.dataset.id) show(ids[0]);
+    if (pics) {
+      el.title = "Click for a different picture"; el.style.cursor = "pointer";
+      el.onclick = () => show(ids[(ids.indexOf(+el.dataset.id) + 1) % ids.length]);
+    }
+  });
+}
+function sheetsHtml(doc, editable, pics = {}) {
   const ce = editable ? ' contenteditable="true" spellcheck="true"' : "";
+  const lang = doc.language === "es" ? "es" : "en";
   let step = 0, prevLast = null;
   return (doc.pages || []).map((p, pi) => {
     const lines = p.lines || [];
@@ -1163,17 +1219,21 @@ function sheetsHtml(doc, editable) {
     prevLast = lines.at(-1)?.kind ?? null;
     const body = lines.map((l, li) => {
       const kind = l.kind || "text", name = drawingFor(l);
-      const pic = name ? `<div class="pic" title="${mdToHtml(ICONS[name].label)}">${svgFor(name)}</div>` : `<div class="pic none"></div>`;
+      const kw = String(l.picture || "").trim(), alt = name ? ICONS[name].label.split(/,\s*/)[0] : "", saved = pics[`${pi}:${li}`], id = parseInt(saved), neg = String(saved).endsWith("n");
+      const attrs = `data-kw="${mdToHtml(kw)}" data-alt="${mdToHtml(alt)}" data-lang="${lang}" data-pl="${pi}:${li}"`;
+      const pic = id ? `<div class="pic picto${neg ? " neg" : ""}" ${attrs} data-id="${id}"><img alt="${mdToHtml(kw || alt)}" src="${pictoUrl(id)}"></div>`
+        : name ? `<div class="pic" ${attrs} title="${mdToHtml(ICONS[name].label)}">${svgFor(name)}</div>` : `<div class="pic none"></div>`;
       const lead = kind === "step" ? `<span class="num">${++step}.</span>` : kind === "checkbox" ? `<span class="box"></span>` : "";
       return `<div class="ln ${kind}">${pic}<div class="tx">${lead}<span${ce} data-p="${pi}" data-l="${li}">${mdToHtml(l.text)}</span></div></div>`;
     }).join("");
     return `<article class="sheet">${pi === 0 ? `<p class="doc-title"${ce} data-title="1">${mdToHtml(doc.title)}</p>` : ""}
       <h2${ce} data-p="${pi}" data-topic="1">${mdToHtml(p.topic)}</h2>${body}
-      <div class="foot">${doc.language === "es" ? "Basado en" : "Based on"}: ${mdToHtml(doc.source || "")}</div></article>`;
+      <div class="foot">${doc.language === "es" ? "Basado en" : "Based on"}: ${mdToHtml(doc.source || "")} · ${PICTO_CREDIT}</div></article>`;
   }).join("");
 }
 function render() {
   const out = $("out"), doc = state.doc;
+  const pics = state.versions[state.vi]?.pics ?? (state.pics ||= {});   // pictures chosen for this version
   if (!doc) { out.innerHTML = ""; return; }
   const check = factCheck(state.original, doc);
   const probs = problemList(check);
@@ -1189,8 +1249,9 @@ function render() {
       </span>
     </div>
     ${rv.tabs}
-    <div class="sheets" style="margin-top:16px">${sheetsHtml(doc, true)}</div>
+    <div class="sheets" style="margin-top:16px">${sheetsHtml(doc, true, pics)}</div>
     ${rv.panel}`;
+  addPictograms(out, pics);
   if (reviewing) wireReview();
   $("dl").onclick = download;
   if ($("fix")) $("fix").onclick = () => fixWithClaude(check);
@@ -1203,7 +1264,7 @@ function render() {
 }
 
 // ───────────────────────────── Download (a page that prints like the preview) ─────────────────────────────
-function printable(doc) {
+function printable(doc, pics = {}) {
   const css = [...document.querySelectorAll("style")].map((s) => s.textContent).join("\n");
   const js = "";
   return `<!doctype html><html lang="${doc.language || "en"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${mdToHtml(doc.title)}</title>
@@ -1211,19 +1272,19 @@ function printable(doc) {
 :root{color-scheme:light}body{background:#e9e9e9}.wrap{max-width:8.5in}.tip{font:14px system-ui;background:#fff8e1;border:1px solid #f0b400;border-radius:8px;padding:8px 12px}
 @page{size:letter;margin:0}@media print{body{background:#fff}.wrap{padding:0;max-width:none;display:block}.tip{display:none}.sheet{box-shadow:none;border-radius:0;width:8.5in;min-height:11in;aspect-ratio:auto;padding:.6in;gap:22px;page-break-after:always}
 .sheet .doc-title{font-size:36px}.sheet h2{font-size:32px}.ln{grid-template-columns:110px 1fr;gap:26px;font-size:28px}.pic{padding:16px}.foot{font-size:11px}}</style></head>
-<body><div class="wrap"><p class="tip">${doc.language === "es" ? "Para imprimir: Archivo → Imprimir." : "To print: File → Print."}</p><div class="sheets">${sheetsHtml(doc, false)}</div></div><script>${js}<\/script></body></html>`;
+<body><div class="wrap"><p class="tip">${doc.language === "es" ? "Para imprimir: Archivo → Imprimir." : "To print: File → Print."}</p><div class="sheets">${sheetsHtml(doc, false, pics)}</div></div><script>${js}<\/script></body></html>`;
 }
 async function download() {
   const name = (String(state.doc.title || "handout").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "handout").slice(0, 60) + ".html";
   if (WEB) {   // an ordinary browser download
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([printable(state.doc)], { type: "text/html" })); a.download = name;
+    a.href = URL.createObjectURL(new Blob([printable(state.doc, state.versions[state.vi]?.pics ?? state.pics)], { type: "text/html" })); a.download = name;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 10000);
     setStatus("Saved. Open the file in your browser, then File → Print."); return;
   }
   try { downloads ||= await window.claude?.use?.("downloads"); } catch {}
   if (!downloads) { setStatus("Downloads only work when the page is open inside Claude.", true); return; }
-  try { await downloads.save({ filename: name, data: printable(state.doc) }); setStatus("Saved. Open the file in your browser, then File → Print."); }
+  try { await downloads.save({ filename: name, data: printable(state.doc, state.versions[state.vi]?.pics ?? state.pics) }); setStatus("Saved. Open the file in your browser, then File → Print."); }
   catch (e) { if (e?.code !== "declined") setStatus("Couldn't save the file (" + (e?.code || "error") + ").", true); }
 }
 
@@ -1264,5 +1325,6 @@ addEventListener("popstate", () => show(location.hash.slice(1)));
 document.querySelectorAll("[data-icon]").forEach((el) => { el.innerHTML = svgFor(el.dataset.icon); });
 $("brand-mark").innerHTML = svgFor("file-text");
 $("hero-sheet").innerHTML = sheetsHtml({ title: "", language: "en", source: "a made-up medicine sheet", pages: [{"topic": "Things that help", "lines": [{"kind": "text", "text": "**Move** your body, if your **doctor** says okay.", "picture": "walk", "icon": "walk"}, {"kind": "text", "text": "Keep a **daily routine**.", "picture": "calendar", "icon": "calendar"}, {"kind": "text", "text": "**Talk** with people you **trust**.", "picture": "conversation", "icon": "messages"}]}] }, false);
+addPictograms($("hero-sheet"));
 show(location.hash.slice(1));
 </script>
