@@ -928,10 +928,12 @@ function reviewPanel() {
   const tabs = n > 1 ? `<div class="versions" role="group" aria-label="Versions">${state.versions.map((v, i) =>
     `<button type="button" data-v="${i}" aria-pressed="${i === state.vi}">Version ${i + 1}${edited(v) ? " (edited)" : ""}</button>`).join("")}</div>` : "";
   const pick = n > 1 ? `<fieldset><legend>Which version is best?</legend>${state.versions.map((v, i) =>
-    `<label><input type="radio" name="revchoice" value="${i}" ${i === chosen ? "checked" : ""}> Version ${i + 1}${edited(v) ? " (with your edits)" : ""}</label>`).join("")}</fieldset>` : "";
+    `<label><input type="radio" name="revchoice" value="${i}" ${i === chosen ? "checked" : ""}> Version ${i + 1}${edited(v) ? " (with your edits)" : ""}</label>`).join("")}</fieldset>`
+    : `<fieldset><legend>Which version is best?</legend><p class="hint">There is only one version so far. Write a second one to compare them side by side, or just review this one.</p>
+        <div><button id="revmore" type="button">Write a second version</button></div></fieldset>`;
   return { tabs, panel: `<section class="revpanel" aria-label="Your review">
       <h3>Your review</h3>
-      <p class="hint">Click any line to correct it. Use “Write another version” to compare versions.</p>
+      <p class="hint">Click any line on the handout to correct it.</p>
       ${pick}
       <fieldset><legend>Is ${n > 1 ? "the version you chose" : "this handout"} ready to use?</legend>${RATINGS.map(([v, t]) =>
         `<label><input type="radio" name="revrating" value="${v}" ${review.rating === v ? "checked" : ""}> ${t}</label>`).join("")}</fieldset>
@@ -949,6 +951,7 @@ function wireReview() {
   $("revcomment").oninput = (e) => { review.comment = e.target.value; };
   $("revconsent").onchange = (e) => { review.consent = e.target.checked; };
   $("revsend").onclick = sendReview;
+  if ($("revmore")) $("revmore").onclick = () => { $("fix").click(); $("out").scrollIntoView({ behavior: "smooth" }); };
 }
 async function sendReview() {
   const msg = $("revsent");
